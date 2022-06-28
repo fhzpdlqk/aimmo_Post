@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "aimmoPost"
+version = "0.1.0"
+description = ""
+authors = ["fhzpdlqk <rozencrants@naver.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.1.2"
+Flask-Classful = "^0.14.2"
+marshmallow = "^3.17.0"
+mongoengine = "^0.24.1"
+Flask-Cors = "^3.0.10"
+python-dotenv = "^0.20.0"
+pylint = "^2.14.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
