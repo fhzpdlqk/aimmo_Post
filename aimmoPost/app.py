@@ -1,7 +1,12 @@
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
-import Route
+from . import config
+from . import Route
+from mongoengine import *
+
+connect("connect1", host="mongodb://" + config.default.mongodb_host + ":" + config.default.mongodb_port + "/" + config.default.mongodb_name)
+
 
 app = Flask(__name__)
 CORS(app)
