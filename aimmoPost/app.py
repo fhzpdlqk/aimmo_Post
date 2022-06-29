@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify
-from flask_cors import CORS
+
+# from flask_cors import CORS
 from . import config
 from . import Route
 from mongoengine import *
@@ -9,7 +10,7 @@ connect("connect1", host="mongodb://" + config.default.mongodb_host + ":" + conf
 
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 
 app.register_blueprint(Route.user.user)
 if __name__ == "__main__":

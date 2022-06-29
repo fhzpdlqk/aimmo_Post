@@ -1,1 +1,0 @@
-from test_aimmopost import test_version
