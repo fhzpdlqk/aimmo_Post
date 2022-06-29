@@ -1,8 +1,10 @@
 from flask import Blueprint, jsonify, request
 from aimmoPost.aimmoPost.models import User
+from aimmoPost.aimmoPost.config import default
 import mongoengine
 import sys
 import bcrypt
+import jwt
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
@@ -15,7 +17,8 @@ def login():
         user_pw = data["user_pw"]
         for d in User.User.objects(user_id=user_id):
             if bcrypt.checkpw(user_pw.encode("utf-8"), d.user_pw.encode("utf-8")):
-                return jsonify({"success": True})
+                token = jwt.encode({"user_id": user_id}, default.token, algorithm="HS256")
+                return jsonify({"success": True, "token": token})
         return jsonify({"success": False, "message": "아이디나 비밀번호가 없습니다"})
     except:
         return str(sys.exc_info()[0])
