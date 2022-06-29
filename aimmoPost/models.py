@@ -1,7 +1,7 @@
-from mongoengine import *
-from . import config
+from marshmallow_mongoengine import ModelSchema
+from models import User
 
 
-class User(Document):
-    _id = StringField(required="True", max_length=200, primary_key=True)
-    pw = StringField(required="True", max_length=100)
+class UserSchema(ModelSchema):
+    class Meta:
+        model = User
