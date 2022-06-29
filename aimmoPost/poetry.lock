@@ -239,6 +239,18 @@ lint = ["mypy (==0.961)", "flake8 (==4.0.1)", "flake8-bugbear (==22.6.22)", "pre
 tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
+name = "marshmallow-mongoengine"
+version = "0.30.2"
+description = "Mongoengine integration with the marshmallow (de)serialization library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+marshmallow = ">=3.0.0b7"
+mongoengine = ">=0.9.0"
+
+[[package]]
 name = "mccabe"
 version = "0.7.0"
 description = "McCabe checker, plugin for flake8"
@@ -459,7 +471,7 @@ email = ["email-validator"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "d6a786e710e9a85c3eec4c8184a903c64b5d0cb0e22ff0f194006d3a9e68e3aa"
+content-hash = "9716cc9fceadc05892ad95ba2182f48d4a8ca1f7c7201d3bee91bb2393b3da27"
 
 [metadata.files]
 astroid = [
@@ -614,6 +626,9 @@ markupsafe = [
 marshmallow = [
     {file = "marshmallow-3.17.0-py3-none-any.whl", hash = "sha256:00040ab5ea0c608e8787137627a8efae97fabd60552a05dc889c888f814e75eb"},
     {file = "marshmallow-3.17.0.tar.gz", hash = "sha256:635fb65a3285a31a30f276f30e958070f5214c7196202caa5c7ecf28f5274bc7"},
+]
+marshmallow-mongoengine = [
+    {file = "marshmallow-mongoengine-0.30.2.tar.gz", hash = "sha256:64857b86a4f2e2d8ff096eab2fa244562817c9e0bb7cda156a0bb85d3dbcbbcf"},
 ]
 mccabe = [
     {file = "mccabe-0.7.0-py2.py3-none-any.whl", hash = "sha256:6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e"},
