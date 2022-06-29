@@ -15,6 +15,7 @@ pylint = "^2.14.3"
 flask-mongoengine = "^1.0.0"
 marshmallow-mongoengine = "^0.30.2"
 Flask-Cors = "^3.0.10"
+asyncio = "^3.4.3"
 
 
 [build-system]
