@@ -9,7 +9,7 @@ def test_version():
 
 @pytest.fixture
 def api():
-    test_api = ai.createApp()
+    test_api = ai.app
     api = test_api.test_client()
     return api
 

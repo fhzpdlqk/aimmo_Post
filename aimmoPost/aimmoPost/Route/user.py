@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify, request
+import random
 from aimmoPost.aimmoPost.models import User
 import mongoengine
 import sys
+
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
@@ -33,6 +35,7 @@ def login():
 
 @user.route("/", methods=["POST"])
 def signup():
+    print(random.SystemRandom())
     try:
         data = request.json
         User.User(user_id=data["user_id"], user_pw=data["user_pw"]).save()
