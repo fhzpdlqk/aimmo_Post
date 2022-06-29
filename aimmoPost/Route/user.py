@@ -37,5 +37,4 @@ def signup():
         except mongoengine.errors.NotUniqueError:
             return jsonify({"success": False, "message": "id가 중복되었습니다."})
         except:
-            print(sys.exc_info()[0])
-            return jsonify({"success": False})
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])})
