@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
-import random
 from aimmoPost.aimmoPost.models import User
 import mongoengine
 import sys
-
+import bcrypt
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
@@ -35,10 +34,11 @@ def login():
 
 @user.route("/", methods=["POST"])
 def signup():
-    print(random.SystemRandom())
     try:
         data = request.json
-        User.User(user_id=data["user_id"], user_pw=data["user_pw"]).save()
+        salt = bcrypt.gensalt()
+        pw = bcrypt.hashpw(data["user_pw"].encode("utf-8"), salt)
+        User.User(user_id=data["user_id"], user_pw=pw, salt=salt).save()
         return jsonify({"success": True})
     except mongoengine.errors.NotUniqueError:
         return jsonify({"success": False, "message": "id가 중복되었습니다."})
