@@ -8,6 +8,20 @@ import jwt
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
+"""
+    로그인 API
+    method: POST
+    content-type: application/json
+    request : {
+        user_id : 윺저 아이디 (String),
+        user_pw : 유저 비밀번호 (String)
+    }
+    response : {
+        status : 200, success: true, token: string
+        status : 300, success: true, token: string
+    }
+"""
+
 
 @user.route("/login", methods=["POST"])
 def login():
