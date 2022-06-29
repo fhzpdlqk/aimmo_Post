@@ -11,15 +11,19 @@ user = Blueprint("user", __name__, url_prefix="/user")
 def login():
     try:
         data = request.json
+        user_id = data["user_id"]
+        user_pw = data["user_pw"]
+        for d in User.User.objects(user_id=user_id):
+            if bcrypt.checkpw(user_pw.encode("utf-8"), d.user_pw.encode("utf-8")):
+                return jsonify({"success": True})
+        return jsonify({"success": False, "message": "아이디나 비밀번호가 없습니다"})
     except:
-        pass
-
-    return "login"
+        return str(sys.exc_info()[0])
 
 
 """
     회원가입 API
-    method : POST
+    method: POST
     content-type: application/json
     request : {
         user_id : 윺저 아이디 (String),
