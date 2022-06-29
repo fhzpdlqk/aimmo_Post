@@ -8,6 +8,25 @@ import jwt
 post = Blueprint("post", __name__, url_prefix="/post")
 token_key = default.token
 
+"""
+    개시물 등록 메ㅑ
+    method: POST
+    content-type: application/json
+    header: {
+        token : 유저 정보 토큰
+    }
+    request : {
+        title: 제목 : String
+        content: 내용 : String
+        tag: 태그 : List
+        notice: 공지사항 여부 : Boolean
+    }
+    response : {
+        status : 200, success: true
+        status : 300, success: true
+    }
+"""
+
 
 @post.route("/regist", methods=["POST"])
 def login():
