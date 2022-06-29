@@ -5,13 +5,13 @@ import datetime
 
 
 class ReComment(Document):
-    writer = ReferenceField(User, required=True)
+    writer = StringField(required=True)
     date = DateTimeField(default=datetime.datetime.utcnow)
-    like = ReferenceField(Like)
+    like = ReferenceField(Like, default=Like)
 
 
 class Comment(Document):
-    writer = ReferenceField(User, required=True)
+    writer = StringField(required=True)
     date = DateTimeField(default=datetime.datetime.utcnow)
-    like = ReferenceField(Like)
+    like = ReferenceField(Like, default=Like)
     re_comment = ListField(ReferenceField(ReComment), default=list)
