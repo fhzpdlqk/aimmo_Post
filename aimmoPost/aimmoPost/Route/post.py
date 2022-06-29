@@ -17,7 +17,10 @@ def login():
         user_id = decoded["user_id"]
         title = data["title"]
         content = data["content"]
-        tag = data["tag"]
+        if "tag" in data:
+            tag = data["tag"]
+        else:
+            tag = []
         notice = data["notice"]
         post = Post.Post(writer=user_id, title=title, content=content, tag=tag, notice=notice)
         post.save()
