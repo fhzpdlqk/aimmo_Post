@@ -196,7 +196,12 @@ def update_post_detail():
         id = request.args["id"]
         user_id = decoded["user_id"]
         data = request.json
-        Post.Post.objects(id=id, writer=user_id).update(title=data["title"], content=data["content"], tag=data["tag"], notice=data["notice"])
-        return jsonify({"success": True})
+        print(user_id)
+        print(id)
+        result = Post.Post.objects(id=id, writer=user_id).update(title=data["title"], content=data["content"], tag=data["tag"], notice=data["notice"])
+        if result == 1:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False})
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})
