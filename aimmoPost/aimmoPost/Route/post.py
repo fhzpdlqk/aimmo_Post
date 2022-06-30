@@ -89,8 +89,21 @@ def post_list():
             return jsonify({"success": False, "message": "필터 조건이 잘못되었습니다."})
         if filter == "comment" or filter == "like":
             filter = "num_" + filter
-        data = Post.Post.objects().order_by("notice", "-" + filter)[(page - 1) * 10 : page * 10]
-        return jsonify({"success": True, "message": json.loads(data.to_json())})
+        datas = Post.Post.objects().order_by("notice", "-" + filter)[(page - 1) * 10 : page * 10]
+        result = []
+        for data in datas:
+            new_data = {}
+            new_data["id"] = str(data.id)
+            new_data["writer"] = data.writer
+            new_data["date"] = data.date
+            new_data["title"] = data.title
+            new_data["tag"] = data.tag
+            new_data["notice"] = data.notice
+            result.append(new_data)
+        print(result)
+        return jsonify({"success": True, "message": result})
+
+        # return jsonify({"success": True, "message": json.loads(datas.to_json())})
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})
 
