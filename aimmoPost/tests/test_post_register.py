@@ -104,3 +104,19 @@ def test_regist_post_no_notice(api):
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert data["success"] == False
+
+
+def test_regist_post_success_notice_false(api):
+    login_data = {"user_id": "testid", "user_pw": "testpw"}
+    resp = api.post("/user/login", data=json.dumps(login_data), content_type="application/json")
+    data = json.loads(resp.data.decode("utf-8"))
+    assert resp.status_code == 200
+    assert data["success"] == True
+    assert isinstance(data["token"], str)
+
+    token = data["token"]
+    new_data = {"title": "sampletitle", "content": "samplecontent", "tag": ["st_1", "st_2"], "notice": False}
+    resp = api.post("/post/regist", data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    data = json.loads(resp.data.decode("utf-8"))
+    assert resp.status_code == 200
+    assert data == {"success": True}

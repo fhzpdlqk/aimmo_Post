@@ -76,8 +76,19 @@ def post_list():
         parameter_dic = request.args.to_dict()
         if len(parameter_dic) == 0:
             return jsonify({"success": False, "message": "Please input page params"})
-        page = int(request.args["page"])
-        data = Post.Post.objects().order_by("-date")[(page - 1) * 10 : page * 10]
+        if "page" not in request.args:
+            page = 1
+        else:
+            page = int(request.args["page"])
+        if "filter" not in request.args:
+            filter = "date"
+        else:
+            filter = request.args["filter"]
+        if filter not in ["date", "notice", "comment", "like"]:
+            return jsonify({"success": False, "message": "필터 조건이 잘못되었습니다."})
+        if filter == "comment" or filter == "like":
+            filter = "num_" + filter
+        data = Post.Post.objects().order_by("notice", "-" + filter)[(page - 1) * 10 : page * 10]
         return jsonify({"success": True, "message": json.loads(data.to_json())})
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})

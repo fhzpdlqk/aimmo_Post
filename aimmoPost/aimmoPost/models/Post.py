@@ -13,4 +13,6 @@ class Post(Document):
     tag = ListField(StringField(), default=list)
     notice = BooleanField(default=False)
     comment = ListField(ReferenceField(Comment), default=list)
+    num_comment = IntField(default=0)
     like = ListField(ReferenceField(Like), default=list)
+    num_like = IntField(default=0)
