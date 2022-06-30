@@ -50,7 +50,7 @@ def regist():
 
 
 """
-    개시물 리스트 조회 API
+    게시물 리스트 조회 API
     method: GET
     content-type: application/json
     url : /post/list/?
@@ -96,7 +96,7 @@ def post_list():
 
 
 """
-    개시물 상세 조회 API
+    게시물 상세 조회 API
     method: GET
     content-type: application/json
     url : /post/?
@@ -120,12 +120,44 @@ def post_list():
 def get_post_detail():
     try:
         parameter_dic = request.args.to_dict()
-        if len(parameter_dic) == 0:
-            return jsonify({"success": False, "message": "Please input page params"})
         if "id" not in request.args:
             return jsonify({"success": False, "message": "Please input id params"})
         id = request.args["id"]
         data = Post.Post.objects(id=id)
         return jsonify({"success": True, "message": json.loads(data.to_json())[0]})
+    except:
+        return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+
+
+"""
+    게시물 삭제 API
+    method: DELETE
+    content-type: application/json
+    url : /post/?
+    header: {
+        token : 유저 정보 토큰
+    }
+    request : {
+
+    }
+    parameter : {
+        id: string
+    }
+    response : {
+        status : 200, success: true
+        status : 300, success: true
+    }
+"""
+
+
+@post.route("/", methods=["DELETE"])
+def delete_post_detail():
+    try:
+        decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+        if "id" == 0:
+            return jsonify({"success": False, "message": "please input id params"})
+        id = request.args["id"]
+        Post.Post.objects(id=id, writer=decoded["user_id"]).delete()
+        return jsonify({"success": True})
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})
