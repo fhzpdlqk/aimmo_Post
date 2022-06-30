@@ -19,11 +19,10 @@ def test_get_post_list_no_filter(api):
         assert isinstance(data["writer"], str) and len(data["writer"]) > 0
         assert isinstance(data["date"], str) and len(data["date"]) > 0
         assert isinstance(data["title"], str) and len(data["title"]) > 0
-        assert isinstance(data["content"], str) and len(data["content"]) > 0
         assert isinstance(data["tag"], list)
         assert isinstance(data["notice"], bool)
-        assert isinstance(data["comment"], list)
-        assert isinstance(data["like"], list)
+        assert isinstance(data["num_like"], int)
+        assert isinstance(data["num_comment"], int)
 
 
 def test_get_post_list_success_filter_like(api):
@@ -35,11 +34,10 @@ def test_get_post_list_success_filter_like(api):
         assert isinstance(data["writer"], str) and len(data["writer"]) > 0
         assert isinstance(data["date"], str) and len(data["date"]) > 0
         assert isinstance(data["title"], str) and len(data["title"]) > 0
-        assert isinstance(data["content"], str) and len(data["content"]) > 0
         assert isinstance(data["tag"], list)
         assert isinstance(data["notice"], bool)
-        assert isinstance(data["comment"], list)
-        assert isinstance(data["like"], list)
+        assert isinstance(data["num_like"], int)
+        assert isinstance(data["num_comment"], int)
 
 
 def test_get_post_list_success_filter_comment(api):
@@ -51,11 +49,10 @@ def test_get_post_list_success_filter_comment(api):
         assert isinstance(data["writer"], str) and len(data["writer"]) > 0
         assert isinstance(data["date"], str) and len(data["date"]) > 0
         assert isinstance(data["title"], str) and len(data["title"]) > 0
-        assert isinstance(data["content"], str) and len(data["content"]) > 0
         assert isinstance(data["tag"], list)
         assert isinstance(data["notice"], bool)
-        assert isinstance(data["comment"], list)
-        assert isinstance(data["like"], list)
+        assert isinstance(data["num_like"], int)
+        assert isinstance(data["num_comment"], int)
 
 
 def test_get_post_list_pageover(api):

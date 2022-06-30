@@ -26,7 +26,7 @@ def test_post_update_success(api):
     data = datas["message"][0]
 
     new_data = {"title": "sampletitle222", "content": "samplecontent222", "tag": ["st_1", "st_2"], "notice": True}
-    resp = api.put("/post/?id=" + data["_id"]["$oid"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    resp = api.put("/post/?id=" + data["id"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
@@ -48,7 +48,7 @@ def test_post_update_wronguser(api):
     data = datas["message"][0]
 
     new_data = {"title": "sampletitle222", "content": "samplecontent222", "tag": ["st_1", "st_2"], "notice": True}
-    resp = api.put("/post/?id=" + data["_id"]["$oid"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    resp = api.put("/post/?id=" + data["id"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert not datas["success"]
@@ -70,7 +70,7 @@ def test_post_update_notitle(api):
     data = datas["message"][0]
 
     new_data = {"content": "samplecontent222", "tag": ["st_1", "st_2"], "notice": True}
-    resp = api.put("/post/?id=" + data["_id"]["$oid"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    resp = api.put("/post/?id=" + data["id"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert not datas["success"]
@@ -92,7 +92,7 @@ def test_post_update_nocontent(api):
     data = datas["message"][0]
 
     new_data = {"title": "sampletitle222", "tag": ["st_1", "st_2"], "notice": True}
-    resp = api.put("/post/?id=" + data["_id"]["$oid"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    resp = api.put("/post/?id=" + data["id"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert not datas["success"]
@@ -114,7 +114,7 @@ def test_post_update_notag(api):
     data = datas["message"][0]
 
     new_data = {"title": "sampletitle222", "content": "samplecontent222", "notice": True}
-    resp = api.put("/post/?id=" + data["_id"]["$oid"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    resp = api.put("/post/?id=" + data["id"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert not datas["success"]
@@ -136,7 +136,7 @@ def test_post_update_nonotice(api):
     data = datas["message"][0]
 
     new_data = {"title": "sampletitle222", "content": "samplecontent222", "tag": ["st_1", "st_2"]}
-    resp = api.put("/post/?id=" + data["_id"]["$oid"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    resp = api.put("/post/?id=" + data["id"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert not datas["success"]

@@ -25,7 +25,7 @@ def test_get_post_detail_success(api):
     assert datas["success"]
     data = datas["message"][0]
 
-    resp = api.get("/post/?id=" + data["_id"]["$oid"], content_type="application/json")
+    resp = api.get("/post/?id=" + data["id"], content_type="application/json")
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert data["success"]
