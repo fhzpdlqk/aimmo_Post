@@ -25,7 +25,7 @@ def test_post_delete_success(api):
     assert datas["success"]
     data = datas["message"][0]
 
-    resp = api.delete("/post/?id=" + data["_id"]["$oid"], content_type="application/json", headers={"Token": token})
+    resp = api.delete("/post/?id=" + data["id"], content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
@@ -46,7 +46,7 @@ def test_post_delete_wrong_post_id(api):
     assert datas["success"]
     data = datas["message"][0]
 
-    resp = api.delete("/post/?id=" + data["_id"]["$oid"] + "ab", content_type="application/json", headers={"Token": token})
+    resp = api.delete("/post/?id=" + data["id"] + "ab", content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert not datas["success"]
@@ -67,7 +67,7 @@ def test_post_delete_wrong_user_id(api):
     assert datas["success"]
     data = datas["message"][0]
 
-    resp = api.delete("/post/?id=" + data["_id"]["$oid"] + "ab", content_type="application/json", headers={"Token": token})
+    resp = api.delete("/post/?id=" + data["id"] + "ab", content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert not datas["success"]

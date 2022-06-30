@@ -99,6 +99,8 @@ def post_list():
             new_data["title"] = data.title
             new_data["tag"] = data.tag
             new_data["notice"] = data.notice
+            new_data["num_like"] = data.num_like
+            new_data["num_comment"] = data.num_comment
             result.append(new_data)
         print(result)
         return jsonify({"success": True, "message": result})
