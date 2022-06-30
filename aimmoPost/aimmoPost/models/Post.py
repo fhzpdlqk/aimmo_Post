@@ -7,7 +7,7 @@ import datetime
 
 class Post(Document):
     writer = StringField(required=True)
-    date = DateTimeField(default=datetime.datetime.utcnow)
+    date = ComplexDateTimeField(default=datetime.datetime.utcnow)
     title = StringField(required=True, max_length=100)
     content = StringField(required=True)
     tag = ListField(StringField(), default=list)
