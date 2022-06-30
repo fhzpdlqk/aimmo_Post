@@ -3,7 +3,7 @@ import os
 from flask import Flask, jsonify
 
 from .config import default
-from aimmoPost.aimmoPost.Route import user, post
+from aimmoPost.aimmoPost.Route import user, post, comment
 from mongoengine import connect
 from flask_cors import CORS
 
@@ -16,3 +16,4 @@ app.config["BCRYPT_LEVEL"] = 10
 CORS(app)
 app.register_blueprint(user.user)
 app.register_blueprint(post.post)
+app.register_blueprint(comment.comment)
