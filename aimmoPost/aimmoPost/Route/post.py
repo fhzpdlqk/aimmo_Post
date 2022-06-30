@@ -129,14 +129,36 @@ def get_post_detail():
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})
 
 
+"""
+    게시물 상세 조회 API
+    method: DELETE
+    content-type: application/json
+    url : /post/?
+    header: {
+        token : 유저 정보 토큰
+    }
+    request : {
+
+    }
+    parameter : {
+        id: string
+    }
+    response : {
+        status : 200, success: true
+        status : 300, success: true
+    }
+"""
+
+
 @post.route("/", methods=["DELETE"])
 def delete_post_detail():
     try:
         parameter_dic = request.args.to_dict()
+        decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
         if "id" == 0:
             return jsonify({"success": False, "message": "please input id params"})
         id = request.args["id"]
-        Post.Post.objects(id=id).delete()
+        Post.Post.objects(id=id, writer=decoded["user_id"]).delete()
         return jsonify({"success": True})
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})
