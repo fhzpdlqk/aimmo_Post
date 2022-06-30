@@ -37,7 +37,6 @@ def test_get_post_detail_success(api):
     assert isinstance(data["tag"], list)
     assert isinstance(data["notice"], bool)
     assert isinstance(data["comment"], list)
-    assert isinstance(data["like"], list)
 
 
 def test_get_post_detail_nosearch(api):
