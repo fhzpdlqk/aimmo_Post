@@ -153,7 +153,6 @@ def get_post_detail():
 @post.route("/", methods=["DELETE"])
 def delete_post_detail():
     try:
-        parameter_dic = request.args.to_dict()
         decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
         if "id" == 0:
             return jsonify({"success": False, "message": "please input id params"})
