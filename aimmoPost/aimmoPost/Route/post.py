@@ -154,10 +154,54 @@ def get_post_detail():
 def delete_post_detail():
     try:
         decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-        if "id" == 0:
+        if "id" not in request.args:
             return jsonify({"success": False, "message": "please input id params"})
         id = request.args["id"]
         Post.Post.objects(id=id, writer=decoded["user_id"]).delete()
         return jsonify({"success": True})
+    except:
+        return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+
+
+"""
+    게시물 수정 API
+    method: PUT
+    content-type: application/json
+    url : /post/?
+    header: {
+        token : 유저 정보 토큰
+    }
+    request : {
+        title: string,
+        content: string,
+        tag: list,
+        notice: bool
+    }
+    parameter : {
+        id: string
+    }
+    response : {
+        status : 200, success: true
+        status : 300, success: true
+    }
+"""
+
+
+@post.route("/", methods=["PUT"])
+def update_post_detail():
+    try:
+        decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+        if "id" not in request.args:
+            return jsonify({"success": False, "message": "please input id params"})
+        id = request.args["id"]
+        user_id = decoded["user_id"]
+        data = request.json
+        print(user_id)
+        print(id)
+        result = Post.Post.objects(id=id, writer=user_id).update(title=data["title"], content=data["content"], tag=data["tag"], notice=data["notice"])
+        if result == 1:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False})
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})

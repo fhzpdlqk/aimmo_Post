@@ -11,7 +11,21 @@ def api():
 
 
 def test_get_post_detail_success(api):
-    resp = api.get("/post/?id=62bd246c90e2ca83615ed2d3", content_type="application/json")
+    login_data = {"user_id": "testid", "user_pw": "testpw"}
+    resp = api.post("/user/login", data=json.dumps(login_data), content_type="application/json")
+    data = json.loads(resp.data.decode("utf-8"))
+    assert resp.status_code == 200
+    assert data["success"] == True
+    assert isinstance(data["token"], str)
+    token = data["token"]
+
+    resp = api.get("/post/list/?page=1", content_type="application/json")
+    datas = json.loads(resp.data.decode("utf-8"))
+    assert resp.status_code == 200
+    assert datas["success"]
+    data = datas["message"][0]
+
+    resp = api.get("/post/?id=" + data["_id"]["$oid"], content_type="application/json")
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert data["success"]
