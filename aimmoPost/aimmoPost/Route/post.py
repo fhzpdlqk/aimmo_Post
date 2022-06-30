@@ -77,7 +77,7 @@ def post_list():
         if len(parameter_dic) == 0:
             return jsonify({"success": False, "message": "Please input page params"})
         page = int(request.args["page"])
-        data = Post.Post.objects().order_by("date")[(page - 1) * 10 : page * 10]
+        data = Post.Post.objects().order_by("-date")[(page - 1) * 10 : page * 10]
         return jsonify({"success": True, "message": json.loads(data.to_json())})
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})
