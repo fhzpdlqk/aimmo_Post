@@ -130,7 +130,7 @@ def get_post_detail():
 
 
 """
-    게시물 상세 조회 API
+    게시물 삭제 API
     method: DELETE
     content-type: application/json
     url : /post/?
