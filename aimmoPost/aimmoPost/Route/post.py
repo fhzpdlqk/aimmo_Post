@@ -134,12 +134,40 @@ def post_list():
 @post.route("/", methods=["GET"])
 def get_post_detail():
     try:
-        parameter_dic = request.args.to_dict()
         if "id" not in request.args:
             return jsonify({"success": False, "message": "Please input id params"})
         id = request.args["id"]
         data = Post.Post.objects(id=id)
-        return jsonify({"success": True, "message": json.loads(data.to_json())[0]})
+        result = {}
+        result["id"] = str(data[0].id)
+        result["content"] = data[0].content
+        result["title"] = data[0].title
+        result["writer"] = data[0].writer
+        result["notice"] = data[0].notice
+        result["num_like"] = data[0].num_like
+        result["num_comment"] = data[0].num_comment
+        result["tag"] = data[0].tag
+        result["date"] = data[0].date
+        result["comment"] = []
+        for i in data[0].comment:
+            new_comment_data = {}
+            new_comment_data["id"] = str(i.id)
+            new_comment_data["writer"] = i.writer
+            new_comment_data["date"] = i.date
+            new_comment_data["num_like"] = i.num_like
+            new_comment_data["content"] = i.content
+            new_comment_data["re_comment"] = []
+            for j in i.re_comment:
+                new_recomment_data = {}
+                new_recomment_data["id"] = str(j.id)
+                new_recomment_data["writer"] = j.writer
+                new_recomment_data["date"] = j.date
+                new_recomment_data["num_like"] = j.num_like
+                new_recomment_data["content"] = j.content
+                new_comment_data["re_comment"].append(new_recomment_data)
+            result["comment"].append(new_comment_data)
+        return jsonify({"success": True, "message": result})
+
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})
 
