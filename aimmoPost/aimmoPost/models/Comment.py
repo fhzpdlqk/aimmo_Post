@@ -8,12 +8,12 @@ class ReComment(Document):
     writer = StringField(required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
     content = StringField(required=True)
-    like = ReferenceField(Like, default=Like)
+    like = ListField(ReferenceField(Like), default=list)
 
 
 class Comment(Document):
     writer = StringField(required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
-    like = ReferenceField(Like, default=Like)
+    like = ListField(ReferenceField(Like), default=list)
     content = StringField(required=True)
     re_comment = ListField(ReferenceField(ReComment), default=list)
