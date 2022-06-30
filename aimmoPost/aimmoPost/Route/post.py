@@ -62,6 +62,7 @@ def regist():
     }
     parameter : {
         page: number
+        filter: string
     }
     response : {
         status : 200, success: true
@@ -90,5 +91,41 @@ def post_list():
             filter = "num_" + filter
         data = Post.Post.objects().order_by("notice", "-" + filter)[(page - 1) * 10 : page * 10]
         return jsonify({"success": True, "message": json.loads(data.to_json())})
+    except:
+        return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+
+
+"""
+    개시물 상세 조회 API
+    method: GET
+    content-type: application/json
+    url : /post/?
+    header: {
+        token : 유저 정보 토큰
+    }
+    request : {
+
+    }
+    parameter : {
+        id: string
+    }
+    response : {
+        status : 200, success: true
+        status : 300, success: true
+    }
+"""
+
+
+@post.route("/", methods=["GET"])
+def get_post_detail():
+    try:
+        parameter_dic = request.args.to_dict()
+        if len(parameter_dic) == 0:
+            return jsonify({"success": False, "message": "Please input page params"})
+        if "id" not in request.args:
+            return jsonify({"success": False, "message": "Please input id params"})
+        id = request.args["id"]
+        data = Post.Post.objects(id=id)
+        return jsonify({"success": True, "message": json.loads(data.to_json())[0]})
     except:
         return jsonify({"success": False, "message": str(sys.exc_info()[0])})
