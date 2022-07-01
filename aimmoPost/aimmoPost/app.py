@@ -14,6 +14,6 @@ app.config["SECRET_KEY"] = "abcd"
 app.config["BCRYPT_LEVEL"] = 10
 
 CORS(app)
-app.register_blueprint(user.user)
-app.register_blueprint(post.post)
-app.register_blueprint(comment.comment)
+user.UserView.register(app, route_base="/user")
+post.PostView.register(app, route_base="/post")
+comment.CommentView.register(app, route_base="/comment")
