@@ -87,3 +87,19 @@ class CommentView(FlaskView):
                 return jsonify({"success": False})
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+
+    @route("/", methods=["DELETE"])
+    def comment_delete(self):
+        try:
+            decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+            if "comment_id" not in request.args:
+                return jsonify({"success": False, "message": "Please input id params"})
+            id = request.args["comment_id"]
+            user_id = decoded["user_id"]
+            result = Comment.Comment.objects(id=id, writer=user_id).delete()
+            if result == 1:
+                return jsonify({"success": True})
+            else:
+                return jsonify({"success": False})
+        except:
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])})
