@@ -10,7 +10,8 @@ def api():
     return api
 
 
-def test_comment_update_success(api):
+@pytest.mark.asyncio
+async def test_comment_update_success(api):
     login_data = {"user_id": "testid", "user_pw": "testpw"}
     resp = api.post("/user/login", data=json.dumps(login_data), content_type="application/json")
     data = json.loads(resp.data.decode("utf-8"))
@@ -24,13 +25,13 @@ def test_comment_update_success(api):
     assert resp.status_code == 200
     assert datas["success"]
     data = datas["message"][0]
-
     new_data = {"content": "samplecontent333"}
     resp = api.post(f"/comment/regist?id={data['id']}", data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
 
+    print(data["id"])
     resp = api.get("/post/?id=" + data["id"], content_type="application/json")
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
@@ -44,6 +45,7 @@ def test_comment_update_success(api):
     assert isinstance(data["notice"], bool)
     assert isinstance(data["comment"], list)
 
+    print(data["comment"])
     comment_id = data["comment"][0]["id"]
     new_data = {"content": "samplecontent4444"}
     resp = api.put(f"/comment/?comment_id={comment_id}", data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
@@ -73,9 +75,9 @@ def test_comment_update_nocomment(api):
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
-
     resp = api.get("/post/?id=" + data["id"], content_type="application/json")
     data = json.loads(resp.data.decode("utf-8"))
+    print(data)
     assert resp.status_code == 200
     assert data["success"]
     data = data["message"]

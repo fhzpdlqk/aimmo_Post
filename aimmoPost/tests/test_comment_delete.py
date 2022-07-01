@@ -10,7 +10,7 @@ def api():
     return api
 
 
-def test_get_post_detail_success(api):
+def test_comment_update_success(api):
     login_data = {"user_id": "testid", "user_pw": "testpw"}
     resp = api.post("/user/login", data=json.dumps(login_data), content_type="application/json")
     data = json.loads(resp.data.decode("utf-8"))
@@ -25,9 +25,14 @@ def test_get_post_detail_success(api):
     assert datas["success"]
     data = datas["message"][0]
 
+    new_data = {"content": "samplecontent333"}
+    resp = api.post(f"/comment/regist?id={data['id']}", data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    datas = json.loads(resp.data.decode("utf-8"))
+    assert resp.status_code == 200
+    assert datas["success"]
+
     resp = api.get("/post/?id=" + data["id"], content_type="application/json")
     data = json.loads(resp.data.decode("utf-8"))
-
     assert resp.status_code == 200
     assert data["success"]
     data = data["message"]
@@ -39,9 +44,9 @@ def test_get_post_detail_success(api):
     assert isinstance(data["notice"], bool)
     assert isinstance(data["comment"], list)
 
-
-def test_get_post_detail_nosearch(api):
-    resp = api.get("/post/?id=62bd246c90e2c3123635ed2d3", content_type="application/json")
-    data = json.loads(resp.data.decode("utf-8"))
+    comment_id = data["comment"][0]["id"]
+    resp = api.delete(f"/comment/?comment_id={comment_id}", content_type="application/json", headers={"Token": token})
+    print(resp.status_code)
+    datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
-    assert not data["success"]
+    assert datas["success"]
