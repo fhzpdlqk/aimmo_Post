@@ -23,7 +23,7 @@ def test_post_delete_success(api):
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
-    data = datas["message"][0]
+    data = datas["message"][1]
 
     resp = api.delete("/post/?id=" + data["id"], content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))

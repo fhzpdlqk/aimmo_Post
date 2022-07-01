@@ -25,8 +25,8 @@ def test_comment_add_success(api):
     assert datas["success"]
     data = datas["message"][0]
 
-    new_data = {"content": "samplecontent222"}
-    resp = api.post("/comment/regist?id=" + data["id"], data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    new_data = {"content": "samplecontent333"}
+    resp = api.post(f"/comment/regist?id={data['id']}", data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
