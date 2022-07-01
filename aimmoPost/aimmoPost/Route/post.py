@@ -89,7 +89,6 @@ class PostView(FlaskView):
                 return jsonify({"success": False, "message": "필터 조건이 잘못되었습니다."})
 
             datas = Post.Post.objects().order_by("-notice", "-" + filter)[(page - 1) * 10 : page * 10]
-            print("aa")
             result = []
             for data in datas:
                 new_data = {}
@@ -102,7 +101,6 @@ class PostView(FlaskView):
                 new_data["num_like"] = len(data.like)
                 new_data["num_comment"] = len(data.comment)
                 result.append(new_data)
-            print(result)
             return jsonify({"success": True, "message": result})
 
             # return jsonify({"success": True, "message": json.loads(datas.to_json())})
