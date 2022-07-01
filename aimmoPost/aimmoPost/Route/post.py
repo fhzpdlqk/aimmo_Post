@@ -87,9 +87,9 @@ def post_list():
             filter = request.args["filter"]
         if filter not in ["date", "notice", "comment", "like"]:
             return jsonify({"success": False, "message": "필터 조건이 잘못되었습니다."})
-        if filter == "comment" or filter == "like":
-            filter = "num_" + filter
-        datas = Post.Post.objects().order_by("notice", "-" + filter)[(page - 1) * 10 : page * 10]
+
+        datas = Post.Post.objects().order_by("-notice", "-" + filter)[(page - 1) * 10 : page * 10]
+        print("aa")
         result = []
         for data in datas:
             new_data = {}
@@ -99,8 +99,8 @@ def post_list():
             new_data["title"] = data.title
             new_data["tag"] = data.tag
             new_data["notice"] = data.notice
-            new_data["num_like"] = data.num_like
-            new_data["num_comment"] = data.num_comment
+            new_data["num_like"] = len(data.like)
+            new_data["num_comment"] = len(data.comment)
             result.append(new_data)
         print(result)
         return jsonify({"success": True, "message": result})
@@ -144,8 +144,8 @@ def get_post_detail():
         result["title"] = data[0].title
         result["writer"] = data[0].writer
         result["notice"] = data[0].notice
-        result["num_like"] = data[0].num_like
-        result["num_comment"] = data[0].num_comment
+        result["num_like"] = len(data[0].like)
+        result["num_comment"] = len(data[0].comment)
         result["tag"] = data[0].tag
         result["date"] = data[0].date
         result["comment"] = []
@@ -154,7 +154,7 @@ def get_post_detail():
             new_comment_data["id"] = str(i.id)
             new_comment_data["writer"] = i.writer
             new_comment_data["date"] = i.date
-            new_comment_data["num_like"] = i.num_like
+            new_comment_data["num_like"] = len(i.like)
             new_comment_data["content"] = i.content
             new_comment_data["re_comment"] = []
             for j in i.re_comment:
@@ -162,7 +162,7 @@ def get_post_detail():
                 new_recomment_data["id"] = str(j.id)
                 new_recomment_data["writer"] = j.writer
                 new_recomment_data["date"] = j.date
-                new_recomment_data["num_like"] = j.num_like
+                new_recomment_data["num_like"] = len(j.like)
                 new_recomment_data["content"] = j.content
                 new_comment_data["re_comment"].append(new_recomment_data)
             result["comment"].append(new_comment_data)
