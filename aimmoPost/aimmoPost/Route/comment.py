@@ -7,7 +7,6 @@ import jwt
 import json
 from flask_classful import FlaskView, route
 
-comment = Blueprint("comment", __name__, url_prefix="/comment")
 token_key = default.token
 
 
