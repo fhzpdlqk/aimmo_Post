@@ -1,4 +1,5 @@
 from mongoengine import *
+from mongoengine import signals
 from .User import User
 from .Like import Like
 from .Comment import Comment, ReComment
@@ -13,6 +14,4 @@ class Post(Document):
     tag = ListField(StringField(), default=list)
     notice = BooleanField(default=False)
     comment = ListField(ReferenceField(Comment), default=list)
-    num_comment = IntField(default=0)
     like = ListField(ReferenceField(Like), default=list)
-    num_like = IntField(default=0)
