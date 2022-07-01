@@ -134,6 +134,7 @@ class PostView(FlaskView):
                 return jsonify({"success": False, "message": "Please input id params"})
             id = request.args["id"]
             data = Post.Post.objects(id=id)
+
             result = {}
             result["id"] = str(data[0].id)
             result["content"] = data[0].content
@@ -145,6 +146,7 @@ class PostView(FlaskView):
             result["tag"] = data[0].tag
             result["date"] = data[0].date
             result["comment"] = []
+
             for i in data[0].comment:
                 new_comment_data = {}
                 new_comment_data["id"] = str(i.id)
@@ -153,6 +155,7 @@ class PostView(FlaskView):
                 new_comment_data["num_like"] = len(i.like)
                 new_comment_data["content"] = i.content
                 new_comment_data["re_comment"] = []
+
                 for j in i.re_comment:
                     new_recomment_data = {}
                     new_recomment_data["id"] = str(j.id)
