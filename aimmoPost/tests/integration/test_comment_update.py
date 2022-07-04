@@ -5,7 +5,7 @@ import uuid
 
 @pytest.fixture
 def new_data():
-    return {"content": "samplecontent4444"}
+    return {"content": "comment_content_update"}
 
 
 def test_comment_update_success(app, db, id_token, new_data, comment):
@@ -14,6 +14,8 @@ def test_comment_update_success(app, db, id_token, new_data, comment):
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert data["success"]
+    comment.reload()
+    assert comment.content == "comment_content_update"
 
 
 def test_comment_update_wrong_userid(app, db, id_token, new_data, comment):

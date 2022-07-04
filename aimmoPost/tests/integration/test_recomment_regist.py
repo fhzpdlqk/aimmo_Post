@@ -5,15 +5,18 @@ import uuid
 
 @pytest.fixture
 def new_data():
-    return {"content": "samplecontent_comment"}
+    return {"content": "recomment_content"}
 
 
 def test_recomment_regist_success(app, db, id_token, new_data, comment):
     token = id_token
     resp = app.post("/recomment/regist?comment_id=" + str(comment.id), data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
+    temp = len(comment.re_comment)
     assert resp.status_code == 200
     assert data["success"]
+    comment.reload()
+    assert len(comment.re_comment) - temp == 1
 
 
 def test_recomment_regist_wrong_userid(app, db, id_token, new_data, comment):

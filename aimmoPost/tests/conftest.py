@@ -5,6 +5,7 @@ from flask import current_app
 import jwt
 from aimmoPost.tests.factory.post_factory import PostFactory
 from aimmoPost.tests.factory.comment_factory import CommentFactory
+from aimmoPost.tests.factory.recomment_factory import ReCommentFactory
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -39,3 +40,8 @@ def post():
 @pytest.fixture
 def comment():
     return CommentFactory.create()
+
+
+@pytest.fixture
+def recomment():
+    return ReCommentFactory.create()
