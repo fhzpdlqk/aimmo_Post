@@ -26,6 +26,14 @@ def test_recomment_update_wrong_userid(app, db, id_token, new_data, recomment):
     assert not data["success"]
 
 
+def test_recomment_update_def_userid(app, db, wrong_id_token, new_data, recomment):
+    token = wrong_id_token
+    resp = app.put("/recomment/?recomment_id=" + str(recomment.id), data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
+    data = json.loads(resp.data.decode("utf-8"))
+    assert resp.status_code == 401
+    assert not data["success"]
+
+
 def test_recomment_update_wrong_commentid(app, db, id_token, new_data, recomment):
     token = id_token
     resp = app.put("/recomment/?recomment_id=" + str(recomment.id) + "a", data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
