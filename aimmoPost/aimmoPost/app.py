@@ -3,7 +3,7 @@ import os
 from flask import Flask, jsonify
 
 from .config import default
-from aimmoPost.aimmoPost.Route import user, post, comment
+from aimmoPost.aimmoPost.Route import user, post, comment, recomment
 from mongoengine import connect
 from flask_cors import CORS
 
@@ -23,3 +23,4 @@ CORS(app)
 user.UserView.register(app, route_base="/user")
 post.PostView.register(app, route_base="/post")
 comment.CommentView.register(app, route_base="/comment")
+recomment.ReCommentView.register(app, route_base="/recomment")

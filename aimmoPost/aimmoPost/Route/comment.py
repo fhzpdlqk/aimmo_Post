@@ -36,37 +36,21 @@ class CommentView(FlaskView):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             if "id" not in request.args and "comment_id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"})
-            if "id" in request.args and "comment_id" not in request.args:
-                data = request.json
-                if "content" in data and data["content"] == "":
-                    return jsonify({"success": False}), 400
-                elif "content" not in data:
-                    return jsonify({"success": False}), 400
-                id = request.args["id"]
-                user_id = decoded["user_id"]
-                content = data["content"]
-                temp = Comment.Comment(writer=user_id, content=content).save()
-                result = Post.Post.objects(id=id).update_one(push__comment=temp)
-                if result == 1:
-                    return jsonify({"success": True}), 200
-                else:
-                    return jsonify({"success": False}), 400
-            elif "id" not in request.args and "comment_id" in request.args:
-                data = request.json
-                if "content" in data and data["content"] == "":
-                    return jsonify({"success": False}), 400
-                elif "content" not in data:
-                    return jsonify({"success": False}), 400
-                comment_id = request.args["comment_id"]
-                user_id = decoded["user_id"]
-                content = data["content"]
-                temp = Comment.ReComment(writer=user_id, content=content).save()
-                result = Comment.Comment.objects(id=comment_id).update_one(push__re_comment=temp)
-                if result == 1:
-                    return jsonify({"success": True}), 200
-                else:
-                    return jsonify({"success": False}), 400
+                return jsonify({"success": False, "message": "Please input id params"}), 400
+            data = request.json
+            if "content" in data and data["content"] == "":
+                return jsonify({"success": False}), 400
+            elif "content" not in data:
+                return jsonify({"success": False}), 400
+            id = request.args["id"]
+            user_id = decoded["user_id"]
+            content = data["content"]
+            temp = Comment.Comment(writer=user_id, content=content).save()
+            result = Post.Post.objects(id=id).update_one(push__comment=temp)
+            if result == 1:
+                return jsonify({"success": True}), 200
+            else:
+                return jsonify({"success": False}), 400
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except mongoengine.errors.ValidationError:
