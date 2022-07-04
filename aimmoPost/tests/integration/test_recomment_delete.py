@@ -27,7 +27,7 @@ def test_recomment_delete_def_userid(app, db, wrong_id_token, recomment):
     assert not data["success"]
 
 
-def test_recomment_delete_wrong_commentid(app, db, id_token, recomment):
+def test_recomment_delete_wrong_recommentid(app, db, id_token, recomment):
     token = id_token
     resp = app.delete("/recomment/?recomment_id=" + str(recomment.id) + "a", content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
@@ -35,7 +35,7 @@ def test_recomment_delete_wrong_commentid(app, db, id_token, recomment):
     assert not data["success"]
 
 
-def test_recomment_delete_no_commentid(app, db, id_token, recomment):
+def test_recomment_delete_no_recommentid(app, db, id_token, recomment):
     token = id_token
     resp = app.delete("/recomment/", content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))

@@ -114,7 +114,7 @@ class ReCommentView(FlaskView):
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """
-        댓글 삭제 API
+        대댓글 삭제 API
         method: DELETE
         content-type: application/json
         url : /comment/?:recomment_id
