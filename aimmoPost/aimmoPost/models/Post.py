@@ -14,4 +14,4 @@ class Post(Document):
     tag = ListField(StringField(), default=list)
     notice = BooleanField(default=False)
     comment = ListField(ReferenceField(Comment, reverse_delete_rule=CASCADE), default=list)
-    like = ListField(ReferenceField(Like), default=list)
+    like = ListField(ReferenceField(Like), default=list, reverse_delete_rule=CASCADE)

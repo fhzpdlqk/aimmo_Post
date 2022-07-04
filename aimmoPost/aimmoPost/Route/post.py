@@ -283,5 +283,50 @@ class PostView(FlaskView):
         except mongoengine.errors.ValidationError:
             return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
         except:
-            print(str(sys.exc_info()[0]))
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+
+    """
+        게시물 좋아요 API
+        method: POST
+        content-type: application/json
+        url : /post/like/?:id
+        header: {
+            token : 유저 정보 토큰
+        }
+        request : {
+        }
+        parameter : {
+            id: string
+        }
+        response : {
+            성공시 : {success: true}, 200
+            게시물 아이디가 입력되지 않았을 경우 : {"success": false, "message": "please input id params"}, 400
+            게시물 아이디가 잘못되었을 경우: {"success": false, "message": "게시물 아이디가 존재하지 않습니다."}, 404
+            유저 아이디 토큰이 잘못되었을 경우 : {"success": false, "message": "유효하지 않은 아이디입니다."}, 401
+            이미 좋아요를 누른 유저일 경우 : {"success": False, "message": "already you push like"}, 409
+            이외의 오류가 발생했을 경우 : {"success": false, "message": error.message} 500
+        }
+    """
+
+    @route("/like/", methods=["POST"])
+    def post_like(self):
+        try:
+            decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+            if "id" not in request.args:
+                return jsonify({"success": False, "message": "please input id params"}), 400
+            id = request.args["id"]
+            user_id = decoded["user_id"]
+            p = Post.Post.objects(id=id).get()
+            if user_id not in p.like:
+                temp = Like.Like(writer=user_id).save()
+                result = Post.Post.objects(id=id).update_one(push__like=temp)
+            else:
+                return jsonify({"success": False, "message": "already you push like"}), 409
+            if result == 1:
+                return jsonify({"success": True}), 200
+        except jwt.exceptions.InvalidSignatureError:
+            return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
+        except mongoengine.errors.ValidationError:
+            return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
+        except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
