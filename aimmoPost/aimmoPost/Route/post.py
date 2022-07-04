@@ -37,6 +37,13 @@ class PostView(FlaskView):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             data = request.json
+
+            if "title" not in data or data["title"] == "":
+                return jsonify({"success": False, "message": "제목을 입력하세요"}), 400
+            if "content" not in data or data["content"] == "":
+                return jsonify({"success": False, "message": "내용을 입력하세요"}), 400
+            if "notice" not in data or data["notice"] == "":
+                return jsonify({"success": False, "message": "공지사항 여부를 입력해주세요"}), 400
             user_id = decoded["user_id"]
             title = data["title"]
             content = data["content"]
@@ -46,9 +53,10 @@ class PostView(FlaskView):
                 tag = []
             notice = data["notice"]
             Post.Post(writer=user_id, title=title, content=content, tag=tag, notice=notice).save()
-            return jsonify({"success": True})
-        except:
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+            return jsonify({"success": True}), 200
+        except jwt.exceptions.InvalidSignatureError:
+
+            return {"message": "아이디 토큰이 잘못되었습니다"}, 401
 
     """
         게시물 리스트 조회 API
@@ -75,8 +83,6 @@ class PostView(FlaskView):
     def post_list(self):
         try:
             parameter_dic = request.args.to_dict()
-            if len(parameter_dic) == 0:
-                return jsonify({"success": False, "message": "Please input page params"})
             if "page" not in request.args:
                 page = 1
             else:
@@ -85,8 +91,8 @@ class PostView(FlaskView):
                 filter = "date"
             else:
                 filter = request.args["filter"]
-            if filter not in ["date", "notice", "comment", "like"]:
-                return jsonify({"success": False, "message": "필터 조건이 잘못되었습니다."})
+            if filter not in ["date", "comment", "like"]:
+                filter = "date"
 
             datas = Post.Post.objects().order_by("-notice", "-" + filter)[(page - 1) * 10 : page * 10]
             result = []
@@ -101,11 +107,14 @@ class PostView(FlaskView):
                 new_data["num_like"] = len(data.like)
                 new_data["num_comment"] = len(data.comment)
                 result.append(new_data)
-            return jsonify({"success": True, "message": result})
+            return jsonify({"success": True, "message": result}), 200
 
             # return jsonify({"success": True, "message": json.loads(datas.to_json())})
+        except IndexError:
+            return jsonify({"success": False, "message": "유효하지 않은 페이지 인덱스 입니다."}), 400
         except:
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+            print(str(sys.exc_info()))
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """
         게시물 상세 조회 API
@@ -165,10 +174,12 @@ class PostView(FlaskView):
                     new_recomment_data["content"] = j.content
                     new_comment_data["re_comment"].append(new_recomment_data)
                 result["comment"].append(new_comment_data)
-            return jsonify({"success": True, "message": result})
-
+            return jsonify({"success": True, "message": result}), 200
+        except mongoengine.errors.ValidationError:
+            return jsonify({"success": False, "message": "post_id를 찾을 수 없습니다"}), 404
         except:
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+            print(sys.exc_info()[0])
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """
         게시물 삭제 API
@@ -195,12 +206,17 @@ class PostView(FlaskView):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             if "id" not in request.args:
-                return jsonify({"success": False, "message": "please input id params"})
+                return jsonify({"success": False, "message": "please input id params"}), 400
             id = request.args["id"]
             Post.Post.objects(id=id, writer=decoded["user_id"]).delete()
-            return jsonify({"success": True})
+            return jsonify({"success": True}), 200
+        except mongoengine.errors.ValidationError:
+            return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
+        except jwt.exceptions.InvalidSignatureError:
+            return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except:
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+            print(str(sys.exc_info()))
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """
         게시물 수정 API
@@ -230,16 +246,26 @@ class PostView(FlaskView):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             if "id" not in request.args:
-                return jsonify({"success": False, "message": "please input id params"})
+                return jsonify({"success": False, "message": "please input id params"}), 400
             id = request.args["id"]
             user_id = decoded["user_id"]
             data = request.json
-            print(user_id)
-            print(id)
-            result = Post.Post.objects(id=id, writer=user_id).update(title=data["title"], content=data["content"], tag=data["tag"], notice=data["notice"])
+            if "title" in data and data["title"] == "":
+                del data["title"]
+            if "content" in data and data["content"] == "":
+                del data["content"]
+            if "notice" in data and data["notice"] == "":
+                del data["notice"]
+            result = Post.Post.objects(id=id, writer=user_id).update(**data)
+
             if result == 1:
-                return jsonify({"success": True})
+                return jsonify({"success": True}), 200
             else:
-                return jsonify({"success": False})
+                return jsonify({"success": False}), 401
+        except jwt.exceptions.InvalidSignatureError:
+            return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
+        except mongoengine.errors.ValidationError:
+            return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
         except:
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+            print(str(sys.exc_info()[0]))
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
