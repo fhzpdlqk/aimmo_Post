@@ -7,11 +7,17 @@ from aimmoPost.aimmoPost.Route import user, post, comment
 from mongoengine import connect
 from flask_cors import CORS
 
-connect("connect1", host="mongodb://" + default.mongodb_host + ":" + default.mongodb_port + "/" + default.mongodb_name)
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "abcd"
 app.config["BCRYPT_LEVEL"] = 10
+
+if "DATABASE" not in app.config:
+    app.config["DATABASE"] = default.mongodb_uri
+try:
+    connect("connect1", host=app.config["DATABASE"])
+except:
+    pass
 
 CORS(app)
 user.UserView.register(app, route_base="/user")

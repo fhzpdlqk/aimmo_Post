@@ -28,15 +28,19 @@ class UserView(FlaskView):
     def login(self):
         try:
             data = request.json
+            if "user_id" not in data:
+                return {"message": "아이디를 입력해주세요"}, 401
+            elif "user_pw" not in data:
+                return {"message": "비밀번호를 입력해주세요"}, 401
             user_id = data["user_id"]
             user_pw = data["user_pw"]
             for d in User.User.objects(user_id=user_id):
                 if bcrypt.checkpw(user_pw.encode("utf-8"), d.user_pw.encode("utf-8")):
                     token = jwt.encode({"user_id": user_id}, default.token, algorithm="HS256")
-                    return jsonify({"success": True, "token": token})
-            return jsonify({"success": False, "message": "아이디나 비밀번호가 없습니다"})
+                    return jsonify({"token": token}), 200
+            return {"message": "아이디 혹은 비밀번호가 잘못되었습니다"}, 401
         except:
-            return str(sys.exc_info()[0])
+            return str(sys.exc_info()[0]), 500
 
     """
         회원가입 API
@@ -59,8 +63,8 @@ class UserView(FlaskView):
             salt = bcrypt.gensalt()
             pw = bcrypt.hashpw(data["user_pw"].encode("utf-8"), salt)
             User.User(user_id=data["user_id"], user_pw=pw, salt=salt).save()
-            return jsonify({"success": True})
+            return {"success": True}, 200
         except mongoengine.errors.NotUniqueError:
-            return jsonify({"success": False, "message": "id가 중복되었습니다."})
+            return {"success": False, "message": "id가 중복되었습니다."}, 409
         except:
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])})
+            return {"success": False, "message": str(sys.exc_info()[0])}, 400
