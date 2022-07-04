@@ -26,6 +26,11 @@ def id_token():
     return jwt.encode({"user_id": "testid"}, "abcd", algorithm="HS256")
 
 
+@pytest.fixture(scope="function")
+def wrong_id_token():
+    return jwt.encode({"user_id": "wrong_testid"}, "abcd", algorithm="HS256")
+
+
 @pytest.fixture
 def post():
     return PostFactory.create()

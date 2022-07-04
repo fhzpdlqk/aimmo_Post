@@ -11,6 +11,30 @@ token_key = default.token
 
 
 class ReCommentView(FlaskView):
+    """
+        대댓글 등록 API
+        method: POST
+        content-type: application/json
+        url : /recomment/regist/:comment_id
+        header: {
+            token : 유저 정보 토큰
+        }
+        request : {
+            content: string
+        }
+        parameter : {
+            comment_id: string
+        }
+        response : {
+        성공시 : {success: true}, 200
+        댓글 아이디가 누락되었을 경우: {"success": False, "message": "Please input id params"}: 400
+        댓글 내용이 누락되었을 경우: {"success": False, "message": "내용이 누락되었습니다."}, 400
+        아이디가 유효하지 않을 경우: {"success": False, "message": "유효하지 않은 아이디입니다."}: 401
+        댓글 아이디가 존재하지 않을 경우: {"success": False, "message": "댓글 아이디가 존재하지 않습니다"}, 404
+        이외의 오류가 발생했을 경우 :{success: false, message: error.message}, 500
+    }
+    """
+
     @route("/regist", methods=["POST"])
     def recomment_regist(self):
         try:
