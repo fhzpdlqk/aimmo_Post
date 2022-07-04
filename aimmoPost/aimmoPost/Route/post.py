@@ -16,7 +16,7 @@ class PostView(FlaskView):
     개시물 등록 API
     method: POST
     content-type: application/json
-    url: /post/regist
+    uri: "/post/regist"
     header: {
         token : 유저 정보 토큰
     }
@@ -27,8 +27,11 @@ class PostView(FlaskView):
         notice: 공지사항 여부 : Boolean
     }
     response : {
-        status : 200, success: true
-        status : 300, success: true
+        성공시 : {success: true}, 200
+        제목, 내용이 누락되었을 경우 : {success: false,message:"제목/내용을 입력하세요"}, 400
+        공지사항여부가 누락되었을 경우 : {success: false, message: "공지사항 여부를 입력해주세요"}, 400
+        아이디가 잘못 입력되었을 경우 :{success: false, message: "아이디 토큰이 잘못되었습니다"}, 401
+        이외의 오류가 발생했을 경우 :{success: false, message: error.message},500
     }
     """
 
@@ -55,27 +58,28 @@ class PostView(FlaskView):
             Post.Post(writer=user_id, title=title, content=content, tag=tag, notice=notice).save()
             return jsonify({"success": True}), 200
         except jwt.exceptions.InvalidSignatureError:
-
-            return {"message": "아이디 토큰이 잘못되었습니다"}, 401
+            return {"success": False, "message": "아이디 토큰이 잘못되었습니다"}, 401
+        except:
+            return {"success": False, "message": str(sys.exc_info()[0])}, 500
 
     """
         게시물 리스트 조회 API
         method: GET
         content-type: application/json
-        url : /post/list/?
+        url : /post/list/?:page&:filter
         header: {
             token : 유저 정보 토큰
         }
         request : {
-
         }
         parameter : {
             page: number
             filter: string
         }
         response : {
-            status : 200, success: true
-            status : 300, success: true
+            성공시 : {success: true}, 200
+            페이지 인덱스가 음수일 경우: {"success": false, "message": "유효하지 않은 페이지 인덱스 입니다."}, 400
+            이외의 오류가 발생했을 경우 :{success: false, message: error.message}, 500
         }
     """
 
@@ -120,7 +124,7 @@ class PostView(FlaskView):
         게시물 상세 조회 API
         method: GET
         content-type: application/json
-        url : /post/?
+        url : /post/?:id
         header: {
             token : 유저 정보 토큰
         }
@@ -131,8 +135,10 @@ class PostView(FlaskView):
             id: string
         }
         response : {
-            status : 200, success: true
-            status : 300, success: true
+            성공시 : {success: true}, 200
+            게시물 아이디가 입력되지 않았을 경우 : {"success": false, "message": "please input id params"}, 400
+            게시물 아이디가 잘못되었을 경우: {"success": false, "message": "post_id를 찾을 수 없습니다"}, 404
+            이외의 오류가 발생했을 경우 :{success: false, message: error.message}, 500
         }
     """
 
@@ -140,7 +146,7 @@ class PostView(FlaskView):
     def get_post_detail(self):
         try:
             if "id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"})
+                return jsonify({"success": False, "message": "Please input id params"}), 400
             id = request.args["id"]
             data = Post.Post.objects(id=id)
 
@@ -185,7 +191,7 @@ class PostView(FlaskView):
         게시물 삭제 API
         method: DELETE
         content-type: application/json
-        url : /post/?
+        url : /post/?:id
         header: {
             token : 유저 정보 토큰
         }
@@ -196,8 +202,12 @@ class PostView(FlaskView):
             id: string
         }
         response : {
-            status : 200, success: true
-            status : 300, success: true
+            성공시 : {success: true}, 200
+            게시물 아이디가 입력되지 않았을 경우 : {"success": false, "message": "please input id params"}, 400
+            게시물 아이디가 잘못되었을 경우: {"success": false, "message": "게시물 아이디가 존재하지 않습니다."}, 404
+            유저 아이디가 잘못되었을 경우 : {"success": false, "message": "유효하지 않은 아이디입니다."}, 401
+            유저 아이디가 다른 아이디일 경우 : {"success": false, "message": "작성자 아이디가 아닙니다."}, 401
+            이외의 오류가 발생했을 경우 : {"success": false, "message": error.message} 500
         }
     """
 
@@ -208,21 +218,23 @@ class PostView(FlaskView):
             if "id" not in request.args:
                 return jsonify({"success": False, "message": "please input id params"}), 400
             id = request.args["id"]
-            Post.Post.objects(id=id, writer=decoded["user_id"]).delete()
-            return jsonify({"success": True}), 200
+            result = Post.Post.objects(id=id, writer=decoded["user_id"]).delete()
+            if result == 1:
+                return jsonify({"success": True}), 200
+            else:
+                return jsonify({"success": False, "message": "작성자 아이디가 아닙니다."}), 401
         except mongoengine.errors.ValidationError:
             return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except:
-            print(str(sys.exc_info()))
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """
         게시물 수정 API
         method: PUT
         content-type: application/json
-        url : /post/?
+        url : /post/?:id
         header: {
             token : 유저 정보 토큰
         }
@@ -236,8 +248,12 @@ class PostView(FlaskView):
             id: string
         }
         response : {
-            status : 200, success: true
-            status : 300, success: true
+            성공시 : {success: true}, 200
+            게시물 아이디가 입력되지 않았을 경우 : {"success": false, "message": "please input id params"}, 400
+            게시물 아이디가 잘못되었을 경우: {"success": false, "message": "게시물 아이디가 존재하지 않습니다."}, 404
+            유저 아이디 토큰이 잘못되었을 경우 : {"success": false, "message": "유효하지 않은 아이디입니다."}, 401
+            유저 아이디가 다른 아이디일 경우 : {"success": false, "message": "작성자 아이디가 아닙니다."}, 401
+            이외의 오류가 발생했을 경우 : {"success": false, "message": error.message} 500
         }
     """
 
@@ -261,7 +277,7 @@ class PostView(FlaskView):
             if result == 1:
                 return jsonify({"success": True}), 200
             else:
-                return jsonify({"success": False}), 401
+                return jsonify({"success": False, "message": "작성자 아이디가 아닙니다."}), 401
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except mongoengine.errors.ValidationError:

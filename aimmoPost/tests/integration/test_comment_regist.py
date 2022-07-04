@@ -12,8 +12,11 @@ def test_comment_regist_success(app, db, id_token, new_data, post):
     token = id_token
     resp = app.post("/comment/regist?id=" + str(post.id), data=json.dumps(new_data), content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
+    temp = len(post.comment)
     assert resp.status_code == 200
     assert data["success"]
+    post.reload()
+    assert len(post.comment) - temp == 1
 
 
 def test_comment_regist_no_comment(app, db, id_token, new_data, post):
