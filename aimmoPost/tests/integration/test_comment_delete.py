@@ -19,6 +19,14 @@ def test_comment_delete_wrong_userid(app, db, id_token, comment):
     assert not data["success"]
 
 
+def test_comment_delete_def_userid(app, db, wrong_id_token, comment):
+    token = wrong_id_token
+    resp = app.delete("/comment/?comment_id=" + str(comment.id), content_type="application/json", headers={"Token": token})
+    data = json.loads(resp.data.decode("utf-8"))
+    assert resp.status_code == 401
+    assert not data["success"]
+
+
 def test_comment_delete_wrong_commentid(app, db, id_token, comment):
     token = id_token
     resp = app.delete("/comment/?comment_id=" + str(comment.id) + "a", content_type="application/json", headers={"Token": token})
