@@ -314,6 +314,7 @@ class PostView(FlaskView):
             id = request.args["id"]
             user_id = decoded["user_id"]
             user = User.User.objects(user_id=user_id)[0]
+            print(Post.Post.objects(id=id))
             if user not in Post.Post.objects(id=id)[0].like:
                 result = Post.Post.objects(id=id).update_one(push__like=user)
             else:
