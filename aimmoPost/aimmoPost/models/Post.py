@@ -32,3 +32,17 @@ class PostListSchema(Schema):
 
     def comment_count(self, obj):
         return len(obj.comment)
+
+
+class PostRegistSchema(Schema):
+    title = fields.Str()
+    content = fields.Str()
+    tag = fields.List(fields.Str())
+    notice = fields.Bool()
+
+    @post_load
+    def make_post(self, data, **kwargs):
+        print(kwargs)
+        print(data)
+        post = Post(**data)
+        return post

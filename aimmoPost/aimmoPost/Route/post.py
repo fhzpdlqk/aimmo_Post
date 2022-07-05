@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from aimmoPost.aimmoPost.models import User, Post, Comment
 from aimmoPost.aimmoPost.models.User import UserSchema
-from aimmoPost.aimmoPost.models.Post import PostListSchema
+from aimmoPost.aimmoPost.models.Post import PostListSchema, PostRegistSchema
 from aimmoPost.aimmoPost.config import default
 import mongoengine
 import sys
@@ -49,15 +49,10 @@ class PostView(FlaskView):
                 return jsonify({"success": False, "message": "내용을 입력하세요"}), 400
             if "notice" not in data or data["notice"] == "":
                 return jsonify({"success": False, "message": "공지사항 여부를 입력해주세요"}), 400
-            user_id = decoded["user_id"]
-            title = data["title"]
-            content = data["content"]
-            if "tag" in data:
-                tag = data["tag"]
-            else:
-                tag = []
-            notice = data["notice"]
-            Post.Post(writer=user_id, title=title, content=content, tag=tag, notice=notice).save()
+
+            post = PostRegistSchema().load(data)
+            post.writer = decoded["user_id"]
+            post.save()
             return jsonify({"success": True}), 200
         except jwt.exceptions.InvalidSignatureError:
             return {"success": False, "message": "아이디 토큰이 잘못되었습니다"}, 401
