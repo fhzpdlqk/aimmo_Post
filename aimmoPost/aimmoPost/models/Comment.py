@@ -1,7 +1,7 @@
 from mongoengine import *
-from .User import User
+from .User import User, UserSchema
 import datetime
-from marshmallow_mongoengine import ModelSchema
+from marshmallow import fields, Schema, post_load
 
 
 class ReComment(Document):
@@ -19,11 +19,26 @@ class Comment(Document):
     re_comment = ListField(ReferenceField(ReComment), default=list, reverse_delete_rule=CASCADE)
 
 
-class CommentSchema(ModelSchema):
-    class Meta:
-        model = Comment
+class ReCommentDetailSchema(Schema):
+    id = fields.Str()
+    writer = fields.Str()
+    date = fields.DateTime()
+    num_like = fields.Method("like_count")
+    content = fields.Str()
+    like = fields.List(fields.Nested(UserSchema))
+
+    def like_count(self, obj):
+        return len(obj.like)
 
 
-class ReCommentSchema(ModelSchema):
-    class Meta:
-        model = ReComment
+class CommentDetailSchema(Schema):
+    id = fields.Str()
+    writer = fields.Str()
+    date = fields.DateTime()
+    num_like = fields.Method("like_count")
+    content = fields.Str()
+    recomment = fields.List(fields.Nested(ReCommentDetailSchema()))
+    like = fields.List(fields.Nested(UserSchema()))
+
+    def like_count(self, obj):
+        return len(obj.like)

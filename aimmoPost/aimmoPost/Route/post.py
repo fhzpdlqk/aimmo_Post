@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from aimmoPost.aimmoPost.models import User, Post, Comment
 from aimmoPost.aimmoPost.models.User import UserSchema
-from aimmoPost.aimmoPost.models.Post import PostListSchema, PostRegistSchema
+from aimmoPost.aimmoPost.models.Post import PostListSchema, PostRegistSchema, PostDetailSchema
 from aimmoPost.aimmoPost.config import default
 import mongoengine
 import sys
@@ -138,59 +138,37 @@ class PostView(FlaskView):
     @route("/<id>", methods=["GET"])
     def get_post_detail(self, id):
         try:
+            data = Post.Post.objects(id=id)
+            if len(data) == 0:
+                return jsonify({"success": False, "message": "post_id를 찾을 수 없습니다"}), 404
+            data = data[0]
+            result = PostDetailSchema().dump(data)
 
-            data = Post.Post.objects(id=id)[0]
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            result = {}
-            result["id"] = str(data.id)
-            result["content"] = data.content
-            result["title"] = data.title
-            result["writer"] = data.writer
-            result["notice"] = data.notice
-            result["num_like"] = len(data.like)
-            result["num_comment"] = len(data.comment)
-            result["tag"] = data.tag
-            result["date"] = data.date
-            result["comment"] = []
             user_id = decoded["user_id"]
-            user = User.User.objects(user_id=user_id)[0]
-            if user in data.like:
+            user = User.User.objects(user_id=user_id)
+            if len(user) == 0:
+                return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
+            user = user[0]
+            if user in result["like"]:
                 result["is_like"] = True
             else:
                 result["is_like"] = False
+            del result["like"]
 
-            for i in data.comment:
-                new_comment_data = {}
-                new_comment_data["id"] = str(i.id)
-                new_comment_data["writer"] = i.writer
-                new_comment_data["date"] = i.date
-                new_comment_data["num_like"] = len(i.like)
-                new_comment_data["content"] = i.content
-                new_comment_data["re_comment"] = []
-                if user in i.like:
-                    new_comment_data["is_like"] = True
-                else:
-                    new_comment_data["is_like"] = False
-
-                for j in i.re_comment:
-                    new_recomment_data = {}
-                    new_recomment_data["id"] = str(j.id)
-                    new_recomment_data["writer"] = j.writer
-                    new_recomment_data["date"] = j.date
-                    new_recomment_data["num_like"] = len(j.like)
-                    new_recomment_data["content"] = j.content
-                    if user in j.like:
-                        new_recomment_data["is_like"] = True
-                    else:
-                        new_recomment_data["is_like"] = False
-                    new_comment_data["re_comment"].append(new_recomment_data)
-                result["comment"].append(new_comment_data)
+            for i in result["comment"]:
+                i["is_like"] = user in i["like"]
+                del i["like"]
+                if "recomment" not in i:
+                    i["recomment"] = []
+                for j in i["recomment"]:
+                    j["is_like"] = user in j["like"]
             return jsonify({"success": True, "message": result}), 200
         except mongoengine.errors.ValidationError:
             return jsonify({"success": False, "message": "post_id를 찾을 수 없습니다"}), 404
         except:
             print(sys.exc_info()[0])
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+            return jsonify({"success": False, "message": str(sys.exc_info())}), 500
 
     """
         게시물 삭제 API
