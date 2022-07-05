@@ -153,6 +153,51 @@ class ReCommentView(FlaskView):
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except mongoengine.errors.ValidationError:
-            return jsonify({"success": False, "message": "댓글 아이디가 존재하지 않습니다"}), 404
+            return jsonify({"success": False, "message": "대댓글 아이디가 존재하지 않습니다"}), 404
+        except:
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+
+    """
+        대댓글 좋아요 API
+        method: POST
+        content-type: application/json
+        url : /recomment/like/?:recomment_id
+        header: {
+            token : 유저 정보 토큰
+        }
+        request : {
+        }
+        parameter : {
+            recomment_id: string
+        }
+        response : {
+            성공시 : {success: true}, 200
+            대댓글 아이디가 입력되지 않았을 경우 : {"success": false, "message": "please input id params"}, 400
+            대댓글 아이디가 잘못되었을 경우: {"success": false, "message": "대댓글 아이디가 존재하지 않습니다."}, 404
+            유저 아이디 토큰이 잘못되었을 경우 : {"success": false, "message": "유효하지 않은 아이디입니다."}, 401
+            이미 좋아요를 누른 유저일 경우 : {"success": true}, 200
+            이외의 오류가 발생했을 경우 : {"success": false, "message": error.message} 500
+        }
+    """
+
+    @route("/like/", methods=["POST"])
+    def recomment_like(self):
+        try:
+            decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+            if "recomment_id" not in request.args:
+                return jsonify({"success": False, "message": "please input id params"}), 400
+            id = request.args["recomment_id"]
+            user_id = decoded["user_id"]
+            user = User.User.objects(user_id=user_id)[0]
+            if user not in Comment.ReComment.objects(id=id)[0].like:
+                result = Comment.ReComment.objects(id=id).update_one(push__like=user)
+            else:
+                result = Comment.ReComment.objects(id=id).update_one(pull__like=user)
+            if result == 1:
+                return jsonify({"success": True}), 200
+        except jwt.exceptions.InvalidSignatureError:
+            return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
+        except mongoengine.errors.ValidationError:
+            return jsonify({"success": False, "message": "대댓글 아이디가 존재하지 않습니다"}), 404
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500

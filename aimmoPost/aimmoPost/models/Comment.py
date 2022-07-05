@@ -8,7 +8,7 @@ class ReComment(Document):
     writer = StringField(required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
     content = StringField(required=True)
-    like = ListField(ReferenceField(Like, reverse_delete_rule=CASCADE), default=list)
+    like = ListField(ReferenceField(User), default=list)
 
 
 class Comment(Document):
