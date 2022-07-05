@@ -157,6 +157,29 @@ class ReCommentView(FlaskView):
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
+    """
+        대댓글 좋아요 API
+        method: POST
+        content-type: application/json
+        url : /recomment/like/?:recomment_id
+        header: {
+            token : 유저 정보 토큰
+        }
+        request : {
+        }
+        parameter : {
+            recomment_id: string
+        }
+        response : {
+            성공시 : {success: true}, 200
+            대댓글 아이디가 입력되지 않았을 경우 : {"success": false, "message": "please input id params"}, 400
+            대댓글 아이디가 잘못되었을 경우: {"success": false, "message": "대댓글 아이디가 존재하지 않습니다."}, 404
+            유저 아이디 토큰이 잘못되었을 경우 : {"success": false, "message": "유효하지 않은 아이디입니다."}, 401
+            이미 좋아요를 누른 유저일 경우 : {"success": true}, 200
+            이외의 오류가 발생했을 경우 : {"success": false, "message": error.message} 500
+        }
+    """
+
     @route("/like/", methods=["POST"])
     def recomment_like(self):
         try:
