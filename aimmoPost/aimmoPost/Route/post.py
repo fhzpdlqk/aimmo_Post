@@ -300,7 +300,7 @@ class PostView(FlaskView):
             게시물 아이디가 입력되지 않았을 경우 : {"success": false, "message": "please input id params"}, 400
             게시물 아이디가 잘못되었을 경우: {"success": false, "message": "게시물 아이디가 존재하지 않습니다."}, 404
             유저 아이디 토큰이 잘못되었을 경우 : {"success": false, "message": "유효하지 않은 아이디입니다."}, 401
-            이미 좋아요를 누른 유저일 경우 : {"success": False, "message": "already you push like"}, 409
+            이미 좋아요를 누른 유저일 경우 : {"success": true}, 200
             이외의 오류가 발생했을 경우 : {"success": false, "message": error.message} 500
         }
     """
