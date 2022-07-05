@@ -4,7 +4,8 @@ from aimmoPost.tests.factory.post_factory import PostFactory
 
 
 def test_post_list_success_like(app, db, id_token):
-    resp = app.get("/post/list/?page=1&filter=like", content_type="application/json")
+    token = id_token
+    resp = app.get("/post/list/?page=1&filter=like", content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
@@ -16,10 +17,12 @@ def test_post_list_success_like(app, db, id_token):
         assert isinstance(data["notice"], bool)
         assert isinstance(data["num_like"], int)
         assert isinstance(data["num_comment"], int)
+        assert isinstance(data["is_like"], bool)
 
 
 def test_post_list_success_comment(app, db, id_token):
-    resp = app.get("/post/list/?page=1&filter=comment", content_type="application/json")
+    token = id_token
+    resp = app.get("/post/list/?page=1&filter=comment", content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
@@ -31,10 +34,12 @@ def test_post_list_success_comment(app, db, id_token):
         assert isinstance(data["notice"], bool)
         assert isinstance(data["num_like"], int)
         assert isinstance(data["num_comment"], int)
+        assert isinstance(data["is_like"], bool)
 
 
 def test_post_list_success_date(app, db, id_token):
-    resp = app.get("/post/list/?page=1&filter=date", content_type="application/json")
+    token = id_token
+    resp = app.get("/post/list/?page=1&filter=date", content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
@@ -46,10 +51,12 @@ def test_post_list_success_date(app, db, id_token):
         assert isinstance(data["notice"], bool)
         assert isinstance(data["num_like"], int)
         assert isinstance(data["num_comment"], int)
+        assert isinstance(data["is_like"], bool)
 
 
 def test_post_list_success_no_filter(app, db, id_token):
-    resp = app.get("/post/list/?page=1", content_type="application/json")
+    token = id_token
+    resp = app.get("/post/list/?page=1", content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert datas["success"]
@@ -61,17 +68,20 @@ def test_post_list_success_no_filter(app, db, id_token):
         assert isinstance(data["notice"], bool)
         assert isinstance(data["num_like"], int)
         assert isinstance(data["num_comment"], int)
+        assert isinstance(data["is_like"], bool)
 
 
 def test_post_list_negative_page(app, db, id_token):
-    resp = app.get("/post/list/?page=-1", content_type="application/json")
+    token = id_token
+    resp = app.get("/post/list/?page=-1", content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 400
     assert not data["success"]
 
 
 def test_post_list_big_page(app, db, id_token):
-    resp = app.get("/post/list/?page=1000", content_type="application/json")
+    token = id_token
+    resp = app.get("/post/list/?page=1000", content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert data["success"]
@@ -79,14 +89,16 @@ def test_post_list_big_page(app, db, id_token):
 
 
 def test_post_list_not_page(app, db, id_token):
-    resp = app.get("/post/list/", content_type="application/json")
+    token = id_token
+    resp = app.get("/post/list/", content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert data["success"]
 
 
 def test_post_list_wrong_filter(app, db, id_token):
-    resp = app.get("/post/list/?filter=nofilter", content_type="application/json")
+    token = id_token
+    resp = app.get("/post/list/?filter=nofilter", content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
     assert data["success"]
