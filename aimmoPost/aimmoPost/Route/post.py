@@ -86,7 +86,6 @@ class PostView(FlaskView):
     @route("/list/", methods=["GET"])
     def post_list(self):
         try:
-            parameter_dic = request.args.to_dict()
             if "page" not in request.args:
                 page = 1
             else:
@@ -152,21 +151,27 @@ class PostView(FlaskView):
             if "id" not in request.args:
                 return jsonify({"success": False, "message": "Please input id params"}), 400
             id = request.args["id"]
-            data = Post.Post.objects(id=id)
-
+            data = Post.Post.objects(id=id)[0]
+            decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             result = {}
-            result["id"] = str(data[0].id)
-            result["content"] = data[0].content
-            result["title"] = data[0].title
-            result["writer"] = data[0].writer
-            result["notice"] = data[0].notice
-            result["num_like"] = len(data[0].like)
-            result["num_comment"] = len(data[0].comment)
-            result["tag"] = data[0].tag
-            result["date"] = data[0].date
+            result["id"] = str(data.id)
+            result["content"] = data.content
+            result["title"] = data.title
+            result["writer"] = data.writer
+            result["notice"] = data.notice
+            result["num_like"] = len(data.like)
+            result["num_comment"] = len(data.comment)
+            result["tag"] = data.tag
+            result["date"] = data.date
             result["comment"] = []
+            user_id = decoded["user_id"]
+            user = User.User.objects(user_id=user_id)[0]
+            if user in data.like:
+                result["is_like"] = True
+            else:
+                result["is_like"] = False
 
-            for i in data[0].comment:
+            for i in data.comment:
                 new_comment_data = {}
                 new_comment_data["id"] = str(i.id)
                 new_comment_data["writer"] = i.writer
@@ -174,6 +179,10 @@ class PostView(FlaskView):
                 new_comment_data["num_like"] = len(i.like)
                 new_comment_data["content"] = i.content
                 new_comment_data["re_comment"] = []
+                if user in i.like:
+                    new_comment_data["is_like"] = True
+                else:
+                    new_comment_data["is_like"] = False
 
                 for j in i.re_comment:
                     new_recomment_data = {}
@@ -182,6 +191,10 @@ class PostView(FlaskView):
                     new_recomment_data["date"] = j.date
                     new_recomment_data["num_like"] = len(j.like)
                     new_recomment_data["content"] = j.content
+                    if user in j.like:
+                        new_recomment_data["is_like"] = True
+                    else:
+                        new_recomment_data["is_like"] = False
                     new_comment_data["re_comment"].append(new_recomment_data)
                 result["comment"].append(new_comment_data)
             return jsonify({"success": True, "message": result}), 200
