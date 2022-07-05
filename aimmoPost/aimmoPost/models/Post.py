@@ -2,7 +2,7 @@ from mongoengine import *
 from mongoengine import signals
 from .User import User
 from .Comment import Comment, ReComment
-from marshmallow_mongoengine import ModelSchema
+from marshmallow import fields, Schema, post_load
 import datetime
 
 
@@ -17,6 +17,32 @@ class Post(Document):
     like = ListField(ReferenceField(User), default=list)
 
 
-class PostSchema(ModelSchema):
-    class Meta:
-        model = Post
+class PostListSchema(Schema):
+    writer = fields.Str()
+    date = fields.DateTime()
+    title = fields.Str()
+    content = fields.Str()
+    tag = fields.List(fields.String)
+    notice = fields.Bool()
+    num_like = fields.Method("like_count")
+    num_comment = fields.Method("comment_count")
+
+    def like_count(self, obj):
+        return len(obj.like)
+
+    def comment_count(self, obj):
+        return len(obj.comment)
+
+
+class PostRegistSchema(Schema):
+    title = fields.Str()
+    content = fields.Str()
+    tag = fields.List(fields.Str())
+    notice = fields.Bool()
+
+    @post_load
+    def make_post(self, data, **kwargs):
+        print(kwargs)
+        print(data)
+        post = Post(**data)
+        return post
