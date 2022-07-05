@@ -327,6 +327,29 @@ class PostView(FlaskView):
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
+    """
+        게시물 좋아요 취소 API
+        method: POST
+        content-type: application/json
+        url : /post/like/cancel/?:id
+        header: {
+            token : 유저 정보 토큰
+        }
+        request : {
+        }
+        parameter : {
+                id: string
+        }
+        response : {
+            성공시 : {success: true}, 200
+            게시물 아이디가 입력되지 않았을 경우 : {"success": false, "message": "please input id params"}, 400
+            게시물 아이디가 잘못되었을 경우: {"success": false, "message": "게시물 아이디가 존재하지 않습니다."}, 404
+            유저 아이디 토큰이 잘못되었을 경우 : {"success": false, "message": "유효하지 않은 아이디입니다."}, 401
+            좋아요를 누르지 않은 유저일 경우 : {"success": False, "message": "you not push like"}, 409
+            이외의 오류가 발생했을 경우 : {"success": false, "message": error.message} 500
+        }
+    """
+
     @route("/like/cancel/", methods=["POST"])
     def post_like_cancel(self):
         try:
@@ -339,7 +362,7 @@ class PostView(FlaskView):
             if user in Post.Post.objects(id=id)[0].like:
                 result = Post.Post.objects(id=id).update_one(pull__like=user)
             else:
-                return jsonify({"success": False, "message": "already you push like"}), 409
+                return jsonify({"success": False, "message": "you not push like"}), 409
             if result == 1:
                 return jsonify({"success": True}), 200
         except jwt.exceptions.InvalidSignatureError:
