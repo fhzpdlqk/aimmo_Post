@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from aimmoPost.aimmoPost.models import User, Post, Comment
 from aimmoPost.aimmoPost.models.User import UserSchema
-from aimmoPost.aimmoPost.models.Post import PostSchema
+from aimmoPost.aimmoPost.models.Post import PostListSchema
 from aimmoPost.aimmoPost.config import default
 import mongoengine
 import sys
@@ -106,15 +106,7 @@ class PostView(FlaskView):
             user = User.User.objects(user_id=user_id)[0]
 
             for data in datas:
-                new_data = {}
-                new_data["id"] = str(data.id)
-                new_data["writer"] = data.writer
-                new_data["date"] = data.date
-                new_data["title"] = data.title
-                new_data["tag"] = data.tag
-                new_data["notice"] = data.notice
-                new_data["num_like"] = len(data.like)
-                new_data["num_comment"] = len(data.comment)
+                new_data = PostListSchema().dump(data)
                 if user in data.like:
                     new_data["is_like"] = True
                 else:
@@ -124,7 +116,7 @@ class PostView(FlaskView):
         except IndexError:
             return jsonify({"success": False, "message": "유효하지 않은 페이지 인덱스 입니다."}), 400
         except:
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+            return jsonify({"success": False, "message": str(sys.exc_info())}), 500
 
     """
         게시물 상세 조회 API
