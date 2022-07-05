@@ -1,6 +1,5 @@
 from mongoengine import *
 from .User import User
-from .Like import Like
 import datetime
 
 

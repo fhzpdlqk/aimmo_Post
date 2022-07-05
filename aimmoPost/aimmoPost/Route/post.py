@@ -100,6 +100,9 @@ class PostView(FlaskView):
 
             datas = Post.Post.objects().order_by("-notice", "-" + filter)[(page - 1) * 10 : page * 10]
             result = []
+            decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+            user_id = decoded["user_id"]
+            user = User.User.objects(user_id=user_id)[0]
             for data in datas:
                 new_data = {}
                 new_data["id"] = str(data.id)
@@ -110,6 +113,10 @@ class PostView(FlaskView):
                 new_data["notice"] = data.notice
                 new_data["num_like"] = len(data.like)
                 new_data["num_comment"] = len(data.comment)
+                if user in data.like:
+                    new_data["is_like"] = True
+                else:
+                    new_data["is_like"] = False
                 result.append(new_data)
             return jsonify({"success": True, "message": result}), 200
         except IndexError:

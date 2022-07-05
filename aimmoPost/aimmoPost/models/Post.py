@@ -2,7 +2,6 @@ from mongoengine import *
 from mongoengine import signals
 from .User import User
 from .Comment import Comment, ReComment
-from .Like import Like
 import datetime
 
 
