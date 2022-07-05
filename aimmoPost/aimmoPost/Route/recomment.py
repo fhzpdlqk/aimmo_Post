@@ -153,7 +153,7 @@ class ReCommentView(FlaskView):
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except mongoengine.errors.ValidationError:
-            return jsonify({"success": False, "message": "댓글 아이디가 존재하지 않습니다"}), 404
+            return jsonify({"success": False, "message": "대댓글 아이디가 존재하지 않습니다"}), 404
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
@@ -198,6 +198,6 @@ class ReCommentView(FlaskView):
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except mongoengine.errors.ValidationError:
-            return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
+            return jsonify({"success": False, "message": "대댓글 아이디가 존재하지 않습니다"}), 404
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
