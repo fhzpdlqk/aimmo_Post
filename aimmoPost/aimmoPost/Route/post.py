@@ -314,9 +314,30 @@ class PostView(FlaskView):
             id = request.args["id"]
             user_id = decoded["user_id"]
             user = User.User.objects(user_id=user_id)[0]
-            print(Post.Post.objects(id=id))
             if user not in Post.Post.objects(id=id)[0].like:
                 result = Post.Post.objects(id=id).update_one(push__like=user)
+            else:
+                return jsonify({"success": False, "message": "already you push like"}), 409
+            if result == 1:
+                return jsonify({"success": True}), 200
+        except jwt.exceptions.InvalidSignatureError:
+            return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
+        except mongoengine.errors.ValidationError:
+            return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
+        except:
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+
+    @route("/like/cancel/", methods=["POST"])
+    def post_like_cancel(self):
+        try:
+            decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+            if "id" not in request.args:
+                return jsonify({"success": False, "message": "please input id params"}), 400
+            id = request.args["id"]
+            user_id = decoded["user_id"]
+            user = User.User.objects(user_id=user_id)[0]
+            if user in Post.Post.objects(id=id)[0].like:
+                result = Post.Post.objects(id=id).update_one(pull__like=user)
             else:
                 return jsonify({"success": False, "message": "already you push like"}), 409
             if result == 1:
