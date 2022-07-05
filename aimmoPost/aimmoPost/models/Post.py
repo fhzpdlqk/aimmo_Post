@@ -2,6 +2,7 @@ from mongoengine import *
 from mongoengine import signals
 from .User import User
 from .Comment import Comment, ReComment
+from marshmallow_mongoengine import ModelSchema
 import datetime
 
 
@@ -14,3 +15,8 @@ class Post(Document):
     notice = BooleanField(default=False)
     comment = ListField(ReferenceField(Comment, reverse_delete_rule=CASCADE), default=list)
     like = ListField(ReferenceField(User), default=list)
+
+
+class PostSchema(ModelSchema):
+    class Meta:
+        model = Post
