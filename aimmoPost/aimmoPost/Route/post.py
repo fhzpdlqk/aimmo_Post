@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from aimmoPost.aimmoPost.models import User, Post, Like, Comment
+from aimmoPost.aimmoPost.models import User, Post, Comment
 from aimmoPost.aimmoPost.config import default
 import mongoengine
 import sys
@@ -112,12 +112,9 @@ class PostView(FlaskView):
                 new_data["num_comment"] = len(data.comment)
                 result.append(new_data)
             return jsonify({"success": True, "message": result}), 200
-
-            # return jsonify({"success": True, "message": json.loads(datas.to_json())})
         except IndexError:
             return jsonify({"success": False, "message": "유효하지 않은 페이지 인덱스 입니다."}), 400
         except:
-            print(str(sys.exc_info()))
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """
@@ -316,10 +313,9 @@ class PostView(FlaskView):
                 return jsonify({"success": False, "message": "please input id params"}), 400
             id = request.args["id"]
             user_id = decoded["user_id"]
-            p = Post.Post.objects(id=id).get()
-            if user_id not in p.like:
-                temp = Like.Like(writer=user_id).save()
-                result = Post.Post.objects(id=id).update_one(push__like=temp)
+            user = User.User.objects(user_id=user_id)[0]
+            if user not in Post.Post.objects(id=id)[0].like:
+                result = Post.Post.objects(id=id).update_one(push__like=user)
             else:
                 return jsonify({"success": False, "message": "already you push like"}), 409
             if result == 1:

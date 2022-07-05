@@ -1,8 +1,8 @@
 from mongoengine import *
 from mongoengine import signals
 from .User import User
-from .Like import Like
 from .Comment import Comment, ReComment
+from .Like import Like
 import datetime
 
 
@@ -14,4 +14,4 @@ class Post(Document):
     tag = ListField(StringField(), default=list)
     notice = BooleanField(default=False)
     comment = ListField(ReferenceField(Comment, reverse_delete_rule=CASCADE), default=list)
-    like = ListField(ReferenceField(Like), default=list, reverse_delete_rule=CASCADE)
+    like = ListField(ReferenceField(User, reverse_delete_rule=CASCADE), default=list)
