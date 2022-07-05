@@ -4,7 +4,7 @@ import json
 
 def test_post_detail_success(app, db, id_token, post):
     token = id_token
-    resp = app.get("/post/?id=" + str(post.id), content_type="application/json", headers={"Token": token})
+    resp = app.get("/post/" + str(post.id), content_type="application/json", headers={"Token": token})
 
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
@@ -33,7 +33,7 @@ def test_post_detail_success(app, db, id_token, post):
 
 def test_post_detail_wrongid(app, db, id_token, post):
     token = id_token
-    resp = app.get("/post/?id=" + str(post.id) + "a", content_type="application/json", headers={"Token": token})
+    resp = app.get("/post/" + str(post.id) + "a", content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 404
     assert not data["success"]

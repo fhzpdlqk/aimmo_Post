@@ -35,18 +35,15 @@ class ReCommentView(FlaskView):
     }
     """
 
-    @route("/regist", methods=["POST"])
-    def recomment_regist(self):
+    @route("/regist/<comment_id>", methods=["POST"])
+    def recomment_regist(self, comment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "comment_id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"}), 400
             data = request.json
             if "content" in data and data["content"] == "":
                 return jsonify({"success": False}), 400
             elif "content" not in data:
                 return jsonify({"success": False}), 400
-            comment_id = request.args["comment_id"]
             user_id = decoded["user_id"]
             content = data["content"]
             temp = Comment.ReComment(writer=user_id, content=content).save()
@@ -87,18 +84,16 @@ class ReCommentView(FlaskView):
         }
         """
 
-    @route("/", methods=["PUT"])
-    def recomment_update(self):
+    @route("/<recomment_id>", methods=["PUT"])
+    def recomment_update(self, recomment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "recomment_id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"}), 400
             data = request.json
             if "content" in data and data["content"] == "":
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
             elif "content" not in data:
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
-            id = request.args["recomment_id"]
+            id = recomment_id
             user_id = decoded["user_id"]
             content = data["content"]
             result = Comment.ReComment.objects(id=id, writer=user_id).update(content=content)
@@ -137,13 +132,11 @@ class ReCommentView(FlaskView):
         }
     """
 
-    @route("/", methods=["DELETE"])
-    def comment_delete(self):
+    @route("/<recomment_id>", methods=["DELETE"])
+    def comment_delete(self, recomment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "recomment_id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"}), 400
-            id = request.args["recomment_id"]
+            id = recomment_id
             user_id = decoded["user_id"]
             result = Comment.ReComment.objects(id=id, writer=user_id).delete()
             if result == 1:
@@ -180,13 +173,11 @@ class ReCommentView(FlaskView):
         }
     """
 
-    @route("/like/", methods=["POST"])
-    def recomment_like(self):
+    @route("/like/<recomment_id>", methods=["POST"])
+    def recomment_like(self, recomment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "recomment_id" not in request.args:
-                return jsonify({"success": False, "message": "please input id params"}), 400
-            id = request.args["recomment_id"]
+            id = recomment_id
             user_id = decoded["user_id"]
             user = User.User.objects(user_id=user_id)[0]
             if user not in Comment.ReComment.objects(id=id)[0].like:

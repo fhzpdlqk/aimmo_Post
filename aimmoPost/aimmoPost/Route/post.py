@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
 from aimmoPost.aimmoPost.models import User, Post, Comment
+from aimmoPost.aimmoPost.models.User import UserSchema
+from aimmoPost.aimmoPost.models.Post import PostSchema
 from aimmoPost.aimmoPost.config import default
 import mongoengine
 import sys
@@ -102,6 +104,7 @@ class PostView(FlaskView):
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             user_id = decoded["user_id"]
             user = User.User.objects(user_id=user_id)[0]
+
             for data in datas:
                 new_data = {}
                 new_data["id"] = str(data.id)
@@ -145,12 +148,10 @@ class PostView(FlaskView):
         }
     """
 
-    @route("/", methods=["GET"])
-    def get_post_detail(self):
+    @route("/<id>", methods=["GET"])
+    def get_post_detail(self, id):
         try:
-            if "id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"}), 400
-            id = request.args["id"]
+
             data = Post.Post.objects(id=id)[0]
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             result = {}
@@ -228,13 +229,10 @@ class PostView(FlaskView):
         }
     """
 
-    @route("/", methods=["DELETE"])
-    def delete_post_detail(self):
+    @route("/<id>", methods=["DELETE"])
+    def delete_post_detail(self, id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "id" not in request.args:
-                return jsonify({"success": False, "message": "please input id params"}), 400
-            id = request.args["id"]
             result = Post.Post.objects(id=id, writer=decoded["user_id"]).delete()
             if result == 1:
                 return jsonify({"success": True}), 200
@@ -274,13 +272,10 @@ class PostView(FlaskView):
         }
     """
 
-    @route("/", methods=["PUT"])
-    def update_post_detail(self):
+    @route("/<id>", methods=["PUT"])
+    def update_post_detail(self, id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "id" not in request.args:
-                return jsonify({"success": False, "message": "please input id params"}), 400
-            id = request.args["id"]
             user_id = decoded["user_id"]
             data = request.json
             if "title" in data and data["title"] == "":
@@ -325,13 +320,11 @@ class PostView(FlaskView):
         }
     """
 
-    @route("/like/", methods=["POST"])
-    def post_like(self):
+    @route("/like/<id>", methods=["POST"])
+    def post_like(self, id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "id" not in request.args:
-                return jsonify({"success": False, "message": "please input id params"}), 400
-            id = request.args["id"]
+
             user_id = decoded["user_id"]
             user = User.User.objects(user_id=user_id)[0]
             if user not in Post.Post.objects(id=id)[0].like:

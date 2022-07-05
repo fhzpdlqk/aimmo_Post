@@ -35,21 +35,21 @@ class CommentView(FlaskView):
     }
     """
 
-    @route("/regist", methods=["POST"])
-    def comment_regist(self):
+    @route("/regist/<id>", methods=["POST"])
+    def comment_regist(self, id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "id" not in request.args and "comment_id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"}), 400
             data = request.json
             if "content" in data and data["content"] == "":
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
             elif "content" not in data:
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
-            id = request.args["id"]
             user_id = decoded["user_id"]
             content = data["content"]
-            temp = Comment.Comment(writer=user_id, content=content).save()
+            temp = Comment.Comment(
+                writer=user_id,
+                content=content,
+            ).save()
             result = Post.Post.objects(id=id).update_one(push__comment=temp)
             if result == 1:
                 return jsonify({"success": True}), 200
@@ -87,18 +87,16 @@ class CommentView(FlaskView):
     }
     """
 
-    @route("/", methods=["PUT"])
-    def comment_update(self):
+    @route("/<comment_id>", methods=["PUT"])
+    def comment_update(self, comment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "comment_id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"}), 400
             data = request.json
             if "content" in data and data["content"] == "":
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
             elif "content" not in data:
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
-            id = request.args["comment_id"]
+            id = comment_id
             user_id = decoded["user_id"]
             content = data["content"]
             result = Comment.Comment.objects(id=id, writer=user_id).update(content=content)
@@ -137,13 +135,11 @@ class CommentView(FlaskView):
         }
     """
 
-    @route("/", methods=["DELETE"])
-    def comment_delete(self):
+    @route("/<comment_id>", methods=["DELETE"])
+    def comment_delete(self, comment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "comment_id" not in request.args:
-                return jsonify({"success": False, "message": "Please input id params"}), 400
-            id = request.args["comment_id"]
+            id = comment_id
             user_id = decoded["user_id"]
             result = Comment.Comment.objects(id=id, writer=user_id).delete()
             if result == 1:
@@ -180,13 +176,11 @@ class CommentView(FlaskView):
         }
     """
 
-    @route("/like/", methods=["POST"])
-    def comment_like(self):
+    @route("/like/<comment_id>", methods=["POST"])
+    def comment_like(self, comment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            if "comment_id" not in request.args:
-                return jsonify({"success": False, "message": "please input id params"}), 400
-            id = request.args["comment_id"]
+            id = comment_id
             user_id = decoded["user_id"]
             user = User.User.objects(user_id=user_id)[0]
             if user not in Comment.Comment.objects(id=id)[0].like:

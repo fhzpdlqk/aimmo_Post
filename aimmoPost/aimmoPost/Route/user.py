@@ -40,7 +40,7 @@ class UserView(FlaskView):
             for d in User.User.objects(user_id=user_id):
                 if bcrypt.checkpw(user_pw.encode("utf-8"), d.user_pw.encode("utf-8")):
                     token = jwt.encode({"user_id": user_id}, default.token, algorithm="HS256")
-                    return jsonify({"success": False, "token": token}), 200
+                    return jsonify({"success": True, "token": token}), 200
             return {"success": False, "message": "아이디 혹은 비밀번호가 잘못되었습니다"}, 401
         except:
             return {"success": False, "message": str(sys.exc_info()[0])}, 500
