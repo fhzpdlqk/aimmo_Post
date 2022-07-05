@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from aimmoPost.aimmoPost.models import User, Post, Like, Comment
+from aimmoPost.aimmoPost.models import User, Post, Comment
 from aimmoPost.aimmoPost.config import default
 import mongoengine
 import sys
