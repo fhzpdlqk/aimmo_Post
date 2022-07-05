@@ -156,3 +156,25 @@ class CommentView(FlaskView):
             return jsonify({"success": False, "message": "댓글 아이디가 존재하지 않습니다"}), 404
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+
+    @route("/like/", methods=["POST"])
+    def comment_like(self):
+        try:
+            decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+            if "comment_id" not in request.args:
+                return jsonify({"success": False, "message": "please input id params"}), 400
+            id = request.args["comment_id"]
+            user_id = decoded["user_id"]
+            user = User.User.objects(user_id=user_id)[0]
+            if user not in Comment.Comment.objects(id=id)[0].like:
+                result = Comment.Comment.objects(id=id).update_one(push__like=user)
+            else:
+                result = Comment.Comment.objects(id=id).update_one(pull__like=user)
+            if result == 1:
+                return jsonify({"success": True}), 200
+        except jwt.exceptions.InvalidSignatureError:
+            return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
+        except mongoengine.errors.ValidationError:
+            return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
+        except:
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
