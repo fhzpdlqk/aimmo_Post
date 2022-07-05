@@ -17,17 +17,17 @@ def test_post_like_success(app, db, id_token, post):
     assert len(post.like) - temp == 1
 
 
-def test_post_like_duplicate(app, db, id_token):
+def test_post_like_cancel_success(app, db, id_token):
     token = id_token
     already_user = User.objects(user_id="testid")[0]
     post = PostFactory.create(like=[already_user])
     resp = app.post("/post/like/?id=" + str(post.id), content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
     temp = len(post.like)
-    assert resp.status_code == 409
-    assert not data["success"]
+    assert resp.status_code == 200
+    assert data["success"]
     post.reload()
-    assert len(post.like) - temp == 0
+    assert len(post.like) - temp == -1
 
 
 def test_post_like_no_postid(app, db, id_token):
