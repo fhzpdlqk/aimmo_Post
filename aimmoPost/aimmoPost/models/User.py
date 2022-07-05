@@ -1,5 +1,5 @@
 from mongoengine import *
-from marshmallow_mongoengine import ModelSchema
+from marshmallow import fields, Schema, post_load
 
 
 class User(Document):
@@ -8,6 +8,5 @@ class User(Document):
     salt = StringField(required="True", max_length=100)
 
 
-class UserSchema(ModelSchema):
-    class Meta:
-        model = User
+class UserSchema(Schema):
+    user_id = fields.Str()
