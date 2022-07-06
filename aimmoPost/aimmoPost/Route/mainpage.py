@@ -45,3 +45,22 @@ class MainPageView(FlaskView):
             new_data = PostListSchema().dump(post)
             result.append(new_data)
         return jsonify({"success": True, "message": result}), 200
+
+    """
+        메인페이지 게시물 좋아요순 10개
+        method: GET
+        content-type: application/json
+        uri: "/mainpage/comment"
+        response : {
+            성공시 : {success: true}, 200
+        }
+    """
+
+    @route("/like", methods=["GET"])
+    def like_post(self):
+        post_list = Post.objects().order_by("-like")[:10]
+        result = []
+        for post in post_list:
+            new_data = PostListSchema().dump(post)
+            result.append(new_data)
+        return jsonify({"success": True, "message": result}), 200
