@@ -41,7 +41,7 @@ class BoardView(FlaskView):
         content-type: application/json
         uri: "/board/list"
         response : {
-            성공시 : {success: true, message: [boardname]}, 200
+            성공시 : {success: true, message: [{id,boardname}]}, 200
         }
     """
 
@@ -50,5 +50,5 @@ class BoardView(FlaskView):
         board_name_list = []
         board_list = Board.objects()
         for board in board_list:
-            board_name_list.append(board.boardname)
+            board_name_list.append({"id": str(board.id), "boardname": board.boardname})
         return jsonify({"success": True, "message": board_name_list}), 200
