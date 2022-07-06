@@ -6,6 +6,7 @@ import jwt
 from aimmoPost.tests.factory.post_factory import PostFactory
 from aimmoPost.tests.factory.comment_factory import CommentFactory
 from aimmoPost.tests.factory.recomment_factory import ReCommentFactory
+from aimmoPost.tests.factory.board_factory import BoardFactory
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -45,3 +46,8 @@ def comment():
 @pytest.fixture
 def recomment():
     return ReCommentFactory.create()
+
+
+@pytest.fixture
+def board():
+    return BoardFactory.create()
