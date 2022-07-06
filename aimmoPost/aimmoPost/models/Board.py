@@ -8,12 +8,12 @@ from .Post import Post
 
 
 class Board(Document):
-    boardname = StringField(reuired=True)
+    board_name = StringField(reuired=True)
     post = ListField(ReferenceField(Post, reverse_delete_rule=CASCADE), default=list)
 
 
 class BoardRegistSchema(Schema):
-    boardname = fields.Str()
+    board_name = fields.Str()
 
     @post_load
     def make_board(self, data, **kwargs):
