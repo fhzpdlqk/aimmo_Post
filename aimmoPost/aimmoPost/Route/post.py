@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from aimmoPost.aimmoPost.models import User, Post, Comment
 from aimmoPost.aimmoPost.models.User import UserSchema
 from aimmoPost.aimmoPost.models.Post import PostListSchema, PostRegistSchema, PostDetailSchema
+from aimmoPost.aimmoPost.models.Board import Board
 from aimmoPost.aimmoPost.config import default
 import mongoengine
 import sys
@@ -37,8 +38,8 @@ class PostView(FlaskView):
     }
     """
 
-    @route("/regist", methods=["POST"])
-    def regist(self):
+    @route("/regist/<board_id>", methods=["POST"])
+    def regist(self, board_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             data = request.json
@@ -53,7 +54,11 @@ class PostView(FlaskView):
             post = PostRegistSchema().load(data)
             post.writer = decoded["user_id"]
             post.save()
-            return jsonify({"success": True}), 200
+            result = Board.objects(id=board_id).update_one(push__post=post)
+            if result == 1:
+                return jsonify({"success": True}), 200
+            else:
+                return jsonify({"success": False}), 400
         except jwt.exceptions.InvalidSignatureError:
             return {"success": False, "message": "아이디 토큰이 잘못되었습니다"}, 401
         except:

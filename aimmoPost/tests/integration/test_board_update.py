@@ -10,8 +10,9 @@ def new_data():
 
 def test_board_update_success(app, board, new_data):
     resp = app.put("/board/" + str(board.id), data=json.dumps(new_data), content_type="application/json")
-    data = json.loads(resp.data.decode("utf-8"))
     assert resp.status_code == 200
+    data = json.loads(resp.data.decode("utf-8"))
+
     assert data == {"success": True}
     board.reload()
     assert board.board_name == "test_board_update_name"

@@ -81,3 +81,25 @@ class BoardView(FlaskView):
             return jsonify({"success": False, "message": "게시판 아이디가 존재하지 않습니다"}), 404
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+
+    """
+        게시판 삭제 API
+        method: DELETE
+        content-type: application/json
+        uri: "/board/<board_id>"
+        response : {
+            성공시 : {success: true, message: [{id,boardname}]}, 200
+            게시판 아이디가 없을 경우: {success: false, message:"게시판 아이디가 존재하지 않습니다}, 404
+       }
+    """
+
+    @route("/<board_id>", methods=["DELETE"])
+    def board_delete(self, board_id):
+        try:
+            result = Board.objects(id=board_id).delete()
+            if result == 1:
+                return jsonify({"success": True}), 200
+        except mongoengine.errors.ValidationError:
+            return jsonify({"success": False, "message": "게시판 아이디가 존재하지 않습니다"}), 404
+        except:
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
