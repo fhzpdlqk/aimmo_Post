@@ -44,13 +44,10 @@ class CommentView(FlaskView):
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
             elif "content" not in data:
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
-            user_id = decoded["user_id"]
-            content = data["content"]
-            temp = Comment.Comment(
-                writer=user_id,
-                content=content,
-            ).save()
-            result = Post.Post.objects(id=id).update_one(push__comment=temp)
+            comment = Comment.CommentRegistSchema().load(data)
+            comment.writer = decoded["user_id"]
+            comment.save()
+            result = Post.Post.objects(id=id).update_one(push__comment=comment)
             if result == 1:
                 return jsonify({"success": True}), 200
             else:
@@ -96,10 +93,7 @@ class CommentView(FlaskView):
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
             elif "content" not in data:
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
-            id = comment_id
-            user_id = decoded["user_id"]
-            content = data["content"]
-            result = Comment.Comment.objects(id=id, writer=user_id).update(content=content)
+            result = Comment.Comment.objects(id=comment_id, writer=decoded["user_id"]).update(**data)
             if result == 1:
                 return jsonify({"success": True}), 200
             else:
@@ -139,9 +133,7 @@ class CommentView(FlaskView):
     def comment_delete(self, comment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            id = comment_id
-            user_id = decoded["user_id"]
-            result = Comment.Comment.objects(id=id, writer=user_id).delete()
+            result = Comment.Comment.objects(id=comment_id, writer=decoded["user_id"]).delete()
             if result == 1:
                 return jsonify({"success": True})
             else:
@@ -180,13 +172,11 @@ class CommentView(FlaskView):
     def comment_like(self, comment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            id = comment_id
-            user_id = decoded["user_id"]
-            user = User.User.objects(user_id=user_id)[0]
-            if user not in Comment.Comment.objects(id=id)[0].like:
-                result = Comment.Comment.objects(id=id).update_one(push__like=user)
+            user = User.User.objects(user_id=decoded["user_id"])[0]
+            if user not in Comment.Comment.objects(id=comment_id)[0].like:
+                result = Comment.Comment.objects(id=comment_id).update_one(push__like=user)
             else:
-                result = Comment.Comment.objects(id=id).update_one(pull__like=user)
+                result = Comment.Comment.objects(id=comment_id).update_one(pull__like=user)
             if result == 1:
                 return jsonify({"success": True}), 200
         except jwt.exceptions.InvalidSignatureError:

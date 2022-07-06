@@ -42,3 +42,21 @@ class CommentDetailSchema(Schema):
 
     def like_count(self, obj):
         return len(obj.like)
+
+
+class CommentRegistSchema(Schema):
+    content = fields.Str()
+
+    @post_load
+    def make_comment(self, data, **kwargs):
+        comment = Comment(**data)
+        return comment
+
+
+class ReCommentRegistSchema(Schema):
+    content = fields.Str()
+
+    @post_load
+    def make_recomment(self, data, **kwargs):
+        recomment = ReComment(**data)
+        return recomment
