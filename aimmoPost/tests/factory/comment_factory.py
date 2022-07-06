@@ -1,6 +1,7 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
 from aimmoPost.aimmoPost.models.Comment import Comment
+from .post_factory import PostFactory
 import datetime
 
 
@@ -11,5 +12,5 @@ class CommentFactory(MongoEngineFactory):
     writer = "testid"
     date = factory.LazyFunction(datetime.datetime.utcnow)
     content = "samplecontent_comment"
-    re_comment = factory.LazyAttribute(lambda n: [])
     like = factory.LazyAttribute(lambda n: [])
+    post = PostFactory.create().id

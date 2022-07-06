@@ -9,4 +9,3 @@ class BoardFactory(MongoEngineFactory):
         model = Board
 
     board_name = "test_board_name"
-    post = factory.LazyAttribute(lambda n: [])

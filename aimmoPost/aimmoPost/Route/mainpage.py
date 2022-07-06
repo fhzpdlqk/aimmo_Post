@@ -5,6 +5,7 @@ import jwt
 import json
 from flask_classful import FlaskView, route
 from aimmoPost.aimmoPost.models.Post import Post, PostListSchema
+from aimmoPost.aimmoPost.models.Comment import Comment
 
 
 class MainPageView(FlaskView):
@@ -24,6 +25,7 @@ class MainPageView(FlaskView):
         result = []
         for post in post_list:
             new_data = PostListSchema().dump(post)
+            new_data["num_comment"] = len(Comment.objects(post=post.id))
             result.append(new_data)
         return jsonify({"success": True, "message": result}), 200
 
@@ -39,11 +41,13 @@ class MainPageView(FlaskView):
 
     @route("/comment", methods=["GET"])
     def comment_post(self):
-        post_list = Post.objects().order_by("-comment")[:10]
+        post_list = Post.objects()
         result = []
         for post in post_list:
             new_data = PostListSchema().dump(post)
+            new_data["num_comment"] = len(Comment.objects(post=post.id))
             result.append(new_data)
+        result.sort(key=lambda x: x["num_comment"], reverse=True)
         return jsonify({"success": True, "message": result}), 200
 
     """
@@ -62,5 +66,6 @@ class MainPageView(FlaskView):
         result = []
         for post in post_list:
             new_data = PostListSchema().dump(post)
+            new_data["num_comment"] = len(Comment.objects(post=post.id))
             result.append(new_data)
         return jsonify({"success": True, "message": result}), 200

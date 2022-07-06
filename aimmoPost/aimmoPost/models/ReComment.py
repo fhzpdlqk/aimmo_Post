@@ -2,33 +2,33 @@ from mongoengine import *
 from .User import User, UserSchema
 import datetime
 from marshmallow import fields, Schema, post_load
-from .Post import Post
+from .Comment import Comment
 
 
-class Comment(Document):
+class ReComment(Document):
     writer = StringField(required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
-    like = ListField(ReferenceField(User), default=list)
     content = StringField(required=True)
-    post = ReferenceField(Post, required=True, reverse_delete_rule=CASCADE)
+    like = ListField(ReferenceField(User), default=list)
+    comment = ReferenceField(Comment, required=True, reverse_delete_rule=CASCADE)
 
 
-class CommentDetailSchema(Schema):
+class ReCommentDetailSchema(Schema):
     id = fields.Str()
     writer = fields.Str()
     date = fields.DateTime()
     num_like = fields.Method("like_count")
     content = fields.Str()
-    like = fields.List(fields.Nested(UserSchema()))
+    like = fields.List(fields.Nested(UserSchema))
 
     def like_count(self, obj):
         return len(obj.like)
 
 
-class CommentRegistSchema(Schema):
+class ReCommentRegistSchema(Schema):
     content = fields.Str()
 
     @post_load
-    def make_comment(self, data, **kwargs):
-        comment = Comment(**data)
-        return comment
+    def make_recomment(self, data, **kwargs):
+        recomment = ReComment(**data)
+        return recomment
