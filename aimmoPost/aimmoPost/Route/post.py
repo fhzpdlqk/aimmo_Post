@@ -97,9 +97,10 @@ class PostView(FlaskView):
             datas = Post.Post.objects().order_by("-notice", "-" + filter)[(page - 1) * 10 : page * 10]
             result = []
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            user_id = decoded["user_id"]
-            user = User.User.objects(user_id=user_id)[0]
-
+            user = User.User.objects(user_id=decoded["user_id"])
+            if len(user) == 0:
+                return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
+            user = user[0]
             for data in datas:
                 new_data = PostListSchema().dump(data)
                 if user in data.like:
@@ -145,8 +146,7 @@ class PostView(FlaskView):
             result = PostDetailSchema().dump(data)
 
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            user_id = decoded["user_id"]
-            user = User.User.objects(user_id=user_id)
+            user = User.User.objects(user_id=decoded["user_id"])
             if len(user) == 0:
                 return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
             user = user[0]
@@ -241,7 +241,6 @@ class PostView(FlaskView):
     def update_post_detail(self, id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            user_id = decoded["user_id"]
             data = request.json
             if "title" in data and data["title"] == "":
                 del data["title"]
@@ -249,7 +248,7 @@ class PostView(FlaskView):
                 del data["content"]
             if "notice" in data and data["notice"] == "":
                 del data["notice"]
-            result = Post.Post.objects(id=id, writer=user_id).update(**data)
+            result = Post.Post.objects(id=id, writer=decoded["user_id"]).update(**data)
 
             if result == 1:
                 return jsonify({"success": True}), 200
@@ -289,9 +288,7 @@ class PostView(FlaskView):
     def post_like(self, id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-
-            user_id = decoded["user_id"]
-            user = User.User.objects(user_id=user_id)[0]
+            user = User.User.objects(user_id=decoded["user_id"])[0]
             if user not in Post.Post.objects(id=id)[0].like:
                 result = Post.Post.objects(id=id).update_one(push__like=user)
             else:

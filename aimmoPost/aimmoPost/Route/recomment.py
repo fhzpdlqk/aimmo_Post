@@ -44,10 +44,10 @@ class ReCommentView(FlaskView):
                 return jsonify({"success": False}), 400
             elif "content" not in data:
                 return jsonify({"success": False}), 400
-            user_id = decoded["user_id"]
-            content = data["content"]
-            temp = Comment.ReComment(writer=user_id, content=content).save()
-            result = Comment.Comment.objects(id=comment_id).update_one(push__re_comment=temp)
+            recomment = Comment.ReCommentRegistSchema().load(data)
+            recomment.writer = decoded["user_id"]
+            recomment.save()
+            result = Comment.Comment.objects(id=comment_id).update_one(push__re_comment=recomment)
             if result == 1:
                 return jsonify({"success": True}), 200
             else:
@@ -93,10 +93,7 @@ class ReCommentView(FlaskView):
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
             elif "content" not in data:
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
-            id = recomment_id
-            user_id = decoded["user_id"]
-            content = data["content"]
-            result = Comment.ReComment.objects(id=id, writer=user_id).update(content=content)
+            result = Comment.ReComment.objects(id=recomment_id, writer=decoded["user_id"]).update(**data)
             if result == 1:
                 return jsonify({"success": True}), 200
             else:
@@ -136,9 +133,7 @@ class ReCommentView(FlaskView):
     def comment_delete(self, recomment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            id = recomment_id
-            user_id = decoded["user_id"]
-            result = Comment.ReComment.objects(id=id, writer=user_id).delete()
+            result = Comment.ReComment.objects(id=recomment_id, writer=decoded["user_id"]).delete()
             if result == 1:
                 return jsonify({"success": True})
             else:
@@ -177,13 +172,11 @@ class ReCommentView(FlaskView):
     def recomment_like(self, recomment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
-            id = recomment_id
-            user_id = decoded["user_id"]
-            user = User.User.objects(user_id=user_id)[0]
-            if user not in Comment.ReComment.objects(id=id)[0].like:
-                result = Comment.ReComment.objects(id=id).update_one(push__like=user)
+            user = User.User.objects(user_id=decoded["user_id"])[0]
+            if user not in Comment.ReComment.objects(id=recomment_id)[0].like:
+                result = Comment.ReComment.objects(id=recomment_id).update_one(push__like=user)
             else:
-                result = Comment.ReComment.objects(id=id).update_one(pull__like=user)
+                result = Comment.ReComment.objects(id=recomment_id).update_one(pull__like=user)
             if result == 1:
                 return jsonify({"success": True}), 200
         except jwt.exceptions.InvalidSignatureError:
