@@ -3,7 +3,7 @@ import json
 from aimmoPost.tests.factory.post_factory import PostFactory
 
 
-def test_post_list_success_like(app, db, id_token, board):
+def test_post_list_success(app, db, id_token, board):
     token = id_token
     resp = app.get(f"/post/list/{board.id}/1", content_type="application/json", headers={"Token": token})
     datas = json.loads(resp.data.decode("utf-8"))

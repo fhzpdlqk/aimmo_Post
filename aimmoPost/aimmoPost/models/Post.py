@@ -1,7 +1,7 @@
 from mongoengine import *
 from mongoengine import signals
+from .Board import Board
 from .User import User, UserSchema
-from .Comment import Comment, ReComment, CommentDetailSchema, ReCommentDetailSchema
 from marshmallow import fields, Schema, post_load, post_dump
 import datetime
 
@@ -13,8 +13,8 @@ class Post(Document):
     content = StringField(required=True)
     tag = ListField(StringField(), default=list)
     notice = BooleanField(default=False)
-    comment = ListField(ReferenceField(Comment, reverse_delete_rule=CASCADE), default=list)
     like = ListField(ReferenceField(User), default=list)
+    board = ReferenceField(Board, required=True)
 
 
 class PostListSchema(Schema):
@@ -26,13 +26,9 @@ class PostListSchema(Schema):
     tag = fields.List(fields.String)
     notice = fields.Bool()
     num_like = fields.Method("like_count")
-    num_comment = fields.Method("comment_count")
 
     def like_count(self, obj):
         return len(obj.like)
-
-    def comment_count(self, obj):
-        return len(obj.comment)
 
 
 class PostRegistSchema(Schema):
@@ -54,14 +50,9 @@ class PostDetailSchema(Schema):
     writer = fields.Str()
     notice = fields.Bool()
     num_like = fields.Method("like_count")
-    num_comment = fields.Method("comment_count")
     tag = fields.List(fields.Str())
     date = fields.DateTime()
-    comment = fields.List(fields.Nested(CommentDetailSchema))
     like = fields.List(fields.Nested(UserSchema))
 
     def like_count(self, obj):
         return len(obj.like)
-
-    def comment_count(self, obj):
-        return len(obj.comment)

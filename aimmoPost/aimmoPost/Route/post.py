@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from aimmoPost.aimmoPost.models import User, Post, Comment
+from aimmoPost.aimmoPost.models import User, Post, Comment, ReComment
 from aimmoPost.aimmoPost.models.User import UserSchema
 from aimmoPost.aimmoPost.models.Post import PostListSchema, PostRegistSchema, PostDetailSchema
 from aimmoPost.aimmoPost.models.Board import Board
@@ -53,16 +53,13 @@ class PostView(FlaskView):
 
             post = PostRegistSchema().load(data)
             post.writer = decoded["user_id"]
+            post.board = Board(id=board_id).id
             post.save()
-            result = Board.objects(id=board_id).update_one(push__post=post)
-            if result == 1:
-                return jsonify({"success": True}), 200
-            else:
-                return jsonify({"success": False}), 400
+            return jsonify({"success": True}), 200
         except jwt.exceptions.InvalidSignatureError:
             return {"success": False, "message": "아이디 토큰이 잘못되었습니다"}, 401
         except:
-            return {"success": False, "message": str(sys.exc_info()[0])}, 500
+            return {"success": False, "message": str(sys.exc_info())}, 500
 
     """
         게시물 리스트 조회 API
@@ -90,8 +87,7 @@ class PostView(FlaskView):
             if int(page) < 0:
                 return jsonify({"success": False, "message": "유효하지 않은 페이지 인덱스 입니다."}), 400
 
-            board = Board.objects(id=board_id).get().post
-            post_list = board[(int(page) - 1) * 10 : (int(page)) * 10]
+            post_list = Post.Post.objects(board=board_id).order_by("-notice")[(int(page) - 1) * 10 : (int(page)) * 10]
             result = []
             for post in post_list:
                 new_data = PostListSchema().dump(post)
@@ -99,6 +95,8 @@ class PostView(FlaskView):
                     new_data["is_like"] = True
                 else:
                     new_data["is_like"] = False
+
+                new_data["num_comment"] = len(Comment.Comment.objects(post=post.id))
                 result.append(new_data)
             return jsonify({"success": True, "message": result}), 200
         except IndexError:
@@ -147,14 +145,18 @@ class PostView(FlaskView):
             else:
                 result["is_like"] = False
             del result["like"]
-
-            for i in result["comment"]:
-                i["is_like"] = user in i["like"]
-                del i["like"]
-                if "recomment" not in i:
-                    i["recomment"] = []
-                for j in i["recomment"]:
-                    j["is_like"] = user in j["like"]
+            comments = Comment.Comment.objects(post=id)
+            result["num_comment"] = len(comments)
+            result["comment"] = []
+            for comment in comments:
+                comment_data = Comment.CommentDetailSchema().dump(comment)
+                recomments = ReComment.ReComment.objects(comment=comment.id)
+                comment_data["num_recomment"] = len(recomments)
+                comment_data["recomment"] = []
+                for recomment in recomments:
+                    recomment_data = ReComment.ReCommentDetailSchema().dump(recomment)
+                    comment_data["recomment"].append(recomment_data)
+                result["comment"].append(comment_data)
             return jsonify({"success": True, "message": result}), 200
         except mongoengine.errors.ValidationError:
             return jsonify({"success": False, "message": "post_id를 찾을 수 없습니다"}), 404
@@ -293,3 +295,12 @@ class PostView(FlaskView):
             return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+
+    @route("/search/<board_id>", methods=["POST"])
+    def post_search(self, board_id):
+        p = Post.Post.objects(__raw__={"title": {"$regex": "title"}})
+        print(p)
+        # t = Board.objects(__raw__={"post": {"$elemMatch": {"title": {"$regex": "title"}}}})
+        t = Board.objects(id=board_id).fields(post={"$elemMatch": {"title": "sampletitle"}})
+        print(t[0].post)
+        return "a"

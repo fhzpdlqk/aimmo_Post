@@ -1,6 +1,7 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
-from aimmoPost.aimmoPost.models.Comment import ReComment
+from aimmoPost.aimmoPost.models.ReComment import ReComment
+from .comment_factory import CommentFactory
 import datetime
 
 
@@ -12,3 +13,4 @@ class ReCommentFactory(MongoEngineFactory):
     date = factory.LazyFunction(datetime.datetime.utcnow)
     content = "samplecontent_comment"
     like = factory.LazyAttribute(lambda n: [])
+    comment = CommentFactory.create().id

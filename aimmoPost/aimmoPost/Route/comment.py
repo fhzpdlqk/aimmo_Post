@@ -46,18 +46,13 @@ class CommentView(FlaskView):
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
             comment = Comment.CommentRegistSchema().load(data)
             comment.writer = decoded["user_id"]
+            comment.post = Post.Post(id=id).id
             comment.save()
-            result = Post.Post.objects(id=id).update_one(push__comment=comment)
-            if result == 1:
-                return jsonify({"success": True}), 200
-            else:
-                return jsonify({"success": False}), 400
+            return jsonify({"success": True}), 200
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except mongoengine.errors.ValidationError:
             return jsonify({"success": False, "message": "게시물 아이디가 존재하지 않습니다"}), 404
-        except:
-            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """
         댓글 수정 API
