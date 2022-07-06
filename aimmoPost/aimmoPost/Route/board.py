@@ -53,6 +53,20 @@ class BoardView(FlaskView):
             board_name_list.append({"id": str(board.id), "board_name": board.board_name})
         return jsonify({"success": True, "message": board_name_list}), 200
 
+    """
+        게시판 이름 수정 API
+        method: PUT
+        content-type: application/json
+        uri: "/board/<board_id>"
+        request:{
+            "board_name": String
+        }
+        response : {
+            성공시 : {success: true, message: [{id,boardname}]}, 200
+            게시판 아이디가 없을 경우: {success: false, message:"게시판 아이디가 존재하지 않습니다}, 404
+        }
+    """
+
     @route("/<board_id>", methods=["PUT"])
     def board_update(self, board_id):
         try:
