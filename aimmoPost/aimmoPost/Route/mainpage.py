@@ -8,6 +8,16 @@ from aimmoPost.aimmoPost.models.Post import Post, PostListSchema
 
 
 class MainPageView(FlaskView):
+    """
+    메인페이지 게시물 최신 10개
+    method: GET
+    content-type: application/json
+    uri: "/mainpage/recent"
+    response : {
+        성공시 : {success: true}, 200
+    }
+    """
+
     @route("/recent", methods=["GET"])
     def recent_post(self):
         post_list = Post.objects().order_by("-date")[:10]
