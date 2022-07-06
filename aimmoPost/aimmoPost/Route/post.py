@@ -19,7 +19,7 @@ class PostView(FlaskView):
     개시물 등록 API
     method: POST
     content-type: application/json
-    uri: "/post/regist"
+    uri: "/post/regist/<board_id>"
     header: {
         token : 유저 정보 토큰
     }
@@ -68,47 +68,34 @@ class PostView(FlaskView):
         게시물 리스트 조회 API
         method: GET
         content-type: application/json
-        url : /post/list/?:page&:filter
+        url : /post/list/<board_id>/<page>
         header: {
             token : 유저 정보 토큰
         }
-        request : {
-        }
-        parameter : {
-            page: number
-            filter: string
-        }
         response : {
             성공시 : {success: true}, 200
+            아이디가 잘못되었을 경우: {"success": False, "message": "유효하지 않은 아이디입니다."}, 401
             페이지 인덱스가 음수일 경우: {"success": false, "message": "유효하지 않은 페이지 인덱스 입니다."}, 400
             이외의 오류가 발생했을 경우 :{success: false, message: error.message}, 500
         }
     """
 
-    @route("/list/", methods=["GET"])
-    def post_list(self):
+    @route("/list/<board_id>/<page>", methods=["GET"])
+    def post_list(self, board_id, page):
         try:
-            if "page" not in request.args:
-                page = 1
-            else:
-                page = int(request.args["page"])
-            if "filter" not in request.args:
-                filter = "date"
-            else:
-                filter = request.args["filter"]
-            if filter not in ["date", "comment", "like"]:
-                filter = "date"
-
-            datas = Post.Post.objects().order_by("-notice", "-" + filter)[(page - 1) * 10 : page * 10]
-            result = []
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
             user = User.User.objects(user_id=decoded["user_id"])
             if len(user) == 0:
                 return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
-            user = user[0]
-            for data in datas:
-                new_data = PostListSchema().dump(data)
-                if user in data.like:
+            if int(page) < 0:
+                return jsonify({"success": False, "message": "유효하지 않은 페이지 인덱스 입니다."}), 400
+
+            board = Board.objects(id=board_id).get().post
+            post_list = board[(int(page) - 1) * 10 : (int(page)) * 10]
+            result = []
+            for post in post_list:
+                new_data = PostListSchema().dump(post)
+                if user in post.like:
                     new_data["is_like"] = True
                 else:
                     new_data["is_like"] = False
