@@ -296,11 +296,35 @@ class PostView(FlaskView):
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
+    """
+        게시판 검색 API
+        method: POST
+        content-type: application/json
+        uri: "/post/search/<board_id>"
+        requests:{
+            "search_word": string
+        }
+        response : {
+            성공시 : {success: true, message: [{content, date, id, notice, num_comment, num_like, tag, title, writer}]}, 200
+        }
+    """
+
     @route("/search/<board_id>", methods=["POST"])
     def post_search(self, board_id):
-        p = Post.Post.objects(__raw__={"title": {"$regex": "title"}})
-        print(p)
-        # t = Board.objects(__raw__={"post": {"$elemMatch": {"title": {"$regex": "title"}}}})
-        t = Board.objects(id=board_id).fields(post={"$elemMatch": {"title": "sampletitle"}})
-        print(t[0].post)
-        return "a"
+        data = request.json
+        posts = Post.Post.objects(board=board_id, __raw__={"title": {"$regex": data["search_word"]}})
+
+        result = []
+        for post in posts:
+            p = PostListSchema().dump(post)
+            p["num_comment"] = len(Comment.Comment.objects(post=post.id))
+            result.append(p)
+
+        posts = Post.Post.objects(board=board_id, __raw__={"content": {"$regex": data["search_word"]}})
+        for post in posts:
+            p = PostListSchema().dump(post)
+            p["num_comment"] = len(Comment.Comment.objects(post=post.id))
+            result.append(p)
+        if len(result) == 0:
+            return jsonify({"success": False, "message": "no search word"}), 400
+        return jsonify({"success": True, "message": result}), 200
