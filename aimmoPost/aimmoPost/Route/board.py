@@ -33,4 +33,22 @@ class BoardView(FlaskView):
             board.save()
             return jsonify({"success": True}), 200
         except:
-            return {"success": False, "message": str(sys.exc_info()[0])}, 500
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
+
+    """
+        게시판 목록 API
+        method: GET
+        content-type: application/json
+        uri: "/board/list"
+        response : {
+            성공시 : {success: true, message: [boardname]}, 200
+        }
+    """
+
+    @route("/list", methods=["GET"])
+    def board_list(self):
+        board_name_list = []
+        board_list = Board.objects()
+        for board in board_list:
+            board_name_list.append(board.boardname)
+        return jsonify({"success": True, "message": board_name_list}), 200
