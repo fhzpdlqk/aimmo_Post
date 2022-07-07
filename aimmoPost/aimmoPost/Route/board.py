@@ -47,11 +47,15 @@ class BoardView(FlaskView):
 
     @route("/list", methods=["GET"])
     def board_list(self):
-        board_name_list = []
-        board_list = Board.objects()
-        for board in board_list:
-            board_name_list.append({"id": str(board.id), "board_name": board.board_name})
-        return jsonify({"success": True, "message": board_name_list}), 200
+        try:
+            board_name_list = []
+            board_list = Board.objects()
+            for board in board_list:
+                board_name_list.append({"id": str(board.id), "board_name": board.board_name})
+            return jsonify({"success": True, "message": board_name_list}), 200
+        except:
+            print(str(sys.exc_info()))
+            return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """
         게시판 이름 수정 API
