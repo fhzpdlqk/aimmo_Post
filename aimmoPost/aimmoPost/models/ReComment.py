@@ -13,6 +13,17 @@ class ReComment(Document):
     comment = ReferenceField(Comment, required=True, reverse_delete_rule=CASCADE)
 
 
+class ReCommentListSchema(Schema):
+    id = fields.Str()
+    writer = fields.Str()
+    date = fields.DateTime()
+    content = fields.Str()
+    num_like = fields.Method("like_count")
+
+    def like_count(self, obj):
+        return len(obj.like)
+
+
 class ReCommentDetailSchema(Schema):
     id = fields.Str()
     writer = fields.Str()
