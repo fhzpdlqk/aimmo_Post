@@ -41,7 +41,7 @@ class MainPageView(FlaskView):
 
     @route("/comment", methods=["GET"])
     def comment_post(self):
-        post_list = Post.objects().order_by("-num_comment")
+        post_list = Post.objects().order_by("-num_comment")[:10]
         result = []
         for post in post_list:
             new_data = PostListSchema().dump(post)

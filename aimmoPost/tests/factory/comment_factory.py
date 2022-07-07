@@ -13,4 +13,4 @@ class CommentFactory(MongoEngineFactory):
     date = factory.LazyFunction(datetime.datetime.utcnow)
     content = "samplecontent_comment"
     like = factory.LazyAttribute(lambda n: [])
-    post = PostFactory.create().id
+    post = PostFactory.create()
