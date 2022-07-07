@@ -14,6 +14,17 @@ class Comment(Document):
     num_recomment = IntField(default=0)
 
 
+class CommentListSchema(Schema):
+    id = fields.Str()
+    writer = fields.Str()
+    date = fields.DateTime()
+    num_like = fields.Method("like_count")
+    content = fields.Str()
+
+    def like_count(self, obj):
+        return len(obj.like)
+
+
 class CommentDetailSchema(Schema):
     id = fields.Str()
     writer = fields.Str()
