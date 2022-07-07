@@ -312,15 +312,10 @@ class PostView(FlaskView):
     @route("/search/<board_id>", methods=["POST"])
     def post_search(self, board_id):
         data = request.json
-        posts = Post.Post.objects(board=board_id, __raw__={"title": {"$regex": data["search_word"]}})
 
         result = []
-        for post in posts:
-            p = PostListSchema().dump(post)
-            p["num_comment"] = len(Comment.Comment.objects(post=post.id))
-            result.append(p)
 
-        posts = Post.Post.objects(board=board_id, __raw__={"content": {"$regex": data["search_word"]}})
+        posts = Post.Post.objects(board=board_id, __raw__={"$or": [{"content": {"$regex": data["search_word"]}}, {"title": {"$regex": data["search_word"]}}]})
         for post in posts:
             p = PostListSchema().dump(post)
             p["num_comment"] = len(Comment.Comment.objects(post=post.id))
