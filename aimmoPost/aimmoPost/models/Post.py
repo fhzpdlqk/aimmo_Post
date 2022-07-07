@@ -15,6 +15,7 @@ class Post(Document):
     notice = BooleanField(default=False)
     like = ListField(ReferenceField(User), default=list)
     board = ReferenceField(Board, required=True)
+    num_comment = IntField(default=0)
 
 
 class PostListSchema(Schema):
@@ -26,6 +27,7 @@ class PostListSchema(Schema):
     tag = fields.List(fields.String)
     notice = fields.Bool()
     num_like = fields.Method("like_count")
+    num_comment = fields.Int()
 
     def like_count(self, obj):
         return len(obj.like)
