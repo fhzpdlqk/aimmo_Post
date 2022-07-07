@@ -11,6 +11,7 @@ class Comment(Document):
     like = ListField(ReferenceField(User), default=list)
     content = StringField(required=True)
     post = ReferenceField(Post, required=True, reverse_delete_rule=CASCADE)
+    num_recomment = IntField(default=0)
 
 
 class CommentDetailSchema(Schema):

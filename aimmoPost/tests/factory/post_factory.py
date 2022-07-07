@@ -17,3 +17,4 @@ class PostFactory(MongoEngineFactory):
     notice = True
     like = factory.LazyAttribute(lambda n: [])
     board = BoardFactory.create().id
+    num_comment = 0

@@ -46,7 +46,9 @@ class ReCommentView(FlaskView):
                 return jsonify({"success": False}), 400
             recomment = ReComment.ReCommentRegistSchema().load(data)
             recomment.writer = decoded["user_id"]
-            recomment.comment = Comment.Comment(id=comment_id).id
+            comment = Comment.Comment(id=comment_id)
+            comment.update(num_recomment=comment.num_recomment + 1)
+            recomment.comment = comment.id
             recomment.save()
             print(recomment.comment)
             return jsonify({"success": True}), 200
@@ -131,6 +133,8 @@ class ReCommentView(FlaskView):
     def comment_delete(self, recomment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+            comment = ReComment.ReComment.objects(id=recomment_id, writer=decoded["user_id"])[0].comment
+            comment.update(num_recomment=comment.num_recomment - 1)
             result = ReComment.ReComment.objects(id=recomment_id, writer=decoded["user_id"]).delete()
             if result == 1:
                 return jsonify({"success": True})
@@ -140,6 +144,8 @@ class ReCommentView(FlaskView):
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except mongoengine.errors.ValidationError:
             return jsonify({"success": False, "message": "대댓글 아이디가 존재하지 않습니다"}), 404
+        except IndexError:
+            return jsonify({"success": False, "message": "대댓글 아이디 혹은 댓글이 존재하지 않습니다"}), 404
         except:
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 

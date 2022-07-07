@@ -44,10 +44,13 @@ class CommentView(FlaskView):
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
             elif "content" not in data:
                 return jsonify({"success": False, "message": "내용이 누락되었습니다."}), 400
+            post = Post.Post(id=id)
+
             comment = Comment.CommentRegistSchema().load(data)
             comment.writer = decoded["user_id"]
-            comment.post = Post.Post(id=id).id
+            comment.post = post.id
             comment.save()
+            post.update(num_comment=post.num_comment + 1)
             return jsonify({"success": True}), 200
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
@@ -128,16 +131,21 @@ class CommentView(FlaskView):
     def comment_delete(self, comment_id):
         try:
             decoded = jwt.decode(request.headers["Token"], token_key, algorithms="HS256")
+            post = Comment.Comment.objects(id=comment_id, writer=decoded["user_id"])[0].post
             result = Comment.Comment.objects(id=comment_id, writer=decoded["user_id"]).delete()
+            post.update(num_comment=post.num_comment - 1)
             if result == 1:
-                return jsonify({"success": True})
+                return jsonify({"success": True}), 200
             else:
                 return jsonify({"success": False, "message": "작성자 아이디가 아닙니다."}), 401
         except jwt.exceptions.InvalidSignatureError:
             return jsonify({"success": False, "message": "유효하지 않은 아이디입니다."}), 401
         except mongoengine.errors.ValidationError:
             return jsonify({"success": False, "message": "댓글 아이디가 존재하지 않습니다"}), 404
+        except IndexError:
+            return jsonify({"success": False, "message": "댓글 아이디 혹은 게시물이 존재하지 않습니다"}), 404
         except:
+            print(str(sys.exc_info()))
             return jsonify({"success": False, "message": str(sys.exc_info()[0])}), 500
 
     """

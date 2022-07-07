@@ -41,13 +41,11 @@ class MainPageView(FlaskView):
 
     @route("/comment", methods=["GET"])
     def comment_post(self):
-        post_list = Post.objects()
+        post_list = Post.objects().order_by("-num_comment")
         result = []
         for post in post_list:
             new_data = PostListSchema().dump(post)
-            new_data["num_comment"] = len(Comment.objects(post=post.id))
             result.append(new_data)
-        result.sort(key=lambda x: x["num_comment"], reverse=True)
         return jsonify({"success": True, "message": result}), 200
 
     """

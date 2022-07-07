@@ -23,7 +23,7 @@ def test_recomment_delete_def_userid(app, db, wrong_id_token, recomment):
     token = wrong_id_token
     resp = app.delete("/recomment/" + str(recomment.id), content_type="application/json", headers={"Token": token})
     data = json.loads(resp.data.decode("utf-8"))
-    assert resp.status_code == 401
+    assert resp.status_code == 404
     assert not data["success"]
 
 
