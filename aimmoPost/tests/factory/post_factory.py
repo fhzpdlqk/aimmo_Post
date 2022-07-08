@@ -1,7 +1,7 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
 from .board_factory import BoardFactory
-from aimmoPost.aimmoPost.models.Post import Post
+from aimmoPost.app.schemas.PostSchema import Post
 from .board_factory import BoardFactory
 import datetime
 

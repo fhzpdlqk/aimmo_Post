@@ -1,6 +1,6 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
-from aimmoPost.aimmoPost.models.User import User
+from aimmoPost.app.schemas.UserSchema import User
 import datetime
 import bcrypt
 

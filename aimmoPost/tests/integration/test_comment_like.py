@@ -3,7 +3,7 @@ import json
 import uuid
 from aimmoPost.tests.factory.comment_factory import CommentFactory
 from aimmoPost.tests.factory.user_factory import UserFactory
-from aimmoPost.aimmoPost.models.User import User
+from aimmoPost.app.schemas.UserSchema import User
 
 
 def test_comment_like_success(app, db, id_token, comment):

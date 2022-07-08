@@ -21,6 +21,8 @@ PyJWT = "^2.4.0"
 blinker = "^1.4"
 mongomock = "^4.0.0"
 factory-boy = "^3.2.1"
+flask-restx = "^0.5.1"
+flask-swagger = "^0.2.14"
 
 
 [build-system]
