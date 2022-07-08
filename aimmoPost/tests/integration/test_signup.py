@@ -1,6 +1,6 @@
 import pytest
 import json
-from aimmoPost.aimmoPost.models.User import User
+from aimmoPost.app.schemas.UserSchema import User
 
 
 def test_signup_success(app, db):

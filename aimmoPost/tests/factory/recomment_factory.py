@@ -1,6 +1,6 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
-from aimmoPost.aimmoPost.models.ReComment import ReComment
+from aimmoPost.app.schemas.ReCommentSchema import ReComment
 from .comment_factory import CommentFactory
 import datetime
 

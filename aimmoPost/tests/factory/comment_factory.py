@@ -1,6 +1,6 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
-from aimmoPost.aimmoPost.models.Comment import Comment
+from aimmoPost.app.schemas.CommentSchema import Comment
 from .post_factory import PostFactory
 import datetime
 

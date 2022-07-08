@@ -3,7 +3,7 @@ import json
 import uuid
 from aimmoPost.tests.factory.post_factory import PostFactory
 from aimmoPost.tests.factory.user_factory import UserFactory
-from aimmoPost.aimmoPost.models.User import User
+from aimmoPost.app.schemas.UserSchema import User
 
 
 def test_post_like_success(app, db, id_token, post):

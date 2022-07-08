@@ -1,5 +1,5 @@
 import pytest
-import aimmoPost.aimmoPost as ai
+from aimmoPost.app import create_app
 import mongoengine as me
 from flask import current_app
 import jwt
@@ -11,10 +11,11 @@ from aimmoPost.tests.factory.board_factory import BoardFactory
 
 @pytest.fixture(scope="session", autouse=True)
 def app():
-    return ai.app.test_client()
+    app = create_app("test")
+    return app.test_client()
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def db(app):
     app.application.config["DATABASE"] = "mongomock://localhost"
     db = me.connect("test", host="mongomock://localhost", alias="test")
