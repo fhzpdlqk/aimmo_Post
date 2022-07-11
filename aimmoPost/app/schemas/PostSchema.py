@@ -23,7 +23,7 @@ class PostRegistSchema(Schema):
     title = fields.Str(required=True, validate=Length(min=1))
     content = fields.Str(required=True, validate=Length(min=1))
     tag = fields.List(fields.Str())
-    notice = fields.Bool(required=True)
+    notice = fields.Bool(default=False)
 
     @post_load
     def make_post(self, data, **kwargs):

@@ -1,7 +1,6 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
-from aimmoPost.app.schemas.UserSchema import User
-import datetime
+from app.models import User
 import bcrypt
 
 
@@ -9,6 +8,6 @@ class UserFactory(MongoEngineFactory):
     class Meta:
         model = User
 
-    user_id = "testid"
-    salt = bcrypt.gensalt()
-    user_pw = bcrypt.hashpw("testpw".encode("utf-8"), salt)
+    user_id = "test_user_id"
+    user_pw = bcrypt.hashpw("test_user_pw".encode("utf-8"), bcrypt.gensalt())
+    is_master = False

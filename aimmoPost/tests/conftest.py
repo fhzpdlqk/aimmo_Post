@@ -1,54 +1,16 @@
 import pytest
-from aimmoPost.app import create_app
 import mongoengine as me
 from flask import current_app
-import jwt
-from aimmoPost.tests.factory.post_factory import PostFactory
-from aimmoPost.tests.factory.comment_factory import CommentFactory
-from aimmoPost.tests.factory.recomment_factory import ReCommentFactory
-from aimmoPost.tests.factory.board_factory import BoardFactory
-
 
 @pytest.fixture(scope="session", autouse=True)
 def app():
+    from app import create_app
     app = create_app("test")
-    return app.test_client()
+    return app
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def db(app):
-    app.application.config["DATABASE"] = "mongomock://localhost"
-    db = me.connect("test", host="mongomock://localhost", alias="test")
+    me.connect(host=current_app.config["MONGODB_URI"])
     yield db
-    db.drop_database("test")
-    db.close()
-
-
-@pytest.fixture(scope="function")
-def id_token():
-    return jwt.encode({"user_id": "testid"}, "abcd", algorithm="HS256")
-
-
-@pytest.fixture(scope="function")
-def wrong_id_token():
-    return jwt.encode({"user_id": "wrong_testid"}, "abcd", algorithm="HS256")
-
-
-@pytest.fixture
-def post():
-    return PostFactory.create()
-
-
-@pytest.fixture
-def comment():
-    return CommentFactory.create()
-
-
-@pytest.fixture
-def recomment():
-    return ReCommentFactory.create()
-
-
-@pytest.fixture
-def board():
-    return BoardFactory.create()
+    me.disconnect()

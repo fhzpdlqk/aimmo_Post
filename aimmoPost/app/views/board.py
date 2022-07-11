@@ -6,7 +6,7 @@ from app.models import Board
 from app.decorator import login_required, master_required, check_board
 from app.schemas.BoardSchema import BoardRegistSchema, BoardSchema, BoardUpdateSchema
 from app.schemas.PostSchema import PostListSchema
-from app.models import Post
+from app.models import Post, User
 
 
 class BoardView(FlaskView):
@@ -63,7 +63,7 @@ class BoardView(FlaskView):
             result = []
             for post in posts:
                 new_data = PostListSchema().dump(post)
-                new_data["is_like"] = g.user_id in post.like
+                new_data["is_like"] = User.objects(user_id = g.user_id).get() in post.like
                 result.append(new_data)
             return jsonify(post_list=result), 200
         except IndexError:

@@ -1,3 +1,5 @@
+import sys
+
 import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
@@ -41,7 +43,7 @@ class PostView(FlaskView):
     @check_post_writer
     def put(self, board_id, post_id):
         try:
-            Post.Post.objects(id=post_id, writer=g.user_id).update(**request.json)
+            Post.objects(id=post_id, writer=g.user_id).update(**request.json)
             return "", 200
         except marshmallow.exceptions.ValidationError as err:
             return jsonify({"message": err.messages}), 422
@@ -63,5 +65,5 @@ class PostView(FlaskView):
     @route("/search", methods=["POST"])
     @check_board
     def post_search(self, board_id):
-        posts = Post.Post.objects(board=board_id, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}}, {"title": {"$regex": request.json["search_word"]}}]})
-        return PostListSchema(many=True).dump(posts),200
+        posts = Post.objects(board=board_id, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}}, {"title": {"$regex": request.json["search_word"]}}]})
+        return jsonify(post_list=PostListSchema(many=True).dump(posts)),200

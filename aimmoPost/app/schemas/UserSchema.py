@@ -18,6 +18,7 @@ class UserSignupSchema(Schema):
 class UserSchema(Schema):
     user_id = fields.Str(required=True, unique=True)
     user_pw = fields.Str(required=True)
+    is_master = fields.Boolean(default=False)
 
     @post_load
     def check_user(self, data, **kwargs):

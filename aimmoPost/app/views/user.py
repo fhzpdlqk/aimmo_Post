@@ -12,6 +12,7 @@ class UserView(FlaskView):
     def login(self):
         try:
             user = UserSchema().load(request.json)
+            print(request.json)
             if not user:
                 return {"message": "존재하지 않는 사용자 입니다."}, 401
             if not bcrypt.checkpw(request.json["user_pw"].encode("utf-8"), user.user_pw.encode("utf-8")):
@@ -20,8 +21,7 @@ class UserView(FlaskView):
         except marshmallow.exceptions.ValidationError as err:
             return jsonify({"message": err.messages}), 422
 
-    @route("/", methods=["POST"])
-    def signup(self):
+    def post(self):
         try:
             user = UserSignupSchema().load(request.json)
             if user is False:
