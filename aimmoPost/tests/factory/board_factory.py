@@ -1,7 +1,5 @@
-import factory
 from factory.mongoengine import MongoEngineFactory
-from aimmoPost.app.schemas.BoardSchema import Board
-import datetime
+from app.models import Board
 
 
 class BoardFactory(MongoEngineFactory):

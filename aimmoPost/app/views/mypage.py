@@ -1,4 +1,4 @@
-from flask import jsonify, request, g
+from flask import jsonify, request, g, current_app
 import sys
 import jwt
 from flask_classful import FlaskView, route
@@ -9,9 +9,6 @@ from app.config import Config
 from app.schemas.UserSchema import User
 from app.models import Post
 from app.decorator import login_required
-
-token_key = Config.TOKEN_KEY
-
 
 class MyPageView(FlaskView):
     @route("/post", methods=["GET"])
