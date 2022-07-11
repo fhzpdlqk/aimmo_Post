@@ -571,4 +571,3 @@ class Test_PostView:
 
             def test_message_없는_게시물입니다(self, trans_api):
                 assert trans_api.json["message"] == "없는 게시판입니다"
-판
