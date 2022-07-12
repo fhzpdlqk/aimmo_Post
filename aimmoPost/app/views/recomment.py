@@ -54,8 +54,9 @@ class ReCommentView(FlaskView):
     @check_recomment
     def recomment_like(self, board_id, post_id, comment_id, recomment_id):
         user = User.objects(user_id=g.user_id).get()
-        if g.user_id not in ReComment.objects(id=recomment_id).get().like:
+        if user not in ReComment.objects(id=recomment_id).get().like:
             ReComment.objects(id=recomment_id).update_one(push__like=user)
         else:
+            print("aa")
             ReComment.objects(id=recomment_id).update_one(pull__like=user)
         return "", 200

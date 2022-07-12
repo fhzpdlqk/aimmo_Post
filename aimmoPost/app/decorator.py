@@ -31,6 +31,7 @@ def master_required(f):
 def check_board(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        print(kwargs)
         if not Board.objects(id=kwargs["board_id"]):
             return jsonify(message="없는 게시판입니다"), 404
         return f(*args, **kwargs)
