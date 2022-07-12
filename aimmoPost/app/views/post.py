@@ -67,3 +67,23 @@ class PostView(FlaskView):
     def post_search(self, board_id):
         posts = Post.objects(board=board_id, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}}, {"title": {"$regex": request.json["search_word"]}}]})
         return jsonify(post_list=PostListSchema(many=True).dump(posts)),200
+
+    @route("/", methods=["GET"])
+    @login_required
+    @check_board
+    def get_post_list(self, board_id):
+        try:
+            params = request.args.to_dict()
+            if "page" not in params:
+                params["page"] = "1"
+            if "size" not in params:
+                params["size"] = "10"
+            posts = Post.objects(board=board_id).order_by("-notice")[(int(params["page"]) - 1) * int(params["size"]): int(params["page"]) * int(params["size"])]
+            result = []
+            for post in posts:
+                new_data = PostListSchema().dump(post)
+                new_data["is_like"] = User.objects(user_id=g.user_id).get() in post.like
+                result.append(new_data)
+            return jsonify(post_list=result), 200
+        except IndexError:
+            return jsonify(message="유효하지 않은 페이지 인덱스 입니다."), 404

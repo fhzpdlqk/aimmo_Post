@@ -53,18 +53,3 @@ class BoardView(FlaskView):
             return jsonify({"success": True}), 200
         except marshmallow.exceptions.ValidationError as err:
             return jsonify({"message": err.messages}), 422
-
-    @route("/<string:board_id>/pages/<int:page_number>", methods=["GET"])
-    @login_required
-    @check_board
-    def get_post_list(self, board_id, page_number):
-        try:
-            posts = Post.objects(board=board_id).order_by("-notice")[(page_number - 1) * 10: page_number * 10]
-            result = []
-            for post in posts:
-                new_data = PostListSchema().dump(post)
-                new_data["is_like"] = User.objects(user_id = g.user_id).get() in post.like
-                result.append(new_data)
-            return jsonify(post_list=result), 200
-        except IndexError:
-            return jsonify(message="유효하지 않은 페이지 인덱스 입니다."), 404

@@ -1,4 +1,7 @@
 .pylintrc
 .flaskenv
 
-/.pytest_cache
+.pytest_cache
+.idea
+
+/__pycache__

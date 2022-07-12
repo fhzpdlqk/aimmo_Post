@@ -1,8 +1,6 @@
 import pytest
 import jwt
-import uuid
 import random
-from bson import ObjectId
 from app.models import Board, Post
 from app.config import TestConfig
 from tests.factory.user_factory import UserFactory
@@ -41,46 +39,6 @@ class Test_BoardView:
         def test_데이터_삽입여부(self, trans_api, form):
             assert len(Board.objects(board_name=form["board_name"])) == 1
 
-        class Test_로그인이_되어있지_않은_경우:
-            @pytest.fixture
-            def headers(self):
-                return {
-                    'Content-Type': 'application/json'
-                }
-            def test_상태코드_401(self, trans_api):
-                assert trans_api.status_code == 401
-
-            def test_massage_로그인하지_않은_사용자입니다(self, trans_api):
-                assert trans_api.json["message"] == "로그인하지 않은 사용자입니다."
-
-        class Test_마스터계정이_아닌_경우:
-            @pytest.fixture
-            def login_user(self):
-                return UserFactory.create(is_master=False)
-
-            @pytest.fixture
-            def token(self, login_user):
-                return jwt.encode(
-                    {"user_id": login_user["user_id"], "is_master": login_user["is_master"]},
-                    TestConfig.TOKEN_KEY, TestConfig.ALGORITHM)
-
-            def test_상태코드_403(self, trans_api):
-                assert trans_api.status_code == 403
-
-            def test_massage_허가되지_않은_사용자입니다(self,trans_api):
-                assert trans_api.json["message"] == '허가되지 않은 사용자입니다.'
-
-        class Test_유효하지_않은_토큰일_경우:
-            @pytest.fixture
-            def token(self):
-                return uuid.uuid4()
-
-            def test_상태코드_401(self, trans_api):
-                assert trans_api.status_code == 401
-
-            def test_massage_유효하지_않은_토큰입니다(self,trans_api):
-                assert trans_api.json["message"] == '유효하지 않은 토큰입니다.'
-
         class Test_이미_존재하는_게시판일_경우:
             @pytest.fixture
             def form(self, board):
@@ -102,15 +60,6 @@ class Test_BoardView:
             assert len(trans_api.json["board_list"]) == 1
             assert trans_api.json["board_list"][0]["board_name"] == board.board_name
 
-        class Test_등록된_게시판이_없을_경우:
-            @pytest.fixture
-            def board(self):
-                return None
-            def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
-            def test_게시판_리스트(self, trans_api, board):
-                assert trans_api.json["board_list"] == []
-
     class Test_Update_Board:
         @pytest.fixture
         def form(self):
@@ -125,29 +74,6 @@ class Test_BoardView:
             assert trans_api.status_code == 200
         def test_업데이트_정보(self, board, trans_api, form):
             assert Board.objects(id=board.id).get().board_name == form["board_name"]
-
-        class Test_로그인이_되어_있지_않은_경우:
-            @pytest.fixture
-            def headers(self):
-                return {
-                    'Content-Type': 'application/json'
-                }
-            def test_상태코드_401(self, trans_api):
-                assert trans_api.status_code == 401
-
-            def test_massage_로그인하지_않은_사용자입니다(self, trans_api):
-                assert trans_api.json["message"] == "로그인하지 않은 사용자입니다."
-
-        class Test_유효하지_않은_토큰일_경우:
-            @pytest.fixture
-            def token(self):
-                return uuid.uuid4()
-
-            def test_상태코드_401(self, trans_api):
-                assert trans_api.status_code == 401
-
-            def test_massage_유효하지_않은_토큰입니다(self,trans_api):
-                assert trans_api.json["message"] == '유효하지 않은 토큰입니다.'
 
         class Test_마스터계정이_아닌_경우:
             @pytest.fixture
@@ -188,59 +114,6 @@ class Test_BoardView:
         def test_삭제_여부(self, board, trans_api):
             assert len(Board.objects(id=board.id)) == 0
 
-        class Test_로그인이_되어_있지_않은_경우:
-            @pytest.fixture
-            def headers(self):
-                return {
-                    'Content-Type': 'application/json'
-                }
-
-            def test_상태코드_401(self, trans_api):
-                assert trans_api.status_code == 401
-
-            def test_massage_로그인하지_않은_사용자입니다(self, trans_api):
-                assert trans_api.json["message"] == "로그인하지 않은 사용자입니다."
-
-        class Test_유효하지_않은_토큰일_경우:
-            @pytest.fixture
-            def token(self):
-                return uuid.uuid4()
-
-            def test_상태코드_401(self, trans_api):
-                assert trans_api.status_code == 401
-
-            def test_massage_유효하지_않은_토큰입니다(self, trans_api):
-                assert trans_api.json["message"] == '유효하지 않은 토큰입니다.'
-
-        class Test_마스터계정이_아닌_경우:
-            @pytest.fixture
-            def login_user(self):
-                return UserFactory.create(is_master=False)
-
-            @pytest.fixture
-            def token(self, login_user):
-                return jwt.encode(
-                    {"user_id": login_user["user_id"], "is_master": login_user["is_master"]},
-                    TestConfig.TOKEN_KEY, TestConfig.ALGORITHM)
-
-            def test_상태코드_403(self, trans_api):
-                assert trans_api.status_code == 403
-
-            def test_massage_허가되지_않은_사용자입니다(self, trans_api):
-                assert trans_api.json["message"] == '허가되지 않은 사용자입니다.'
-
-        class Test_없는_게시판일_경우:
-
-            @pytest.fixture
-            def trans_api(self, client, board, headers):
-                return client.delete(f"/boards/{ObjectId()}", headers=headers)
-
-            def test_상태코드_404(self, trans_api):
-                assert trans_api.status_code == 404
-
-            def test_message_없는_게시판입니다(self, trans_api):
-                assert trans_api.json["message"] == "없는 게시판입니다"
-
     class Test_Get_List:
         @pytest.fixture
         def post(self, login_user, board):
@@ -248,7 +121,7 @@ class Test_BoardView:
 
         @pytest.fixture
         def trans_api(self, client, board, headers, post):
-            return client.get(f"/boards/{str(board.id)}/pages/1", headers=headers)
+            return client.get(f"/boards/{str(board.id)}/posts/?page=1&size=10", headers=headers)
 
         def test_상태코드_200(self,trans_api):
             assert trans_api.status_code == 200
@@ -279,46 +152,11 @@ class Test_BoardView:
             for i in posts:
                 assert (login_user in Post.objects(id=i["id"]).get().like) == i["is_like"]
 
-        class Test_로그인이_되어_있지_않은_경우:
-            @pytest.fixture
-            def headers(self):
-                return {
-                    'Content-Type': 'application/json'
-                }
-
-            def test_상태코드_401(self, trans_api):
-                assert trans_api.status_code == 401
-
-            def test_massage_로그인하지_않은_사용자입니다(self, trans_api):
-                assert trans_api.json["message"] == "로그인하지 않은 사용자입니다."
-
-        class Test_유효하지_않은_토큰일_경우:
-            @pytest.fixture
-            def token(self):
-                return uuid.uuid4()
-
-            def test_상태코드_401(self, trans_api):
-                assert trans_api.status_code == 401
-
-            def test_massage_유효하지_않은_토큰입니다(self, trans_api):
-                assert trans_api.json["message"] == '유효하지 않은 토큰입니다.'
-
-        class Test_없는_게시판일_경우:
-
-            @pytest.fixture
-            def trans_api(self, client, board, headers):
-                return client.get(f"/boards/{ObjectId()}/pages/1", headers=headers)
-
-            def test_상태코드_404(self, trans_api):
-                assert trans_api.status_code == 404
-
-            def test_message_없는_게시판입니다(self, trans_api):
-                assert trans_api.json["message"] == "없는 게시판입니다"
 
         class Test_페이지_인덱스가_음수일_경우:
             @pytest.fixture
             def trans_api(self, client, board, headers):
-                return client.get(f"/boards/{str(board.id)}/pages/-1", headers=headers)
+                return client.get(f"/boards/{str(board.id)}/posts/?page=-1&size=10", headers=headers)
 
             def test_상태코드_404(self, trans_api):
                 assert trans_api.status_code == 404
@@ -326,7 +164,7 @@ class Test_BoardView:
         class Test_페이지_인덱스가_매우_클경우:
             @pytest.fixture
             def trans_api(self, client, board, headers):
-                return client.get(f"/boards/{str(board.id)}/pages/100", headers=headers)
+                return client.get(f"/boards/{str(board.id)}/posts/?page=100&size=10", headers=headers)
 
             def test_상태코드_404(self, trans_api):
                 assert trans_api.status_code == 200
