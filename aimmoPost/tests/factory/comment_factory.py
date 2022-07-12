@@ -1,6 +1,6 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
-from aimmoPost.app.schemas.CommentSchema import Comment
+from app.models import Comment
 from .post_factory import PostFactory
 import datetime
 
@@ -13,4 +13,4 @@ class CommentFactory(MongoEngineFactory):
     date = factory.LazyFunction(datetime.datetime.utcnow)
     content = "samplecontent_comment"
     like = factory.LazyAttribute(lambda n: [])
-    post = PostFactory.create()
+    post = factory.SubFactory(PostFactory)

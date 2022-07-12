@@ -2,7 +2,7 @@ from flask import jsonify, request, g
 import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
-from app.models import ReComment, User
+from app.models import ReComment, User, Comment
 from app.schemas.ReCommentSchema import ReCommentRegistSchema
 from app.decorator import login_required, check_board, check_post, check_comment, check_recomment_writer, check_recomment
 
@@ -18,6 +18,8 @@ class ReCommentView(FlaskView):
             recomment.writer = g.user_id
             recomment.comment = ObjectId(comment_id)
             recomment.save()
+            comment = Comment.objects(id=comment_id).get()
+            comment.update(num_recomment=comment.num_recomment + 1)
             return "", 200
         except marshmallow.exceptions.ValidationError as err:
             return jsonify({"message": err.messages}), 422
@@ -40,6 +42,8 @@ class ReCommentView(FlaskView):
     @check_recomment_writer
     def delete(self, board_id, post_id, comment_id, recomment_id):
         ReComment.objects(id=recomment_id, writer=g.user_id).delete()
+        comment = Comment.objects(id=comment_id).get()
+        comment.update(num_recomment=comment.num_recomment - 1)
         return "", 200
 
     @route("/<recomment_id>/like", methods=["POST"])
