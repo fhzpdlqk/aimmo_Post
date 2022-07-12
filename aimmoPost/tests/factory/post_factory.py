@@ -1,6 +1,6 @@
 import factory
 from factory.mongoengine import MongoEngineFactory
-from .board_factory import BoardFactory
+from tests.factory.board_factory import BoardFactory
 from app.models import Post
 import datetime
 
@@ -13,8 +13,8 @@ class PostFactory(MongoEngineFactory):
     date = factory.LazyFunction(datetime.datetime.utcnow)
     title = "sample_post_title"
     content = "sample_content_title"
-    tag = ["sample_post_tag_1", "sample_post_tag_2"]
-    notice = True
+    tag = factory.LazyAttribute(lambda n: ["sample_post_tag_1", "sample_post_tag_2"])
+    notice = factory.LazyAttribute(lambda n: False)
     like = factory.LazyAttribute(lambda n: [])
+    num_comment = factory.LazyAttribute(lambda n: 0)
     board = factory.SubFactory(BoardFactory)
-    num_comment = 0

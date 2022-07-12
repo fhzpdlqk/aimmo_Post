@@ -2,7 +2,7 @@ import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
 from flask import jsonify, request, g
-from app.models import Comment, User
+from app.models import Comment, User, Post
 from app.schemas.CommentSchema import CommentRegistSchema
 from app.decorator import login_required, check_post, check_board, check_comment, check_comment_writer
 
@@ -16,6 +16,8 @@ class CommentView(FlaskView):
             comment.writer = g.user_id
             comment.post = ObjectId(post_id)
             comment.save()
+            post = Post.objects(id=post_id).get()
+            post.update(num_comment=post.num_comment+1)
             return "", 200
         except marshmallow.exceptions.ValidationError as err:
             return jsonify({"message": err.messages}), 422
@@ -36,6 +38,8 @@ class CommentView(FlaskView):
     @check_comment_writer
     def delete(self, board_id, post_id, comment_id):
         Comment.objects(id=comment_id, writer=g.user_id).delete()
+        post = Post.objects(id=post_id).get()
+        post.update(num_comment=post.num_comment - 1)
         return "", 200
 
 

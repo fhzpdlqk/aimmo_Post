@@ -8,6 +8,7 @@ from app.config import TestConfig
 from tests.factory.user_factory import UserFactory
 from tests.factory.board_factory import BoardFactory
 from tests.factory.post_factory import PostFactory
+from tests.factory.comment_factory import CommentFactory
 
 
 class Test_PostView:
@@ -84,6 +85,9 @@ class Test_PostView:
 
             def test_상태코드_404(self, trans_api):
                 assert trans_api.status_code == 404
+
+            def test_message_없는_게시판입니다(self, trans_api):
+                assert trans_api.json["message"] == "없는 게시판입니다"
 
         class Test_제목이_누락되었을_경우:
             @pytest.fixture
