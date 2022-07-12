@@ -12,7 +12,6 @@ class UserView(FlaskView):
     def login(self):
         try:
             user = UserSchema().load(request.json)
-            print(request.json)
             if not user:
                 return {"message": "존재하지 않는 사용자 입니다."}, 401
             if not bcrypt.checkpw(request.json["user_pw"].encode("utf-8"), user.user_pw.encode("utf-8")):
