@@ -24,6 +24,8 @@ factory-boy = "^3.2.1"
 flask-restx = "^0.5.1"
 flask-swagger = "^0.2.14"
 pytest = "^7.1.2"
+flask-apispec = "^0.11.1"
+funcy = "^1.17"
 
 
 [tool.poetry.dev-dependencies]
