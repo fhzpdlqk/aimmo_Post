@@ -2,17 +2,22 @@ import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
 from flask import jsonify, request, g
+from flask_apispec import marshal_with, use_kwargs
 from app.models import Comment, User, Post
 from app.schemas.CommentSchema import CommentRegistSchema
 from app.decorator import login_required, check_post, check_board, check_comment, check_comment_writer
+from app.errors import ApiError
+from app.schemas.errors import ApiErrorSchema
 
 class CommentView(FlaskView):
+    @route('/', methods=["POST"])
     @login_required
     @check_board
     @check_post
-    def post(self, board_id, post_id):
+    @use_kwargs(CommentRegistSchema(), locations=('json',))
+    @marshal_with(ApiErrorSchema, code=422, description="validation error")
+    def post(self, board_id, post_id, comment):
         try:
-            comment = CommentRegistSchema().load(request.json)
             comment.writer = g.user_id
             comment.post = ObjectId(post_id)
             comment.save()
@@ -20,7 +25,7 @@ class CommentView(FlaskView):
             post.update(num_comment=post.num_comment+1)
             return "", 200
         except marshmallow.exceptions.ValidationError as err:
-            return jsonify({"message": err.messages}), 422
+            return ApiError(message=err.messages), 422
 
     @route("/<string:comment_id>", methods=["PUT"])
     @login_required

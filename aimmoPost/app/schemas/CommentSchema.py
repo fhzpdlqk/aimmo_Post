@@ -36,8 +36,7 @@ class CommentRegistSchema(Schema):
 
     @post_load
     def make_comment(self, data, **kwargs):
-        comment = Comment(**data)
-        return comment
+        return {'comment': Comment(**data)}
 
 
 class CommentMyListSchema(Schema):
