@@ -1,7 +1,8 @@
 from marshmallow import fields, Schema, post_load
 from marshmallow.validate import Length
-from app.models import Post, Comment
+from app.models import Post, Comment, User
 from app.schemas.CommentSchema import CommentDetailSchema
+from flask import g
 
 
 class PostListSchema(Schema):
@@ -14,9 +15,12 @@ class PostListSchema(Schema):
     notice = fields.Bool(required=True)
     num_like = fields.Method("like_count")
     num_comment = fields.Int()
+    is_like=fields.Method("islike")
 
     def like_count(self, obj):
         return len(obj.like)
+    def islike(self, obj):
+        return User.objects(user_id=g.user_id).get() in obj.like
 
 
 class PostRegistSchema(Schema):
@@ -27,8 +31,7 @@ class PostRegistSchema(Schema):
 
     @post_load
     def make_post(self, data, **kwargs):
-        post = Post(**data)
-        return post
+        return {'post': Post(**data)}
 
 
 class PostDetailSchema(Schema):
@@ -47,3 +50,13 @@ class PostDetailSchema(Schema):
         return len(obj.like)
     def comment_list(self, obj):
         return CommentDetailSchema(many=True).dump(Comment.objects(post=obj.id))
+
+class PostUpdateSchema(Schema):
+    title = fields.Str(validate=Length(min=1))
+    content = fields.Str(validate=Length(min=1))
+    tag = fields.List(fields.Str())
+    notice = fields.Bool(default=False)
+
+    @post_load
+    def make_post(self, data, **kwargs):
+        return {'post': Post(**data)}

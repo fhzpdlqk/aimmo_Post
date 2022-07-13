@@ -55,6 +55,7 @@ class Test_MyPageView:
         @pytest.fixture
         def posts(self, login_user):
             return [PostFactory.create() for _ in range(10)] + [PostFactory.create(like=[login_user]) for _ in range(20)]
+
         @pytest.fixture
         def trans_api(self, client, headers, posts):
             return client.get('/mypage/likes', headers=headers)
