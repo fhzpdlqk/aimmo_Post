@@ -1,6 +1,7 @@
 import pytest
 import jwt
 import uuid
+import random
 from bson import ObjectId
 from json import dumps
 from app.models import Post
@@ -20,6 +21,7 @@ class Test_PostView:
     def token(self, login_user):
         return jwt.encode({"user_id": login_user["user_id"], "is_master": login_user["is_master"]},
                           TestConfig.TOKEN_KEY, TestConfig.ALGORITHM)
+
     @pytest.fixture
     def board(self):
         return BoardFactory.create()
@@ -48,7 +50,7 @@ class Test_PostView:
         def test_데이터_삽입여부(self, trans_api, form):
             assert len(Post.objects()) == 1
 
-        def test_데이터_확인(self,trans_api, form):
+        def test_데이터_확인(self, trans_api, form):
             assert Post.objects()[0].title == form["title"]
             assert Post.objects()[0].content == form["content"]
             assert Post.objects()[0].tag == form["tag"]
@@ -124,8 +126,10 @@ class Test_PostView:
         @pytest.fixture
         def trans_api(self, client, headers, board, post):
             return client.get(f'/boards/{str(board.id)}/posts/{str(post.id)}', headers=headers)
+
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
+
         def test_데이터_확인(self, trans_api, post):
             assert str(post.id) == trans_api.json["id"]
             assert post.title == trans_api.json["title"]
@@ -166,12 +170,11 @@ class Test_PostView:
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
 
-        def test_데이터_확인(self,trans_api, form, post):
+        def test_데이터_확인(self, trans_api, form, post):
             assert Post.objects(id=post.id).get().title == form["title"]
             assert Post.objects(id=post.id).get().content == form["content"]
             assert Post.objects(id=post.id).get().tag == form["tag"]
             assert Post.objects(id=post.id).get().notice == form["notice"]
-
 
         class Test_제목이_누락되었을_경우:
             @pytest.fixture
@@ -184,6 +187,7 @@ class Test_PostView:
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
+
             def test_데이터_확인(self, trans_api, form, post):
                 assert Post.objects(id=post.id).get().title == post.title
                 assert Post.objects(id=post.id).get().content == form["content"]
@@ -252,7 +256,7 @@ class Test_PostView:
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
 
-        def test_데이터_확인(self,trans_api, post, login_user):
+        def test_데이터_확인(self, trans_api, post, login_user):
             assert login_user in Post.objects(id=post.id).get().like
 
         class Test_이미_좋아요가_눌러져_있을_경우:
@@ -272,6 +276,7 @@ class Test_PostView:
             return {
                 "search_word": "sample"
             }
+
         @pytest.fixture
         def trans_api(self, form, client, headers, board, post):
             return client.post(f'/boards/{str(board.id)}/posts/search', data=dumps(form), headers=headers)
@@ -297,6 +302,7 @@ class Test_PostView:
                 return {
                     "search_word": "title"
                 }
+
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
 
@@ -319,6 +325,7 @@ class Test_PostView:
                 return {
                     "search_word": "content"
                 }
+
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
 
@@ -334,3 +341,65 @@ class Test_PostView:
                 assert trans_api.json["post_list"][0]["notice"] == post.notice
                 assert trans_api.json["post_list"][0]["num_like"] == len(post.like)
                 assert trans_api.json["post_list"][0]["num_comment"] == post.num_comment
+
+    class Test_Get_List:
+        @pytest.fixture
+        def post(self, login_user, board):
+            return [PostFactory.create(like=random.choice([[], [login_user]]), notice=random.choice([True, False]),
+                                       board=board) for _ in range(20)]
+
+        @pytest.fixture
+        def trans_api(self, client, board, headers, post):
+            return client.get(f"/boards/{str(board.id)}/posts/?page=1&size=10", headers=headers)
+
+        def test_상태코드_200(self, trans_api):
+            assert trans_api.status_code == 200
+
+        def test_데이터_확인(self, trans_api):
+            posts = trans_api.json["post_list"]
+            for i in posts:
+                assert "id" in i
+                assert "writer" in i
+                assert "date" in i
+                assert "title" in i
+                assert "content" in i
+                assert "tag" in i
+                assert "notice" in i
+                assert "num_like" in i
+                assert "num_comment" in i
+
+        def test_공지사항_상단_노출_여부(self, trans_api):
+            posts = trans_api.json["post_list"]
+            for i in range(1, len(posts)):
+                assert (posts[i - 1]["notice"] == True and posts[i]["notice"] == True) or (
+                        posts[i - 1]["notice"] == False and posts[i]["notice"] == False) \
+                       or (posts[i - 1]["notice"] == True and posts[i]["notice"] == False)
+
+        def test_존재_여부(self, trans_api, post):
+            posts = trans_api.json["post_list"]
+            for i in posts:
+                assert next((True for item in post if str(item.id) == i["id"]), False)
+
+        def test_좋아요_누름_여부(self, trans_api, login_user):
+            posts = trans_api.json["post_list"]
+            for i in posts:
+                assert (login_user in Post.objects(id=i["id"]).get().like) == i["is_like"]
+
+        class Test_페이지_인덱스가_음수일_경우:
+            @pytest.fixture
+            def trans_api(self, client, board, headers):
+                return client.get(f"/boards/{str(board.id)}/posts/?page=-1&size=10", headers=headers)
+
+            def test_상태코드_404(self, trans_api):
+                assert trans_api.status_code == 404
+
+        class Test_페이지_인덱스가_매우_클경우:
+            @pytest.fixture
+            def trans_api(self, client, board, headers):
+                return client.get(f"/boards/{str(board.id)}/posts/?page=100&size=10", headers=headers)
+
+            def test_상태코드_404(self, trans_api):
+                assert trans_api.status_code == 200
+
+            def test_빈리스트_반환(self, trans_api):
+                assert trans_api.json["post_list"] == []
