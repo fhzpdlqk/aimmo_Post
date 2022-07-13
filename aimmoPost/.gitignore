@@ -3,6 +3,7 @@
 
 .pytest_cache
 .idea
+.idea/*
 ../.idea
 ../.DS_Store
 tests/views/__pycache__/*
