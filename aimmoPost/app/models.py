@@ -1,7 +1,7 @@
-import mongoengine
 from mongoengine import *
-from mongoengine import signals
 import datetime
+import jwt
+from flask import current_app
 
 
 class User(Document):
@@ -50,3 +50,11 @@ class ReComment(Document):
     content = StringField(required=True)
     like = ListField(ReferenceField(User), default=list)
     comment = ReferenceField(Comment, required=True, reverse_delete_rule=CASCADE)
+
+class AuthToken(Document):
+    token = StringField(required=True)
+    @classmethod
+    def create(cls, user_id, is_master):
+        token = jwt.encode({"user_id": user_id, "is_master": is_master}, current_app.config["TOKEN_KEY"], current_app.config["ALGORITHM"])
+        authtoken = cls(token=token)
+        return authtoken

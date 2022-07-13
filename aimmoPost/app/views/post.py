@@ -1,5 +1,3 @@
-import sys
-
 import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
