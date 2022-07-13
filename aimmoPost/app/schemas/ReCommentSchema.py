@@ -30,5 +30,4 @@ class ReCommentRegistSchema(Schema):
 
     @post_load
     def make_recomment(self, data, **kwargs):
-        recomment = ReComment(**data)
-        return recomment
+        return {"recomment": ReComment(**data)}
