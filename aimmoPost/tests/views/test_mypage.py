@@ -1,4 +1,3 @@
-
 import jwt
 from tests.factory.user_factory import UserFactory
 from tests.factory.post_factory import PostFactory
@@ -29,7 +28,7 @@ class Test_MyPageView:
             assert trans_api.status_code == 200
 
         def test_post_목록_작성자_여부(self, trans_api, login_user):
-            post_list = trans_api.json["message"]
+            post_list = trans_api.json
             assert len(post_list) == 20
             for post in post_list:
                 assert post["writer"] == login_user.user_id
@@ -64,7 +63,7 @@ class Test_MyPageView:
             assert trans_api.status_code == 200
 
         def test_게시글_목록_좋아요_여부(self, trans_api, login_user):
-            post_list = trans_api.json["message"]
+            post_list = trans_api.json
             assert len(post_list) == 20
             for post in post_list:
                 assert login_user in Post.objects(id=post["id"]).get().like

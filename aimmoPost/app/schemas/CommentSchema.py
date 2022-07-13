@@ -1,6 +1,7 @@
+from flask import g
 from marshmallow import fields, Schema, post_load
 from app.models import Comment, ReComment
-from app.schemas.ReCommentSchema import ReCommentDetailSchema
+from app.schemas.ReCommentSchema import ReCommentDetailSchema, ReCommentListSchema
 
 
 class CommentListSchema(Schema):
@@ -25,7 +26,8 @@ class CommentDetailSchema(Schema):
 
     def like_count(self, obj):
         return len(obj.like)
-    def recomment_list(self,obj):
+
+    def recomment_list(self, obj):
         return ReCommentDetailSchema(many=True).dump(ReComment.objects(comment=obj.id))
 
 
@@ -36,3 +38,14 @@ class CommentRegistSchema(Schema):
     def make_comment(self, data, **kwargs):
         comment = Comment(**data)
         return comment
+
+
+class CommentMyListSchema(Schema):
+    comments = fields.Method("comment_list")
+    recomments = fields.Method("recomment_list")
+
+    def comment_list(self, obj):
+        return CommentListSchema(many=True).dump(obj.comment)
+
+    def recomment_list(self, obj):
+        return ReCommentListSchema(many=True).dump(obj.recomment)
