@@ -1,4 +1,4 @@
-from flask import g
+
 from marshmallow import fields, Schema, post_load
 from app.models import Comment, ReComment
 from app.schemas.ReCommentSchema import ReCommentDetailSchema, ReCommentListSchema

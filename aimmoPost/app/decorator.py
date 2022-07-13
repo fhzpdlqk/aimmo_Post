@@ -35,65 +35,75 @@ def master_required(f):
 
 def check_board(f):
     @wraps(f)
+    @marshal_with(ApiErrorSchema, code=404, description="없는 게시판")
     def decorated_function(*args, **kwargs):
         if not Board.objects(id=kwargs["board_id"]):
-            return jsonify(message="없는 게시판입니다"), 404
+            return ApiError(message="없는 게시판입니다"), 404
         return f(*args, **kwargs)
     return decorated_function
 
 def check_post(f):
     @wraps(f)
+    @marshal_with(ApiErrorSchema, code=404, description="없는 게시물")
     def decorated_function(*args, **kwargs):
         if not Post.objects(id=kwargs["post_id"]):
-            return jsonify(message="없는 게시물입니다"), 404
+            return ApiError(message="없는 게시물입니다"), 404
         return f(*args, **kwargs)
     return decorated_function
 
 def check_post_writer(f):
     @wraps(f)
+    @marshal_with(ApiErrorSchema, code=404, description="없는 게시물")
+    @marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")
     def decorated_function(*args, **kwargs):
         post = Post.objects(id=kwargs["post_id"])
         if not post:
-            return jsonify(message="없는 게시물입니다"), 404
+            return ApiError(message="없는 게시물입니다"), 404
         elif post.get().writer != g.user_id:
-            return jsonify(message="작성자 아이디가 아닙니다."), 401
+            return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
     return decorated_function
 
 def check_comment(f):
     @wraps(f)
+    @marshal_with(ApiErrorSchema, code=404, description="없는 댓글")
     def decorated_function(*args, **kwargs):
         if not Comment.objects(id=kwargs["comment_id"]):
-            return jsonify(message="없는 댓글입니다"), 404
+            return ApiError(message="없는 댓글입니다"), 404
         return f(*args, **kwargs)
     return decorated_function
 
 def check_comment_writer(f):
     @wraps(f)
+    @marshal_with(ApiErrorSchema, code=404, description="없는 댓글")
+    @marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")
     def decorated_function(*args, **kwargs):
         comment = Comment.objects(id=kwargs["comment_id"])
         if not comment:
-            return jsonify(message="없는 댓글입니다"), 404
+            return ApiError(message="없는 댓글입니다"), 404
         elif comment.get().writer != g.user_id:
-            return jsonify(message="작성자 아이디가 아닙니다."), 401
+            return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
     return decorated_function
 
 def check_recomment(f):
     @wraps(f)
+    @marshal_with(ApiErrorSchema, code=404, description="없는 대댓글")
     def decorated_function(*args, **kwargs):
         if not ReComment.objects(id=kwargs["recomment_id"]):
-            return jsonify(message="없는 대댓글입니다"), 404
+            return ApiError(message="없는 대댓글입니다"), 404
         return f(*args, **kwargs)
     return decorated_function
 
 def check_recomment_writer(f):
     @wraps(f)
+    @marshal_with(ApiErrorSchema, code=404, description="없는 대댓글")
+    @marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")
     def decorated_function(*args, **kwargs):
         recomment = ReComment.objects(id=kwargs["recomment_id"])
         if not recomment:
-            return jsonify(message="없는 대댓글입니다"), 404
+            return ApiError(message="없는 대댓글입니다"), 404
         elif recomment.get().writer != g.user_id:
-            return jsonify(message="작성자 아이디가 아닙니다."), 401
+            return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
     return decorated_function

@@ -285,16 +285,16 @@ class Test_PostView:
             assert trans_api.status_code == 200
 
         def test_데이터_확인(self, trans_api, post):
-            assert len(trans_api.json["post_list"]) == 1
-            assert trans_api.json["post_list"][0]["title"] == post.title
-            assert trans_api.json["post_list"][0]["id"] == str(post.id)
-            assert trans_api.json["post_list"][0]["writer"] == post.writer
-            assert trans_api.json["post_list"][0]["date"] == post.date.isoformat(timespec='microseconds')
-            assert trans_api.json["post_list"][0]["content"] == post.content
-            assert trans_api.json["post_list"][0]["tag"] == post.tag
-            assert trans_api.json["post_list"][0]["notice"] == post.notice
-            assert trans_api.json["post_list"][0]["num_like"] == len(post.like)
-            assert trans_api.json["post_list"][0]["num_comment"] == post.num_comment
+            assert len(trans_api.json) == 1
+            assert trans_api.json[0]["title"] == post.title
+            assert trans_api.json[0]["id"] == str(post.id)
+            assert trans_api.json[0]["writer"] == post.writer
+            assert trans_api.json[0]["date"] == post.date.isoformat(timespec='microseconds')
+            assert trans_api.json[0]["content"] == post.content
+            assert trans_api.json[0]["tag"] == post.tag
+            assert trans_api.json[0]["notice"] == post.notice
+            assert trans_api.json[0]["num_like"] == len(post.like)
+            assert trans_api.json[0]["num_comment"] == post.num_comment
 
         class Test_제목에서_찾은_경우:
             @pytest.fixture
@@ -307,17 +307,17 @@ class Test_PostView:
                 assert trans_api.status_code == 200
 
             def test_데이터_확인(self, trans_api, post, form):
-                assert len(trans_api.json["post_list"]) == 1
-                assert trans_api.json["post_list"][0]["title"] == post.title
-                assert form["search_word"] in trans_api.json["post_list"][0]["title"]
-                assert trans_api.json["post_list"][0]["id"] == str(post.id)
-                assert trans_api.json["post_list"][0]["writer"] == post.writer
-                assert trans_api.json["post_list"][0]["date"] == post.date.isoformat(timespec='microseconds')
-                assert trans_api.json["post_list"][0]["content"] == post.content
-                assert trans_api.json["post_list"][0]["tag"] == post.tag
-                assert trans_api.json["post_list"][0]["notice"] == post.notice
-                assert trans_api.json["post_list"][0]["num_like"] == len(post.like)
-                assert trans_api.json["post_list"][0]["num_comment"] == post.num_comment
+                assert len(trans_api.json) == 1
+                assert trans_api.json[0]["title"] == post.title
+                assert form["search_word"] in trans_api.json[0]["title"]
+                assert trans_api.json[0]["id"] == str(post.id)
+                assert trans_api.json[0]["writer"] == post.writer
+                assert trans_api.json[0]["date"] == post.date.isoformat(timespec='microseconds')
+                assert trans_api.json[0]["content"] == post.content
+                assert trans_api.json[0]["tag"] == post.tag
+                assert trans_api.json[0]["notice"] == post.notice
+                assert trans_api.json[0]["num_like"] == len(post.like)
+                assert trans_api.json[0]["num_comment"] == post.num_comment
 
         class Test_내용에서_찾은_경우:
             @pytest.fixture
@@ -330,17 +330,17 @@ class Test_PostView:
                 assert trans_api.status_code == 200
 
             def test_데이터_확인(self, trans_api, post, form):
-                assert len(trans_api.json["post_list"]) == 1
-                assert trans_api.json["post_list"][0]["title"] == post.title
-                assert form["search_word"] in trans_api.json["post_list"][0]["content"]
-                assert trans_api.json["post_list"][0]["id"] == str(post.id)
-                assert trans_api.json["post_list"][0]["writer"] == post.writer
-                assert trans_api.json["post_list"][0]["date"] == post.date.isoformat(timespec='microseconds')
-                assert trans_api.json["post_list"][0]["content"] == post.content
-                assert trans_api.json["post_list"][0]["tag"] == post.tag
-                assert trans_api.json["post_list"][0]["notice"] == post.notice
-                assert trans_api.json["post_list"][0]["num_like"] == len(post.like)
-                assert trans_api.json["post_list"][0]["num_comment"] == post.num_comment
+                assert len(trans_api.json) == 1
+                assert trans_api.json[0]["title"] == post.title
+                assert form["search_word"] in trans_api.json[0]["content"]
+                assert trans_api.json[0]["id"] == str(post.id)
+                assert trans_api.json[0]["writer"] == post.writer
+                assert trans_api.json[0]["date"] == post.date.isoformat(timespec='microseconds')
+                assert trans_api.json[0]["content"] == post.content
+                assert trans_api.json[0]["tag"] == post.tag
+                assert trans_api.json[0]["notice"] == post.notice
+                assert trans_api.json[0]["num_like"] == len(post.like)
+                assert trans_api.json[0]["num_comment"] == post.num_comment
 
     class Test_Get_List:
         @pytest.fixture
@@ -356,7 +356,7 @@ class Test_PostView:
             assert trans_api.status_code == 200
 
         def test_데이터_확인(self, trans_api):
-            posts = trans_api.json["post_list"]
+            posts = trans_api.json
             for i in posts:
                 assert "id" in i
                 assert "writer" in i
@@ -369,19 +369,19 @@ class Test_PostView:
                 assert "num_comment" in i
 
         def test_공지사항_상단_노출_여부(self, trans_api):
-            posts = trans_api.json["post_list"]
+            posts = trans_api.json
             for i in range(1, len(posts)):
                 assert (posts[i - 1]["notice"] == True and posts[i]["notice"] == True) or (
                         posts[i - 1]["notice"] == False and posts[i]["notice"] == False) \
                        or (posts[i - 1]["notice"] == True and posts[i]["notice"] == False)
 
         def test_존재_여부(self, trans_api, post):
-            posts = trans_api.json["post_list"]
+            posts = trans_api.json
             for i in posts:
                 assert next((True for item in post if str(item.id) == i["id"]), False)
 
         def test_좋아요_누름_여부(self, trans_api, login_user):
-            posts = trans_api.json["post_list"]
+            posts = trans_api.json
             for i in posts:
                 assert (login_user in Post.objects(id=i["id"]).get().like) == i["is_like"]
 
@@ -402,4 +402,4 @@ class Test_PostView:
                 assert trans_api.status_code == 200
 
             def test_빈리스트_반환(self, trans_api):
-                assert trans_api.json["post_list"] == []
+                assert trans_api.json == []
