@@ -2,19 +2,23 @@ from flask import jsonify, request, g
 import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
+from flask_apispec import use_kwargs, marshal_with
 from app.models import ReComment, User, Comment
 from app.schemas.ReCommentSchema import ReCommentRegistSchema
 from app.decorator import login_required, check_board, check_post, check_comment, check_recomment_writer, check_recomment
-
+from app.schemas.errors import ApiErrorSchema
+from app.errors import ApiError
 
 class ReCommentView(FlaskView):
+    @route("/",methods=["POST"])
     @login_required
     @check_board
     @check_post
     @check_comment
-    def post(self, board_id, post_id, comment_id):
+    @use_kwargs(ReCommentRegistSchema, locations=('json',))
+    @marshal_with(ApiErrorSchema, code=422, description='validation error')
+    def post(self, board_id, post_id, comment_id, recomment):
         try:
-            recomment = ReCommentRegistSchema().load(request.json)
             recomment.writer = g.user_id
             recomment.comment = ObjectId(comment_id)
             recomment.save()
@@ -22,7 +26,7 @@ class ReCommentView(FlaskView):
             comment.update(num_recomment=comment.num_recomment + 1)
             return "", 200
         except marshmallow.exceptions.ValidationError as err:
-            return jsonify({"message": err.messages}), 422
+            return ApiError(message= err.messages), 422
 
     @route("/<recomment_id>", methods=["PUT"])
     @login_required
