@@ -1406,7 +1406,7 @@
 				}
 			}
 		},
-		"/mainpage/comment": {
+		"/comment": {
 			"get": {
 				"summary": "댓글 많은 순 게시물 10개",
 				"description": "댓글 많은 순 게시물 10개",
@@ -1450,7 +1450,7 @@
 				}
 			}
 		},
-		"/mainpage/like": {
+		"/like": {
 			"get": {
 				"summary": "좋아요 많은 순 게시물 10개",
 				"description": "좋아요 많은 순 게시물 10개",
@@ -1494,7 +1494,7 @@
 				}
 			}
 		},
-		"/mainpage/recent": {
+		"/recent": {
 			"get": {
 				"summary": "최신 게시물 10개",
 				"description": "최신 게시물 10개",
@@ -1574,11 +1574,11 @@
 			"ApiError": {
 				"type": "object",
 				"properties": {
-					"code": {
-						"type": "integer"
-					},
 					"message": {
 						"type": "string"
+					},
+					"code": {
+						"type": "integer"
 					}
 				},
 				"required": [
@@ -1668,19 +1668,8 @@
 			"PostList": {
 				"type": "object",
 				"properties": {
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"is_like": {
-						"readOnly": true
-					},
-					"id": {
-						"type": "string",
-						"minLength": 1
+					"num_comment": {
+						"type": "integer"
 					},
 					"tag": {
 						"type": "array",
@@ -1688,21 +1677,32 @@
 							"type": "string"
 						}
 					},
+					"is_like": {
+						"readOnly": true
+					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"num_like": {
-						"readOnly": true
+					"notice": {
+						"type": "boolean"
 					},
 					"writer": {
 						"type": "string",
 						"minLength": 1
 					},
-					"num_comment": {
-						"type": "integer"
+					"title": {
+						"type": "string",
+						"minLength": 1
 					},
-					"content": {
+					"num_like": {
+						"readOnly": true
+					},
+					"id": {
 						"type": "string",
 						"minLength": 1
 					}
@@ -1718,14 +1718,8 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
-					"title": {
-						"type": "string"
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"id": {
-						"type": "string"
+					"num_comment": {
+						"type": "integer"
 					},
 					"tag": {
 						"type": "array",
@@ -1736,20 +1730,26 @@
 					"comment": {
 						"readOnly": true
 					},
+					"content": {
+						"type": "string"
+					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"num_like": {
-						"readOnly": true
+					"notice": {
+						"type": "boolean"
 					},
 					"writer": {
 						"type": "string"
 					},
-					"num_comment": {
-						"type": "integer"
+					"title": {
+						"type": "string"
 					},
-					"content": {
+					"num_like": {
+						"readOnly": true
+					},
+					"id": {
 						"type": "string"
 					}
 				}
@@ -1757,22 +1757,22 @@
 			"PostRegist": {
 				"type": "object",
 				"properties": {
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"content": {
-						"type": "string",
-						"minLength": 1
-					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"content": {
+						"type": "string",
+						"minLength": 1
 					}
 				},
 				"required": [
@@ -1783,20 +1783,20 @@
 			"PostUpdate": {
 				"type": "object",
 				"properties": {
-					"title": {
-						"type": "string"
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"content": {
-						"type": "string"
-					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"title": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
 					}
 				}
 			},
@@ -1819,10 +1819,10 @@
 			"CommentMyList": {
 				"type": "object",
 				"properties": {
-					"recomments": {
+					"comments": {
 						"readOnly": true
 					},
-					"comments": {
+					"recomments": {
 						"readOnly": true
 					}
 				}

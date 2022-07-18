@@ -16,7 +16,7 @@ def register_api(app):
     PostView.register(app, route_base="/boards/<string:board_id>/posts", trailing_slash=False)
     CommentView.register(app, route_base="/boards/<string:board_id>/posts/<string:post_id>/comments", trailing_slash=False)
     ReCommentView.register(app, route_base="/boards/<string:board_id>/posts/<string:post_id>/comments/<string:comment_id>/recomments", trailing_slash=False)
-    MainPageView.register(app, route_base="/mainpage",trailing_slash=False)
+    MainPageView.register(app, route_base="/",trailing_slash=False)
     MyPageView.register(app, route_base="/mypage", trailing_slash=False)
 
     app.config["DOC_TITLE"] = "Swagger petstore"

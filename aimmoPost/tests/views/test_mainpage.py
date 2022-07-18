@@ -25,7 +25,7 @@ class Test_MainPageView:
     class Test_Recent_List:
         @pytest.fixture
         def trans_api(self, client, post, headers):
-            return client.get('/mainpage/recent', headers=headers)
+            return client.get('/recent', headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
@@ -38,7 +38,7 @@ class Test_MainPageView:
     class Test_Comment_List:
         @pytest.fixture
         def trans_api(self, client, post, headers):
-            return client.get('/mainpage/comment', headers=headers)
+            return client.get('/comment', headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
@@ -51,7 +51,7 @@ class Test_MainPageView:
     class Test_like_List:
         @pytest.fixture
         def trans_api(self, client, post, headers):
-            return client.get('/mainpage/like', headers=headers)
+            return client.get('/like', headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
