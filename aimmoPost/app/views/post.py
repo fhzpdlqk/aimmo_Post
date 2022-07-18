@@ -262,6 +262,39 @@ class PostView(FlaskView):
     @marshal_with(PostListSchema(many=True), code=200, description='목록')
     @marshal_with(ApiErrorSchema, code=404, description='적합하지 않은 인덱스')
     def get(self, board_id):
+        """ post list
+            ---
+            summary: 게시물 목록 조회
+            description: 게시물 목록 조회
+            tags: [posts]
+            security:
+                Authorization: []
+            parameters:
+                board_id: []
+                page: []
+                size: []
+            responses:
+                200:
+                    description: post list return
+                    content:
+                        application/json:
+                            schema: PostListSchema
+                401:
+                    description: not login user or not valid token
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                404:
+                    description: not found board id
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                422:
+                    description: validation error
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+        """
         try:
             params = request.args.to_dict()
             if "page" not in params:

@@ -2,6 +2,7 @@ import jwt
 from tests.factory.user_factory import UserFactory
 from tests.factory.post_factory import PostFactory
 from tests.factory.comment_factory import CommentFactory
+from tests.factory.recomment_factory import ReCommentFactory
 from app.config import TestConfig
 from app.models import Post
 import pytest
@@ -39,8 +40,7 @@ class Test_MyPageView:
     class Test_My_Comment:
         @pytest.fixture
         def posts(self, login_user):
-            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=login_user.user_id) for
-                                                                   _ in range(20)]
+            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=login_user.user_id) for _ in range(20)]+ [ReCommentFactory.create(writer=login_user.user_id) for _ in range(20)]
 
         @pytest.fixture
         def trans_api(self, client, headers, posts):
@@ -52,8 +52,12 @@ class Test_MyPageView:
         def test_댓글_목록_작성자_여부(self, trans_api, login_user):
             comment_list = trans_api.json["comments"]
             assert len(comment_list) == 20
-            for post in comment_list:
-                assert post["writer"] == login_user.user_id
+            for comment in comment_list:
+                assert comment["writer"] == login_user.user_id
+            recomment_list = trans_api.json["recomments"]
+            assert len(recomment_list) == 20
+            for recomment in recomment_list:
+                assert recomment["writer"] == login_user.user_id
 
     class Test_My_Like:
         @pytest.fixture

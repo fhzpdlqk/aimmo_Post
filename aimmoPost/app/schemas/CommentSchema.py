@@ -31,7 +31,7 @@ class CommentDetailSchema(Schema):
         return ReCommentDetailSchema(many=True).dump(ReComment.objects(comment=obj.id, is_deleted=False))
 
 
-class CommentRegistSchema(Schema):
+class CommentSchema(Schema):
     content = fields.Str()
 
     @post_load
@@ -43,8 +43,8 @@ class CommentMyListSchema(Schema):
     comments = fields.Method("comment_list")
     recomments = fields.Method("recomment_list")
 
-    def comment_list(self, obj):
+    def comment_list(self, obj) -> object:
         return CommentListSchema(many=True).dump(obj.comment)
 
-    def recomment_list(self, obj):
+    def recomment_list(self, obj) -> object:
         return ReCommentListSchema(many=True).dump(obj.recomment)
