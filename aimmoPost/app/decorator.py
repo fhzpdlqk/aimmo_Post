@@ -67,7 +67,7 @@ def check_comment(f):
     @wraps(f)
     @marshal_with(ApiErrorSchema, code=404, description="없는 댓글")
     def decorated_function(*args, **kwargs):
-        if not Comment.objects(id=kwargs["comment_id"]):
+        if not Comment.objects(id=kwargs["comment_id"], is_deleted=False):
             return ApiError(message="없는 댓글입니다"), 404
         return f(*args, **kwargs)
     return decorated_function
@@ -77,7 +77,7 @@ def check_comment_writer(f):
     @marshal_with(ApiErrorSchema, code=404, description="없는 댓글")
     @marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")
     def decorated_function(*args, **kwargs):
-        comment = Comment.objects(id=kwargs["comment_id"])
+        comment = Comment.objects(id=kwargs["comment_id"], is_deleted=False)
         if not comment:
             return ApiError(message="없는 댓글입니다"), 404
         elif comment.get().writer != g.user_id:
@@ -89,7 +89,7 @@ def check_recomment(f):
     @wraps(f)
     @marshal_with(ApiErrorSchema, code=404, description="없는 대댓글")
     def decorated_function(*args, **kwargs):
-        if not ReComment.objects(id=kwargs["recomment_id"]):
+        if not ReComment.objects(id=kwargs["recomment_id"], is_deleted=False):
             return ApiError(message="없는 대댓글입니다"), 404
         return f(*args, **kwargs)
     return decorated_function
@@ -99,7 +99,7 @@ def check_recomment_writer(f):
     @marshal_with(ApiErrorSchema, code=404, description="없는 대댓글")
     @marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")
     def decorated_function(*args, **kwargs):
-        recomment = ReComment.objects(id=kwargs["recomment_id"])
+        recomment = ReComment.objects(id=kwargs["recomment_id"], is_deleted=False)
         if not recomment:
             return ApiError(message="없는 대댓글입니다"), 404
         elif recomment.get().writer != g.user_id:

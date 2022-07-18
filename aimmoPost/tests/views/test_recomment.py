@@ -103,7 +103,7 @@ class TestReCommentView:
             assert trans_api.status_code == 200
 
         def test_데이터_개수_확인(self, trans_api, login_user, comment):
-            assert ReComment.objects().count() == 0
+            assert ReComment.objects(comment=comment.id, is_deleted=False).count() == 0
             assert Comment.objects(id=comment.id).get().num_recomment == 0
 
     class Test_Like_ReComment:

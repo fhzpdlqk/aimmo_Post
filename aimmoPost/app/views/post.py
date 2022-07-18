@@ -252,7 +252,7 @@ class PostView(FlaskView):
                         application/json:
                             schema: ApiErrorSchema
         """
-        posts = Post.objects(board=board_id, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}},
+        posts = Post.objects(board=board_id, is_deleted=False, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}},
                                                               {"title": {"$regex": request.json["search_word"]}}]})
         return posts, 200
 

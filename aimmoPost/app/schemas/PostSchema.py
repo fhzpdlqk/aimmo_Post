@@ -51,7 +51,7 @@ class PostDetailSchema(Schema):
         return len(obj.like)
 
     def comment_list(self, obj):
-        return CommentDetailSchema(many=True).dump(Comment.objects(post=obj.id))
+        return CommentDetailSchema(many=True).dump(Comment.objects(post=obj.id, is_deleted=False))
 
 
 class PostUpdateSchema(Schema):

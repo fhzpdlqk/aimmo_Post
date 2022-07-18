@@ -765,12 +765,12 @@
 			"Board": {
 				"type": "object",
 				"properties": {
-					"id": {
-						"type": "string"
-					},
 					"board_name": {
 						"type": "string",
 						"minLength": 1
+					},
+					"id": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -805,39 +805,39 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
+					"content": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"title": {
+						"type": "string"
+					},
+					"num_like": {
+						"readOnly": true
+					},
+					"notice": {
+						"type": "boolean"
+					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
 					},
-					"date": {
-						"type": "string",
-						"format": "date-time"
+					"writer": {
+						"type": "string"
 					},
-					"notice": {
-						"type": "boolean"
+					"num_comment": {
+						"type": "integer"
 					},
 					"id": {
 						"type": "string"
 					},
-					"title": {
-						"type": "string"
-					},
-					"writer": {
-						"type": "string"
-					},
 					"comment": {
 						"readOnly": true
-					},
-					"content": {
-						"type": "string"
-					},
-					"num_like": {
-						"readOnly": true
-					},
-					"num_comment": {
-						"type": "integer"
 					}
 				}
 			},
@@ -848,9 +848,6 @@
 						"type": "string",
 						"minLength": 1
 					},
-					"notice": {
-						"type": "boolean"
-					},
 					"tag": {
 						"type": "array",
 						"items": {
@@ -860,6 +857,9 @@
 					"title": {
 						"type": "string",
 						"minLength": 1
+					},
+					"notice": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -870,20 +870,11 @@
 			"PostList": {
 				"type": "object",
 				"properties": {
-					"tag": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"notice": {
-						"type": "boolean"
-					},
-					"id": {
+					"content": {
 						"type": "string",
 						"minLength": 1
 					},
@@ -894,19 +885,28 @@
 						"type": "string",
 						"minLength": 1
 					},
+					"num_like": {
+						"readOnly": true
+					},
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"notice": {
+						"type": "boolean"
+					},
 					"writer": {
 						"type": "string",
 						"minLength": 1
 					},
-					"content": {
-						"type": "string",
-						"minLength": 1
-					},
-					"num_like": {
-						"readOnly": true
-					},
 					"num_comment": {
 						"type": "integer"
+					},
+					"id": {
+						"type": "string",
+						"minLength": 1
 					}
 				},
 				"required": [
@@ -923,9 +923,6 @@
 					"content": {
 						"type": "string"
 					},
-					"notice": {
-						"type": "boolean"
-					},
 					"tag": {
 						"type": "array",
 						"items": {
@@ -934,6 +931,9 @@
 					},
 					"title": {
 						"type": "string"
+					},
+					"notice": {
+						"type": "boolean"
 					}
 				}
 			}

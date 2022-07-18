@@ -28,7 +28,7 @@ class CommentDetailSchema(Schema):
         return len(obj.like)
 
     def recomment_list(self, obj):
-        return ReCommentDetailSchema(many=True).dump(ReComment.objects(comment=obj.id))
+        return ReCommentDetailSchema(many=True).dump(ReComment.objects(comment=obj.id, is_deleted=False))
 
 
 class CommentRegistSchema(Schema):
