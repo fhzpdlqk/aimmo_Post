@@ -9,6 +9,7 @@ from tests.factory.post_factory import PostFactory
 from tests.factory.comment_factory import CommentFactory
 from tests.factory.recomment_factory import ReCommentFactory
 
+
 class TestReCommentView:
     @pytest.fixture
     def login_user(self):
@@ -41,7 +42,8 @@ class TestReCommentView:
 
         @pytest.fixture
         def trans_api(self, form, client, headers, board, post, comment):
-            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/', data=dumps(form),
+            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/',
+                               data=dumps(form),
                                headers=headers)
 
         def test_상태코드_200(self, trans_api):
@@ -62,14 +64,17 @@ class TestReCommentView:
             return {
                 "content": "make_recomment_test_update"
             }
+
         @pytest.fixture
         def recomment(self, comment, login_user):
             return ReCommentFactory.create(comment=comment, writer=login_user.user_id)
 
         @pytest.fixture
         def trans_api(self, form, client, headers, board, post, comment, recomment):
-            return client.put(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}', data=dumps(form),
-                               headers=headers)
+            return client.put(
+                f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}',
+                data=dumps(form),
+                headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
@@ -81,7 +86,7 @@ class TestReCommentView:
 
     class Test_Delete_ReComment:
         @pytest.fixture
-        def comment(self,post,login_user):
+        def comment(self, post, login_user):
             return CommentFactory.create(num_recomment=1, post=post, writer=login_user.user_id)
 
         @pytest.fixture
@@ -90,8 +95,9 @@ class TestReCommentView:
 
         @pytest.fixture
         def trans_api(self, client, headers, board, post, comment, recomment):
-            return client.delete(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}', headers=headers)
-
+            return client.delete(
+                f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}',
+                headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
@@ -107,12 +113,14 @@ class TestReCommentView:
 
         @pytest.fixture
         def trans_api(self, client, headers, board, post, comment, recomment):
-            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}/like', headers=headers)
+            return client.post(
+                f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}/like',
+                headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
 
-        def test_데이터_확인(self,trans_api, post, login_user, recomment):
+        def test_데이터_확인(self, trans_api, post, login_user, recomment):
             assert login_user in ReComment.objects(id=recomment.id).get().like
 
         class Test_이미_좋아요가_눌러져_있을_경우:

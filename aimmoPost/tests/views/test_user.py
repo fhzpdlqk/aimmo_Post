@@ -7,6 +7,7 @@ from app.config import TestConfig
 from tests.factory.user_factory import UserFactory
 from json import dumps
 
+
 class Test_UserView:
     @pytest.fixture
     def logged_in_user(self):
@@ -41,13 +42,15 @@ class Test_UserView:
                     "user_pw": factory.Faker("user_pw").provider
                 }
 
-            def test_상태코드_409(self,trans_api):
+            def test_상태코드_409(self, trans_api):
                 assert trans_api.status_code == 409
 
     class Test_Login_User:
         @pytest.fixture
         def signup_user(self):
-            return UserFactory(user_id="test_signup_user_id", user_pw=bcrypt.hashpw("test_signup_user_pw".encode("utf-8"), bcrypt.gensalt()))
+            return UserFactory(user_id="test_signup_user_id",
+                               user_pw=bcrypt.hashpw("test_signup_user_pw".encode("utf-8"), bcrypt.gensalt()))
+
         @pytest.fixture
         def form(self):
             return {
@@ -61,10 +64,11 @@ class Test_UserView:
             return client.post('/users/login', data=dumps(form), content_type="application/json")
 
         def test_login_상태코드_200(self, trans_api):
-            assert trans_api.status_code==200
+            assert trans_api.status_code == 200
 
         def test_login_토큰일치(self, trans_api, form):
-            token = jwt.encode({"user_id": form["user_id"], "is_master": form["is_master"]}, TestConfig.TOKEN_KEY, TestConfig.ALGORITHM)
+            token = jwt.encode({"user_id": form["user_id"], "is_master": form["is_master"]}, TestConfig.TOKEN_KEY,
+                               TestConfig.ALGORITHM)
             assert token == trans_api.json["token"]
 
         class Test_아이디가_없을경우:
@@ -75,8 +79,10 @@ class Test_UserView:
                     "user_pw": "test_signup_user_pw",
                     "is_master": False
                 }
+
             def test_login_상태코드_401(self, trans_api):
                 assert trans_api.status_code == 401
+
         class Test_비밀번호가_틀렸을경우:
             @pytest.fixture
             def form(self):
@@ -85,5 +91,6 @@ class Test_UserView:
                     "user_pw": "test_signup_user_wrong_pw",
                     "is_master": False
                 }
+
             def test_login_상태코드_401(self, trans_api):
                 assert trans_api.status_code == 401

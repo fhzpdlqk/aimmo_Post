@@ -17,6 +17,9 @@ category = "main"
 optional = false
 python-versions = ">=3.7"
 
+[package.dependencies]
+PyYAML = {version = ">=3.10", optional = true, markers = "extra == \"yaml\""}
+
 [package.extras]
 dev = ["PyYAML (>=3.10)", "prance[osv] (>=0.11)", "marshmallow (>=3.13.0)", "pytest", "mock", "flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "pre-commit (>=2.4,<3.0)", "mypy (==0.950)", "types-pyyaml", "tox"]
 docs = ["marshmallow (>=3.13.0)", "pyyaml (==6.0)", "sphinx (==4.5.0)", "sphinx-issues (==3.0.1)", "sphinx-rtd-theme (==1.0.0)"]
@@ -25,6 +28,22 @@ marshmallow = ["marshmallow (>=3.13.0)"]
 tests = ["PyYAML (>=3.10)", "prance[osv] (>=0.11)", "marshmallow (>=3.13.0)", "pytest", "mock"]
 validation = ["prance[osv] (>=0.11)"]
 yaml = ["PyYAML (>=3.10)"]
+
+[[package]]
+name = "apispec-webframeworks"
+version = "0.5.2"
+description = "Web framework plugins for apispec."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+apispec = {version = ">=2.0.0", extras = ["yaml"]}
+
+[package.extras]
+dev = ["pytest", "mock", "Flask (==1.1.1)", "tornado", "bottle (==0.12.17)", "flake8 (==3.7.9)", "flake8-bugbear (==19.8.0)", "pre-commit (>=1.18,<2.0)", "tox"]
+lint = ["flake8 (==3.7.9)", "flake8-bugbear (==19.8.0)", "pre-commit (>=1.18,<2.0)"]
+tests = ["pytest", "mock", "Flask (==1.1.1)", "tornado", "bottle (==0.12.17)"]
 
 [[package]]
 name = "appnope"
@@ -301,6 +320,34 @@ python-versions = "*"
 Flask = ">=0.11,<0.12.3 || >0.12.3"
 
 [[package]]
+name = "flask-classful-apispec"
+version = "0.1.8"
+description = "Auto docs generation from marshmallow schema for flask classfy"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+apispec = {version = ">=5.1.1", extras = ["yaml"]}
+flask-classful = "0.14.2"
+
+[package.extras]
+dev = ["flake8-bugbear (==21.4.3)", "flake8 (==3.9.2)", "mock", "pytest", "tox"]
+lint = ["flake8-bugbear (==21.4.3)", "flake8 (==3.9.2)"]
+tests = ["mock", "pytest"]
+
+[[package]]
+name = "flask-classy"
+version = "0.6.10"
+description = "Class based views for Flask"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Flask = ">=0.9"
+
+[[package]]
 name = "flask-cors"
 version = "3.0.10"
 description = "A Flask extension adding a decorator for CORS support"
@@ -371,6 +418,17 @@ python-versions = "*"
 [package.dependencies]
 Flask = ">=0.10"
 PyYAML = ">=5.1"
+
+[[package]]
+name = "flask-swagger-ui"
+version = "4.11.1"
+description = "Swagger UI blueprint for Flask"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+flask = "*"
 
 [[package]]
 name = "flask-wtf"
@@ -1088,7 +1146,7 @@ email = ["email-validator"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "16fd87bb3323f55e33f5e5dfa91402b9b7f053824d09f1f0a6c855354a50bd21"
+content-hash = "71321a02f67325232e9da75e28c10fae4f5ab282b6f5f3d1755b6d23a8ab64e2"
 
 [metadata.files]
 aniso8601 = [
@@ -1096,6 +1154,7 @@ aniso8601 = [
     {file = "aniso8601-9.0.1.tar.gz", hash = "sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973"},
 ]
 apispec = []
+apispec-webframeworks = []
 appnope = []
 astroid = [
     {file = "astroid-2.11.6-py3-none-any.whl", hash = "sha256:ba33a82a9a9c06a5ceed98180c5aab16e29c285b828d94696bf32d6015ea82a9"},
@@ -1223,6 +1282,10 @@ flask-classful = [
     {file = "Flask-Classful-0.14.2.tar.gz", hash = "sha256:ae0cabd3f69e1e16db3bf31f50862d3a5577244bfa0ace2b4612d10436e4bff7"},
     {file = "Flask_Classful-0.14.2-py2.py3-none-any.whl", hash = "sha256:3a8f3c8fc549e37acf082f7b0ebf9e53dc35b0c9241c14f7d64433d4c1d629c9"},
 ]
+flask-classful-apispec = []
+flask-classy = [
+    {file = "Flask-Classy-0.6.10.tar.gz", hash = "sha256:13c9b4312bff2bf5c6c45ba7d6da46d6bd81724dfc45b598f12438c230583aab"},
+]
 flask-cors = [
     {file = "Flask-Cors-3.0.10.tar.gz", hash = "sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de"},
     {file = "Flask_Cors-3.0.10-py2.py3-none-any.whl", hash = "sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438"},
@@ -1240,6 +1303,7 @@ flask-swagger = [
     {file = "flask-swagger-0.2.14.tar.gz", hash = "sha256:b4085f5bc36df4c20b6548cd1413adc9cf35719b0f0695367cd542065145294d"},
     {file = "flask_swagger-0.2.14-py2-none-any.whl", hash = "sha256:3caddb1311388eafc86f82f8e64ba386a5df6b84e5f16dfae19ca08173eba216"},
 ]
+flask-swagger-ui = []
 flask-wtf = [
     {file = "Flask-WTF-1.0.1.tar.gz", hash = "sha256:34fe5c6fee0f69b50e30f81a3b7ea16aa1492a771fe9ad0974d164610c09a6c9"},
     {file = "Flask_WTF-1.0.1-py3-none-any.whl", hash = "sha256:9d733658c80be551ce7d5bc13c7a7ac0d80df509be1e23827c847d9520f4359a"},

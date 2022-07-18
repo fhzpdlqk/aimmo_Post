@@ -1,4 +1,5 @@
 import bcrypt
+from flask import g
 from marshmallow import fields, Schema, post_load
 from funcy import project
 from app.models import User
@@ -31,6 +32,18 @@ class UserLoginSchema(Schema):
         if not user:
             return {'user': False}
         return {'user': user[0]}
+
+class UserUpdateSchema(Schema):
+    user_origin_pw = fields.Str()
+    user_pw = fields.Str()
+
+    @post_load
+    def check_user(self, data, **kwargs):
+        user = User.objects(user_id=g.user_id)
+        if bcrypt.checkpw(data["user_origin_pw"].encode("utf-8"), user.user_pw.encode("utf-8")):
+            return {'user': user[0]}
+        else:
+            return {'user': False}
 
 
 class AuthTokenSchema(Schema):

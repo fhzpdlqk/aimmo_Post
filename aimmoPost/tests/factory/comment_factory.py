@@ -10,8 +10,8 @@ class CommentFactory(MongoEngineFactory):
     class Meta:
         model = Comment
 
-    writer = fuzzy.FuzzyText("writer_")
+    writer = fuzzy.FuzzyText(prefix="writer_")
     date = factory.LazyFunction(datetime.datetime.utcnow)
-    content = "samplecontent_comment"
+    content = fuzzy.FuzzyText(prefix="comment_content")
     like = factory.LazyAttribute(lambda n: [])
     post = factory.SubFactory(PostFactory)

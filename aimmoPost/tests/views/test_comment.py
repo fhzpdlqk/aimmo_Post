@@ -1,9 +1,7 @@
 import pytest
 import jwt
-import uuid
-from bson import ObjectId
 from json import dumps
-from app.models import Post, Comment, User
+from app.models import Post, Comment
 from app.config import TestConfig
 from tests.factory.user_factory import UserFactory
 from tests.factory.board_factory import BoardFactory
@@ -60,9 +58,11 @@ class TestCommentView:
             return {
                 "content": "update_comment_content"
             }
+
         @pytest.fixture
-        def comment(self,post,login_user):
+        def comment(self, post, login_user):
             return CommentFactory.create(post=post.id, writer=login_user.user_id)
+
         @pytest.fixture
         def trans_api(self, form, client, headers, board, post, comment):
             return client.put(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}',
@@ -79,14 +79,17 @@ class TestCommentView:
     class Test_Delete_Comment:
         @pytest.fixture
         def post(self, board, login_user):
-            post = PostFactory.create(board=board.id, writer=login_user.user_id, num_comment = 1)
+            post = PostFactory.create(board=board.id, writer=login_user.user_id, num_comment=1)
             return post
+
         @pytest.fixture
-        def comment(self,post,login_user):
+        def comment(self, post, login_user):
             return CommentFactory.create(post=post.id, writer=login_user.user_id)
+
         @pytest.fixture
         def trans_api(self, client, headers, board, post, comment):
-            return client.delete(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}', headers=headers)
+            return client.delete(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}',
+                                 headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
@@ -102,12 +105,13 @@ class TestCommentView:
 
         @pytest.fixture
         def trans_api(self, client, headers, board, post, comment):
-            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/like', headers=headers)
+            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/like',
+                               headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
 
-        def test_데이터_확인(self,trans_api, post, login_user, comment):
+        def test_데이터_확인(self, trans_api, post, login_user, comment):
             assert login_user in Comment.objects(id=comment.id).get().like
 
         class Test_이미_좋아요가_눌러져_있을_경우:

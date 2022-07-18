@@ -1,15 +1,12 @@
 import pytest
 import jwt
-import uuid
 import random
-from bson import ObjectId
 from json import dumps
 from app.models import Post
 from app.config import TestConfig
 from tests.factory.user_factory import UserFactory
 from tests.factory.board_factory import BoardFactory
 from tests.factory.post_factory import PostFactory
-from tests.factory.comment_factory import CommentFactory
 
 
 class Test_PostView:
@@ -272,9 +269,9 @@ class Test_PostView:
 
     class Test_Search_Post:
         @pytest.fixture
-        def form(self):
+        def form(self, post):
             return {
-                "search_word": "sample"
+                "search_word": post.title
             }
 
         @pytest.fixture

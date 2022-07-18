@@ -1,11 +1,9 @@
 import pytest
 import jwt
-import random
-from app.models import Board, Post
+from app.models import Board
 from app.config import TestConfig
 from tests.factory.user_factory import UserFactory
 from tests.factory.board_factory import BoardFactory
-from tests.factory.post_factory import PostFactory
 from json import dumps
 
 

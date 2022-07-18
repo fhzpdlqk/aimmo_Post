@@ -1,13 +1,12 @@
 import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
-from flask import jsonify, request, g
+from flask import request, g
 from flask_apispec import marshal_with, use_kwargs
 from app.models import Comment, User, Post
 from app.schemas.CommentSchema import CommentRegistSchema
 from app.decorator import login_required, check_post, check_board, check_comment, check_comment_writer
-from app.errors import ApiError
-from app.schemas.errors import ApiErrorSchema
+from app.errors import ApiError, ApiErrorSchema
 
 class CommentView(FlaskView):
     @route('/', methods=["POST"])

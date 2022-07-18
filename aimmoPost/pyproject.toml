@@ -26,6 +26,10 @@ flask-swagger = "^0.2.14"
 pytest = "^7.1.2"
 flask-apispec = "^0.11.1"
 funcy = "^1.17"
+apispec-webframeworks = "^0.5.2"
+Flask-Classy = "^0.6.10"
+flask-classful-apispec = "^0.1.8"
+flask-swagger-ui = "^4.11.1"
 
 
 [tool.poetry.dev-dependencies]
