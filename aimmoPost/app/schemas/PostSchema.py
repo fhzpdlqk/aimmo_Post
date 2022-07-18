@@ -15,10 +15,11 @@ class PostListSchema(Schema):
     notice = fields.Bool(required=True)
     num_like = fields.Method("like_count")
     num_comment = fields.Int()
-    is_like=fields.Method("islike")
+    is_like = fields.Method("islike")
 
     def like_count(self, obj):
         return len(obj.like)
+
     def islike(self, obj):
         return User.objects(user_id=g.user_id).get() in obj.like
 
@@ -48,12 +49,14 @@ class PostDetailSchema(Schema):
 
     def like_count(self, obj):
         return len(obj.like)
+
     def comment_list(self, obj):
         return CommentDetailSchema(many=True).dump(Comment.objects(post=obj.id))
 
+
 class PostUpdateSchema(Schema):
-    title = fields.Str(validate=Length(min=1))
-    content = fields.Str(validate=Length(min=1))
+    title = fields.Str()
+    content = fields.Str()
     tag = fields.List(fields.Str())
     notice = fields.Bool(default=False)
 

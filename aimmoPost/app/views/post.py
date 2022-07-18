@@ -137,7 +137,7 @@ class PostView(FlaskView):
     @check_board
     @check_post_writer
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
-    def put(self, board_id, post_id):
+    def put(self, board_id, post_id, post):
         """ update post
             ---
             summary: 게시물 수정
@@ -256,12 +256,12 @@ class PostView(FlaskView):
                                                               {"title": {"$regex": request.json["search_word"]}}]})
         return posts, 200
 
+    @route("/", methods=["GET"])
     @login_required
     @check_board
-    @marshal_with(PostListSchema(many=True), code=200, description='검색 목록')
+    @marshal_with(PostListSchema(many=True), code=200, description='목록')
     @marshal_with(ApiErrorSchema, code=404, description='적합하지 않은 인덱스')
     def get(self, board_id):
-
         try:
             params = request.args.to_dict()
             if "page" not in params:

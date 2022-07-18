@@ -10,6 +10,7 @@ from app.errors import ApiError, ApiErrorSchema
 
 class BoardView(FlaskView):
 
+    @route("/", methods=["POST"])
     @use_kwargs(BoardRegistSchema(), locations=('json',))
     @marshal_with(ApiErrorSchema, code=409, description="중복 게시판")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
@@ -61,6 +62,7 @@ class BoardView(FlaskView):
         except marshmallow.exceptions.ValidationError as err:
             return ApiError(message=err.messages), 422
 
+    @route("/", methods=["GET"])
     @marshal_with(BoardSchema(many=True), code=200, description="게시판 목록")
     def get(self):
         """ board
