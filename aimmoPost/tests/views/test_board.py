@@ -45,8 +45,24 @@ class Test_BoardView:
                     "board_name": board.board_name
                 }
 
-            def test_상태코드_409(self, trans_api):
+            def test_상태코드_409(self, trans_api, form):
                 assert trans_api.status_code == 409
+                assert len(Board.objects(board_name=form["board_name"])) == 1
+
+        class Test_생성되었다가_삭제된_게시판일_경우:
+            @pytest.fixture
+            def board(self):
+                return BoardFactory.create(is_deleted=True)
+
+            @pytest.fixture
+            def form(self, board):
+                return {
+                    "board_name": board.board_name
+                }
+
+            def test_상태코드_200(self, trans_api, form):
+                assert trans_api.status_code == 200
+                assert len(Board.objects(board_name=form["board_name"], is_deleted=False)) == 1
 
     class Test_Get_Board_List:
         @pytest.fixture
@@ -59,6 +75,7 @@ class Test_BoardView:
         def test_게시판_리스트(self, trans_api, board):
             assert len(trans_api.json) == 1
             assert trans_api.json[0]["board_name"] == board.board_name
+            assert not Board.objects(board_name=board.board_name).get().is_deleted
 
     class Test_Update_Board:
         @pytest.fixture
@@ -116,4 +133,12 @@ class Test_BoardView:
             assert trans_api.status_code == 200
 
         def test_삭제_여부(self, board, trans_api):
-            assert len(Board.objects(id=board.id)) == 0
+            assert Board.objects(id=board.id).get().is_deleted
+
+        class Test_이미_삭제된_게시판에_삭제요청:
+            @pytest.fixture
+            def board(self):
+                return BoardFactory.create(is_deleted=True)
+
+            def test_상태코드_404(self,trans_api):
+                assert trans_api.status_code==404

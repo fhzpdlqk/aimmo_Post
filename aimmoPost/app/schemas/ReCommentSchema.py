@@ -25,7 +25,7 @@ class ReCommentDetailSchema(Schema):
         return len(obj.like)
 
 
-class ReCommentRegistSchema(Schema):
+class ReCommentSchema(Schema):
     content = fields.Str()
 
     @post_load

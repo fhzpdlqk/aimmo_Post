@@ -11,7 +11,8 @@ class User(Document):
 
 
 class Board(Document):
-    board_name = StringField(reuired=True, unique=True)
+    board_name = StringField(reuired=True)
+    is_deleted = BooleanField(default=False)
 
 
 class Post(Document):
@@ -24,6 +25,7 @@ class Post(Document):
     like = ListField(ReferenceField(User), default=list)
     board = ReferenceField(Board)
     num_comment = IntField(default=0)
+    is_deleted = BooleanField(default=False)
 
     @classmethod
     def post_save(cls, sender, document, **kwargs):
@@ -43,6 +45,7 @@ class Comment(Document):
     content = StringField(required=True)
     post = ReferenceField(Post)
     num_recomment = IntField(default=0)
+    is_deleted = BooleanField(default=False)
 
 class ReComment(Document):
     writer = StringField(required=True)
@@ -50,6 +53,7 @@ class ReComment(Document):
     content = StringField(required=True)
     like = ListField(ReferenceField(User), default=list)
     comment = ReferenceField(Comment, required=True, reverse_delete_rule=CASCADE)
+    is_deleted = BooleanField(default=False)
 
 class AuthToken(Document):
     token = StringField(required=True)

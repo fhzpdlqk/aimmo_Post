@@ -35,13 +35,22 @@ def register_swagger(app):
         spec.paths(ReCommentView, app)
         spec.paths(MyPageView, app)
         spec.paths(MainPageView, app)
+
         api_key_scheme = {"type": "uuid", "in": "header", "name": "Authorization"}
+        board_id_scheme = {"type": "string", "in": "path", "name": "board_id"}
+        post_id_scheme = {"type": "string", "in": "path", "name": "post_id"}
+        comment_id_scheme = {"type": "string", "in": "path", "name": "comment_id"}
+        recomment_id_scheme = {"type": "string", "in": "path", "name": "recomment_id"}
+        page_scheme = {"type": "integer", "in": "query", "name": "page"}
+        size_scheme = {"type": "integer", "in": "query", "name": "size"}
+
         spec.components.security_scheme(component_id="Authorization", component=api_key_scheme)
-        board_id_schema = {"type": "string", "in": "path", "name": "board_id"}
-        spec.components.parameter(component_id="board_id", component=board_id_schema, location='path')
-        post_id_schema = {"type": "string", "in": "path", "name": "post_id"}
-        spec.components.parameter(component_id="post_id", component=post_id_schema, location='path')
-        spec.tag({"boards": "boards", "posts": "posts"})
+        spec.components.parameter(component_id="board_id", component=board_id_scheme, location='path')
+        spec.components.parameter(component_id="post_id", component=post_id_scheme, location='path')
+        spec.components.parameter(component_id="comment_id", component=comment_id_scheme, location='path')
+        spec.components.parameter(component_id="recomment_id", component=recomment_id_scheme, location='path')
+        spec.components.parameter(component_id="page", component=page_scheme, location='query')
+        spec.components.parameter(component_id="size", component=size_scheme, location='query')
 
         with open('./app/static/swagger.json', 'w', encoding='utf-8') as make_file:
             json.dump(spec.to_dict(), make_file, indent="\t", ensure_ascii=False)

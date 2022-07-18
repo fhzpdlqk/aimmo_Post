@@ -52,6 +52,7 @@ class Test_PostView:
             assert Post.objects()[0].content == form["content"]
             assert Post.objects()[0].tag == form["tag"]
             assert Post.objects()[0].notice == form["notice"]
+            assert not Post.objects()[0].is_deleted
 
         class Test_제목이_누락되었을_경우:
             @pytest.fixture
@@ -138,6 +139,14 @@ class Test_PostView:
             assert post.date.isoformat(timespec='microseconds') == trans_api.json["date"]
             assert post.num_comment == trans_api.json["num_comment"]
             assert trans_api.json["comment"] == []
+            assert not post.is_deleted
+        class Test_게시물이_삭제된_게시물일_경우:
+            @pytest.fixture
+            def post(self, board, login_user):
+                return PostFactory.create(board=board, writer=login_user.user_id, is_deleted=True)
+
+            def test_상태코드_404(self, trans_api):
+                assert trans_api.status_code == 404
 
     class Test_Delete_Post:
         @pytest.fixture
@@ -148,7 +157,7 @@ class Test_PostView:
             assert trans_api.status_code == 200
 
         def test_삭제_여부(self, post, trans_api):
-            assert len(Post.objects(id=post.id)) == 0
+            assert Post.objects(id=post.id).get().is_deleted
 
     class Test_Update_Post:
         @pytest.fixture
@@ -172,6 +181,7 @@ class Test_PostView:
             assert Post.objects(id=post.id).get().content == form["content"]
             assert Post.objects(id=post.id).get().tag == form["tag"]
             assert Post.objects(id=post.id).get().notice == form["notice"]
+            assert not Post.objects(id=post.id).get().is_deleted
 
         class Test_제목이_누락되었을_경우:
             @pytest.fixture
@@ -190,6 +200,7 @@ class Test_PostView:
                 assert Post.objects(id=post.id).get().content == form["content"]
                 assert Post.objects(id=post.id).get().tag == form["tag"]
                 assert Post.objects(id=post.id).get().notice == form["notice"]
+                assert not Post.objects(id=post.id).get().is_deleted
 
         class Test_내용이_누락되었을_경우:
             @pytest.fixture
@@ -208,6 +219,7 @@ class Test_PostView:
                 assert Post.objects(id=post.id).get().content == post.content
                 assert Post.objects(id=post.id).get().tag == form["tag"]
                 assert Post.objects(id=post.id).get().notice == form["notice"]
+                assert not Post.objects(id=post.id).get().is_deleted
 
         class Test_태그가_누락되었을_경우:
             @pytest.fixture
@@ -226,6 +238,7 @@ class Test_PostView:
                 assert Post.objects(id=post.id).get().content == form["content"]
                 assert Post.objects(id=post.id).get().tag == post.tag
                 assert Post.objects(id=post.id).get().notice == form["notice"]
+                assert not Post.objects(id=post.id).get().is_deleted
 
         class Test_공지여부가_누락되었을_경우:
             @pytest.fixture
@@ -244,6 +257,7 @@ class Test_PostView:
                 assert Post.objects(id=post.id).get().content == form["content"]
                 assert Post.objects(id=post.id).get().tag == form["tag"]
                 assert Post.objects(id=post.id).get().notice == post.notice
+                assert not Post.objects(id=post.id).get().is_deleted
 
     class Test_Like_Post:
         @pytest.fixture
@@ -292,6 +306,7 @@ class Test_PostView:
             assert trans_api.json[0]["notice"] == post.notice
             assert trans_api.json[0]["num_like"] == len(post.like)
             assert trans_api.json[0]["num_comment"] == post.num_comment
+            assert not Post.objects(id=post.id).get().is_deleted
 
         class Test_제목에서_찾은_경우:
             @pytest.fixture
@@ -315,6 +330,7 @@ class Test_PostView:
                 assert trans_api.json[0]["notice"] == post.notice
                 assert trans_api.json[0]["num_like"] == len(post.like)
                 assert trans_api.json[0]["num_comment"] == post.num_comment
+                assert not Post.objects(id=post.id).get().is_deleted
 
         class Test_내용에서_찾은_경우:
             @pytest.fixture
@@ -338,6 +354,7 @@ class Test_PostView:
                 assert trans_api.json[0]["notice"] == post.notice
                 assert trans_api.json[0]["num_like"] == len(post.like)
                 assert trans_api.json[0]["num_comment"] == post.num_comment
+                assert not Post.objects(id=post.id).get().is_deleted
 
     class Test_Get_List:
         @pytest.fixture
@@ -364,6 +381,7 @@ class Test_PostView:
                 assert "notice" in i
                 assert "num_like" in i
                 assert "num_comment" in i
+                assert not Post.objects(id=i["id"]).get().is_deleted
 
         def test_공지사항_상단_노출_여부(self, trans_api):
             posts = trans_api.json

@@ -19,9 +19,10 @@ class UserView(FlaskView):
     @marshal_with(ApiErrorSchema, code=401, description='로그인 실패')
     def login(self, user=False):
         """ user
-            --
+            ---
             summary: 사용자 로그인
             description: 사용자 로그인
+            tags: [users]
             requestBody:
                 required: true
                 content:
@@ -58,6 +59,7 @@ class UserView(FlaskView):
             ---
             summary: 사용자 회원가입
             description: 사용자 회원가입
+            tags: [users]
             requestBody:
                 required: true
                 content:
@@ -96,6 +98,7 @@ class UserView(FlaskView):
             ---
             summary: 사용자 비밀번호 변경
             description: 사용자 비밀번호 변경
+            tags: [users]
             requestBody:
                 required: true
                 content:

@@ -186,7 +186,7 @@ class BoardView(FlaskView):
                             schema: ApiErrorSchema
         """
         try:
-            Board.objects(id=board_id).delete()
+            Board.objects(id=board_id).update(is_deleted=True)
             return "", 200
         except marshmallow.exceptions.ValidationError as err:
             return ApiError(message= err.messages), 422
