@@ -2,12 +2,53 @@
 	"plugins": [],
 	"paths": {
 		"/users/login": {
-			"post": {}
+			"post": {
+				"summary": "사용자 로그인",
+				"description": "사용자 로그인",
+				"tags": [
+					"users"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserLogin"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Return a user token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthToken"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "wrong user id or user password",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/users/": {
 			"post": {
 				"summary": "사용자 회원가입",
 				"description": "사용자 회원가입",
+				"tags": [
+					"users"
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -56,6 +97,9 @@
 			"put": {
 				"summary": "사용자 비밀번호 변경",
 				"description": "사용자 비밀번호 변경",
+				"tags": [
+					"users"
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -490,7 +534,69 @@
 			}
 		},
 		"/boards/{board_id}/posts/": {
-			"get": {},
+			"get": {
+				"summary": "게시물 목록 조회",
+				"description": "게시물 목록 조회",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/page"
+					},
+					{
+						"$ref": "#/components/parameters/size"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "post list return",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			},
 			"post": {
 				"summary": "게시물 글쓰기 기능",
 				"description": "게시물 글쓰기 기능",
@@ -657,14 +763,251 @@
 			}
 		},
 		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}": {
-			"delete": {},
-			"put": {}
+			"delete": {
+				"summary": "댓글 삭제 기능",
+				"description": "댓글 삭제 기능",
+				"tags": [
+					"comments"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					},
+					{
+						"$ref": "#/components/parameters/comment_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id or comment id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "댓글 수정 기능",
+				"description": "댓글 수정 기능",
+				"tags": [
+					"comments"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					},
+					{
+						"$ref": "#/components/parameters/comment_id"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Comment"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id or comment id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}/like": {
-			"post": {}
+			"post": {
+				"summary": "댓글 좋아요 기능",
+				"description": "댓글 좋아요 기능",
+				"tags": [
+					"comments"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					},
+					{
+						"$ref": "#/components/parameters/comment_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id or comment id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/boards/{board_id}/posts/{post_id}/comments/": {
-			"post": {}
+			"post": {
+				"summary": "댓글 작성 기능",
+				"description": "댓글 작성 기능",
+				"tags": [
+					"comments"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Comment"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}/recomments/{recomment_id}": {
 			"delete": {},
@@ -702,19 +1045,59 @@
 	"tags": [
 		{
 			"boards": "boards",
-			"posts": "posts"
+			"posts": "posts",
+			"users": "users"
 		}
 	],
 	"openapi": "3.0.2",
 	"components": {
 		"schemas": {
+			"UserLogin": {
+				"type": "object",
+				"properties": {
+					"user_pw": {
+						"type": "string"
+					},
+					"is_master": {
+						"type": "boolean"
+					},
+					"user_id": {
+						"type": "string"
+					}
+				}
+			},
+			"AuthToken": {
+				"type": "object",
+				"properties": {
+					"token": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"token"
+				]
+			},
+			"ApiError": {
+				"type": "object",
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"code": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"code"
+				]
+			},
 			"UserSignup": {
 				"type": "object",
 				"properties": {
-					"user_id": {
+					"user_pw": {
 						"type": "string"
 					},
-					"user_pw": {
+					"user_id": {
 						"type": "string"
 					}
 				},
@@ -737,27 +1120,13 @@
 					"user_id"
 				]
 			},
-			"ApiError": {
-				"type": "object",
-				"properties": {
-					"code": {
-						"type": "integer"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"code"
-				]
-			},
 			"UserUpdate": {
 				"type": "object",
 				"properties": {
-					"user_origin_pw": {
+					"user_pw": {
 						"type": "string"
 					},
-					"user_pw": {
+					"user_origin_pw": {
 						"type": "string"
 					}
 				}
@@ -802,90 +1171,23 @@
 					"board_name"
 				]
 			},
-			"PostDetail": {
-				"type": "object",
-				"properties": {
-					"comment": {
-						"readOnly": true
-					},
-					"date": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"id": {
-						"type": "string"
-					},
-					"content": {
-						"type": "string"
-					},
-					"writer": {
-						"type": "string"
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"tag": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					},
-					"num_like": {
-						"readOnly": true
-					},
-					"title": {
-						"type": "string"
-					},
-					"num_comment": {
-						"type": "integer"
-					}
-				}
-			},
-			"PostRegist": {
-				"type": "object",
-				"properties": {
-					"tag": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
-					"content": {
-						"type": "string",
-						"minLength": 1
-					}
-				},
-				"required": [
-					"content",
-					"title"
-				]
-			},
 			"PostList": {
 				"type": "object",
 				"properties": {
-					"date": {
-						"type": "string",
-						"format": "date-time"
+					"num_comment": {
+						"type": "integer"
 					},
 					"is_like": {
 						"readOnly": true
 					},
-					"id": {
+					"num_like": {
+						"readOnly": true
+					},
+					"title": {
 						"type": "string",
 						"minLength": 1
 					},
 					"content": {
-						"type": "string",
-						"minLength": 1
-					},
-					"writer": {
 						"type": "string",
 						"minLength": 1
 					},
@@ -898,15 +1200,17 @@
 					"notice": {
 						"type": "boolean"
 					},
-					"num_like": {
-						"readOnly": true
+					"date": {
+						"type": "string",
+						"format": "date-time"
 					},
-					"title": {
+					"id": {
 						"type": "string",
 						"minLength": 1
 					},
-					"num_comment": {
-						"type": "integer"
+					"writer": {
+						"type": "string",
+						"minLength": 1
 					}
 				},
 				"required": [
@@ -917,9 +1221,24 @@
 					"writer"
 				]
 			},
-			"PostUpdate": {
+			"PostDetail": {
 				"type": "object",
 				"properties": {
+					"num_comment": {
+						"type": "integer"
+					},
+					"num_like": {
+						"readOnly": true
+					},
+					"title": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"comment": {
+						"readOnly": true
+					},
 					"tag": {
 						"type": "array",
 						"items": {
@@ -929,9 +1248,67 @@
 					"notice": {
 						"type": "boolean"
 					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"id": {
+						"type": "string"
+					},
+					"writer": {
+						"type": "string"
+					}
+				}
+			},
+			"PostRegist": {
+				"type": "object",
+				"properties": {
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"notice": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"content",
+					"title"
+				]
+			},
+			"PostUpdate": {
+				"type": "object",
+				"properties": {
 					"title": {
 						"type": "string"
 					},
+					"content": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"notice": {
+						"type": "boolean"
+					}
+				}
+			},
+			"Comment": {
+				"type": "object",
+				"properties": {
 					"content": {
 						"type": "string"
 					}
@@ -950,6 +1327,22 @@
 				"in": "path",
 				"name": "post_id",
 				"required": true
+			},
+			"comment_id": {
+				"type": "string",
+				"in": "path",
+				"name": "comment_id",
+				"required": true
+			},
+			"page": {
+				"type": "integer",
+				"in": "query",
+				"name": "page"
+			},
+			"size": {
+				"type": "integer",
+				"in": "query",
+				"name": "size"
 			}
 		},
 		"securitySchemes": {

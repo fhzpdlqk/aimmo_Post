@@ -31,7 +31,7 @@ class CommentDetailSchema(Schema):
         return ReCommentDetailSchema(many=True).dump(ReComment.objects(comment=obj.id, is_deleted=False))
 
 
-class CommentRegistSchema(Schema):
+class CommentSchema(Schema):
     content = fields.Str()
 
     @post_load
