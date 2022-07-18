@@ -6,6 +6,5 @@
 .idea/*
 ../.idea
 ../.DS_Store
-tests/views/__pycache__
-app/views/__pycache__
-app/static/*.*
+__pycache__
+*.json

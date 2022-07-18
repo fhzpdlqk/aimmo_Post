@@ -55,7 +55,7 @@ def register_swagger(app):
         with open('./app/static/swagger.json', 'w', encoding='utf-8') as make_file:
             json.dump(spec.to_dict(), make_file, indent="\t", ensure_ascii=False)
 
-    SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
+    SWAGGER_URL = '/api-docs'  # URL for exposing Swagger UI (without trailing '/')
     API_URL = '/static/swagger.json'  # Our API url (can of course be a local resource)
 
     # Call factory function to create our blueprint
