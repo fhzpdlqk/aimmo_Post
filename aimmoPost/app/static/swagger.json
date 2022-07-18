@@ -765,12 +765,12 @@
 			"Board": {
 				"type": "object",
 				"properties": {
+					"id": {
+						"type": "string"
+					},
 					"board_name": {
 						"type": "string",
 						"minLength": 1
-					},
-					"id": {
-						"type": "string"
 					}
 				},
 				"required": [
@@ -805,61 +805,61 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
-					"notice": {
-						"type": "boolean"
-					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
 					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"id": {
+						"type": "string"
+					},
 					"title": {
+						"type": "string"
+					},
+					"writer": {
+						"type": "string"
+					},
+					"comment": {
+						"readOnly": true
+					},
+					"content": {
 						"type": "string"
 					},
 					"num_like": {
 						"readOnly": true
 					},
-					"date": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"content": {
-						"type": "string"
-					},
 					"num_comment": {
 						"type": "integer"
-					},
-					"writer": {
-						"type": "string"
-					},
-					"id": {
-						"type": "string"
-					},
-					"comment": {
-						"readOnly": true
 					}
 				}
 			},
 			"PostRegist": {
 				"type": "object",
 				"properties": {
-					"title": {
+					"content": {
 						"type": "string",
 						"minLength": 1
 					},
 					"notice": {
 						"type": "boolean"
 					},
-					"content": {
-						"type": "string",
-						"minLength": 1
-					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
+					},
+					"title": {
+						"type": "string",
+						"minLength": 1
 					}
 				},
 				"required": [
@@ -870,36 +870,18 @@
 			"PostList": {
 				"type": "object",
 				"properties": {
-					"notice": {
-						"type": "boolean"
-					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
 					},
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
-					"num_like": {
-						"readOnly": true
-					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"content": {
-						"type": "string",
-						"minLength": 1
-					},
-					"num_comment": {
-						"type": "integer"
-					},
-					"writer": {
-						"type": "string",
-						"minLength": 1
+					"notice": {
+						"type": "boolean"
 					},
 					"id": {
 						"type": "string",
@@ -907,6 +889,24 @@
 					},
 					"is_like": {
 						"readOnly": true
+					},
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"writer": {
+						"type": "string",
+						"minLength": 1
+					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
+					"num_like": {
+						"readOnly": true
+					},
+					"num_comment": {
+						"type": "integer"
 					}
 				},
 				"required": [
@@ -920,20 +920,20 @@
 			"PostUpdate": {
 				"type": "object",
 				"properties": {
-					"title": {
+					"content": {
 						"type": "string"
 					},
 					"notice": {
 						"type": "boolean"
-					},
-					"content": {
-						"type": "string"
 					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
+					},
+					"title": {
+						"type": "string"
 					}
 				}
 			}

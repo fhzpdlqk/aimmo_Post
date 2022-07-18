@@ -36,7 +36,7 @@ def check_board(f):
     @wraps(f)
     @marshal_with(ApiErrorSchema, code=404, description="없는 게시판")
     def decorated_function(*args, **kwargs):
-        if not Board.objects(id=kwargs["board_id"]):
+        if not Board.objects(id=kwargs["board_id"], is_deleted=False):
             return ApiError(message="없는 게시판입니다"), 404
         return f(*args, **kwargs)
     return decorated_function
@@ -45,7 +45,7 @@ def check_post(f):
     @wraps(f)
     @marshal_with(ApiErrorSchema, code=404, description="없는 게시물")
     def decorated_function(*args, **kwargs):
-        if not Post.objects(id=kwargs["post_id"]):
+        if not Post.objects(id=kwargs["post_id"], is_deleted=False):
             return ApiError(message="없는 게시물입니다"), 404
         return f(*args, **kwargs)
     return decorated_function
@@ -56,7 +56,7 @@ def check_post_writer(f):
     @marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")
     def decorated_function(*args, **kwargs):
         post = Post.objects(id=kwargs["post_id"])
-        if not post:
+        if (not post) or post.get().is_deleted:
             return ApiError(message="없는 게시물입니다"), 404
         elif post.get().writer != g.user_id:
             return ApiError(message="작성자 아이디가 아닙니다."), 401

@@ -41,7 +41,7 @@ class CommentView(FlaskView):
     @check_post
     @check_comment_writer
     def delete(self, board_id, post_id, comment_id):
-        Comment.objects(id=comment_id, writer=g.user_id).delete()
+        Comment.objects(id=comment_id, writer=g.user_id).update(is_deleted=True)
         post = Post.objects(id=post_id).get()
         post.update(num_comment=post.num_comment - 1)
         return "", 200

@@ -8,7 +8,7 @@ class BoardRegistSchema(Schema):
 
     @post_load
     def make_board(self, data, **kwargs):
-        board = Board.objects(**data)
+        board = Board.objects(**data, is_deleted=False)
         if not board:
             return {'board': Board(**data)}
         return {'board': False}
