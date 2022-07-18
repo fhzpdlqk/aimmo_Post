@@ -48,6 +48,7 @@ class UserView(FlaskView):
         except marshmallow.exceptions.ValidationError as err:
             return ApiError(message=err.messages), 422
 
+    @route("/", methods=["POST"])
     @use_kwargs(UserSignupSchema(), locations=('json',))
     @marshal_with(UserSchema, code=200, description="회원가입 성공")
     @marshal_with(ApiErrorSchema, code=409, description="이미 존재하는 사용자")

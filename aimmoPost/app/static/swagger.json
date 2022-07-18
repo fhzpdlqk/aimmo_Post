@@ -4,7 +4,7 @@
 		"/users/login": {
 			"post": {}
 		},
-		"/users": {
+		"/users/": {
 			"post": {
 				"summary": "사용자 회원가입",
 				"description": "사용자 회원가입",
@@ -50,7 +50,9 @@
 						}
 					}
 				}
-			},
+			}
+		},
+		"/users": {
 			"put": {
 				"summary": "사용자 비밀번호 변경",
 				"description": "사용자 비밀번호 변경",
@@ -233,7 +235,7 @@
 				}
 			}
 		},
-		"/boards": {
+		"/boards/": {
 			"get": {
 				"summary": "게시판 목록 조회",
 				"description": "게시판 목록 조회",
@@ -487,55 +489,8 @@
 				}
 			}
 		},
-		"/boards/{board_id}/posts": {
-			"get": {}
-		},
-		"/boards/{board_id}/posts/{post_id}/like": {
-			"post": {
-				"summary": "게시물 좋아요",
-				"description": "게시물 좋아요",
-				"tags": [
-					"posts"
-				],
-				"security": {
-					"Authorization": []
-				},
-				"parameters": [
-					{
-						"$ref": "#/components/parameters/board_id"
-					},
-					{
-						"$ref": "#/components/parameters/post_id"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "no returns"
-					},
-					"401": {
-						"description": "not login user or not valid token",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiError"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "not found board id or post id",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiError"
-								}
-							}
-						}
-					}
-				}
-			}
-		},
 		"/boards/{board_id}/posts/": {
+			"get": {},
 			"post": {
 				"summary": "게시물 글쓰기 기능",
 				"description": "게시물 글쓰기 기능",
@@ -586,6 +541,51 @@
 					},
 					"422": {
 						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts/{post_id}/like": {
+			"post": {
+				"summary": "게시물 좋아요",
+				"description": "게시물 좋아요",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "no returns"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -711,10 +711,10 @@
 			"UserSignup": {
 				"type": "object",
 				"properties": {
-					"user_pw": {
+					"user_id": {
 						"type": "string"
 					},
-					"user_id": {
+					"user_pw": {
 						"type": "string"
 					}
 				},
@@ -726,11 +726,11 @@
 			"User": {
 				"type": "object",
 				"properties": {
-					"is_master": {
-						"type": "boolean"
-					},
 					"user_id": {
 						"type": "string"
+					},
+					"is_master": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -754,10 +754,10 @@
 			"UserUpdate": {
 				"type": "object",
 				"properties": {
-					"user_pw": {
+					"user_origin_pw": {
 						"type": "string"
 					},
-					"user_origin_pw": {
+					"user_pw": {
 						"type": "string"
 					}
 				}
@@ -805,8 +805,8 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
-					"id": {
-						"type": "string"
+					"notice": {
+						"type": "boolean"
 					},
 					"tag": {
 						"type": "array",
@@ -814,29 +814,29 @@
 							"type": "string"
 						}
 					},
-					"comment": {
-						"readOnly": true
-					},
-					"writer": {
+					"title": {
 						"type": "string"
+					},
+					"num_like": {
+						"readOnly": true
 					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"notice": {
-						"type": "boolean"
-					},
-					"title": {
+					"content": {
 						"type": "string"
 					},
 					"num_comment": {
 						"type": "integer"
 					},
-					"content": {
+					"writer": {
 						"type": "string"
 					},
-					"num_like": {
+					"id": {
+						"type": "string"
+					},
+					"comment": {
 						"readOnly": true
 					}
 				}
@@ -870,9 +870,8 @@
 			"PostList": {
 				"type": "object",
 				"properties": {
-					"id": {
-						"type": "string",
-						"minLength": 1
+					"notice": {
+						"type": "boolean"
 					},
 					"tag": {
 						"type": "array",
@@ -880,30 +879,31 @@
 							"type": "string"
 						}
 					},
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"num_like": {
+						"readOnly": true
+					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"writer": {
-						"type": "string",
-						"minLength": 1
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"title": {
+					"content": {
 						"type": "string",
 						"minLength": 1
 					},
 					"num_comment": {
 						"type": "integer"
 					},
-					"content": {
+					"writer": {
 						"type": "string",
 						"minLength": 1
 					},
-					"num_like": {
-						"readOnly": true
+					"id": {
+						"type": "string",
+						"minLength": 1
 					},
 					"is_like": {
 						"readOnly": true
@@ -921,15 +921,13 @@
 				"type": "object",
 				"properties": {
 					"title": {
-						"type": "string",
-						"minLength": 1
+						"type": "string"
 					},
 					"notice": {
 						"type": "boolean"
 					},
 					"content": {
-						"type": "string",
-						"minLength": 1
+						"type": "string"
 					},
 					"tag": {
 						"type": "array",

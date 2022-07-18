@@ -33,6 +33,7 @@ class UserLoginSchema(Schema):
             return {'user': False}
         return {'user': user[0]}
 
+
 class UserUpdateSchema(Schema):
     user_origin_pw = fields.Str()
     user_pw = fields.Str()
