@@ -1278,13 +1278,136 @@
 			"get": {}
 		},
 		"/mainpage/comment": {
-			"get": {}
+			"get": {
+				"summary": "댓글 많은 순 게시물 10개",
+				"description": "댓글 많은 순 게시물 10개",
+				"tags": [
+					"mainpage"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"responses": {
+					"200": {
+						"description": "Recent 10 posts",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/mainpage/like": {
-			"get": {}
+			"get": {
+				"summary": "좋아요 많은 순 게시물 10개",
+				"description": "좋아요 많은 순 게시물 10개",
+				"tags": [
+					"mainpage"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"responses": {
+					"200": {
+						"description": "Recent 10 posts",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/mainpage/recent": {
-			"get": {}
+			"get": {
+				"summary": "최신 게시물 10개",
+				"description": "최신 게시물 10개",
+				"tags": [
+					"mainpage"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"responses": {
+					"200": {
+						"description": "Recent 10 posts",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"info": {
@@ -1373,10 +1496,10 @@
 			"UserUpdate": {
 				"type": "object",
 				"properties": {
-					"user_pw": {
+					"user_origin_pw": {
 						"type": "string"
 					},
-					"user_origin_pw": {
+					"user_pw": {
 						"type": "string"
 					}
 				}
@@ -1384,12 +1507,12 @@
 			"Board": {
 				"type": "object",
 				"properties": {
+					"id": {
+						"type": "string"
+					},
 					"board_name": {
 						"type": "string",
 						"minLength": 1
-					},
-					"id": {
-						"type": "string"
 					}
 				},
 				"required": [
@@ -1424,21 +1547,7 @@
 			"PostList": {
 				"type": "object",
 				"properties": {
-					"num_like": {
-						"readOnly": true
-					},
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
 					"id": {
-						"type": "string",
-						"minLength": 1
-					},
-					"is_like": {
-						"readOnly": true
-					},
-					"writer": {
 						"type": "string",
 						"minLength": 1
 					},
@@ -1446,8 +1555,8 @@
 						"type": "string",
 						"minLength": 1
 					},
-					"notice": {
-						"type": "boolean"
+					"num_like": {
+						"readOnly": true
 					},
 					"num_comment": {
 						"type": "integer"
@@ -1461,6 +1570,20 @@
 					"date": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"writer": {
+						"type": "string",
+						"minLength": 1
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"is_like": {
+						"readOnly": true
+					},
+					"title": {
+						"type": "string",
+						"minLength": 1
 					}
 				},
 				"required": [
@@ -1474,24 +1597,14 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
-					"num_like": {
-						"readOnly": true
-					},
-					"title": {
-						"type": "string"
-					},
-					"date": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"comment": {
-						"readOnly": true
-					},
-					"writer": {
+					"id": {
 						"type": "string"
 					},
 					"content": {
 						"type": "string"
+					},
+					"num_like": {
+						"readOnly": true
 					},
 					"num_comment": {
 						"type": "integer"
@@ -1502,10 +1615,20 @@
 							"type": "string"
 						}
 					},
+					"writer": {
+						"type": "string"
+					},
 					"notice": {
 						"type": "boolean"
 					},
-					"id": {
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"comment": {
+						"readOnly": true
+					},
+					"title": {
 						"type": "string"
 					}
 				}
@@ -1513,6 +1636,15 @@
 			"PostRegist": {
 				"type": "object",
 				"properties": {
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"notice": {
+						"type": "boolean"
+					},
 					"content": {
 						"type": "string",
 						"minLength": 1
@@ -1520,15 +1652,6 @@
 					"title": {
 						"type": "string",
 						"minLength": 1
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"tag": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
 					}
 				},
 				"required": [
@@ -1539,20 +1662,20 @@
 			"PostUpdate": {
 				"type": "object",
 				"properties": {
-					"content": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"notice": {
-						"type": "boolean"
-					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"content": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
 					}
 				}
 			},
