@@ -64,3 +64,7 @@ AIMMO 신입사원 On-Boarding 과제
 3. 패키지매니저
 ----------------------
  - poetry
+
+4. API 명세
+---------------------
+http://localhost:5000/api-docs

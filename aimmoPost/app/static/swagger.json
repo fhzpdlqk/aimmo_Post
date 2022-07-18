@@ -1574,11 +1574,11 @@
 			"ApiError": {
 				"type": "object",
 				"properties": {
-					"message": {
-						"type": "string"
-					},
 					"code": {
 						"type": "integer"
+					},
+					"message": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -1628,12 +1628,12 @@
 			"Board": {
 				"type": "object",
 				"properties": {
+					"id": {
+						"type": "string"
+					},
 					"board_name": {
 						"type": "string",
 						"minLength": 1
-					},
-					"id": {
-						"type": "string"
 					}
 				},
 				"required": [
@@ -1668,8 +1668,9 @@
 			"PostList": {
 				"type": "object",
 				"properties": {
-					"num_comment": {
-						"type": "integer"
+					"id": {
+						"type": "string",
+						"minLength": 1
 					},
 					"tag": {
 						"type": "array",
@@ -1680,6 +1681,13 @@
 					"is_like": {
 						"readOnly": true
 					},
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"num_comment": {
+						"type": "integer"
+					},
 					"content": {
 						"type": "string",
 						"minLength": 1
@@ -1688,23 +1696,15 @@
 						"type": "string",
 						"format": "date-time"
 					},
-					"notice": {
-						"type": "boolean"
+					"num_like": {
+						"readOnly": true
 					},
 					"writer": {
 						"type": "string",
 						"minLength": 1
 					},
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
-					"num_like": {
-						"readOnly": true
-					},
-					"id": {
-						"type": "string",
-						"minLength": 1
+					"notice": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -1718,8 +1718,8 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
-					"num_comment": {
-						"type": "integer"
+					"id": {
+						"type": "string"
 					},
 					"tag": {
 						"type": "array",
@@ -1730,27 +1730,27 @@
 					"comment": {
 						"readOnly": true
 					},
-					"content": {
-						"type": "string"
-					},
-					"date": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"notice": {
-						"type": "boolean"
-					},
-					"writer": {
-						"type": "string"
-					},
 					"title": {
+						"type": "string"
+					},
+					"num_comment": {
+						"type": "integer"
+					},
+					"content": {
 						"type": "string"
 					},
 					"num_like": {
 						"readOnly": true
 					},
-					"id": {
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"writer": {
 						"type": "string"
+					},
+					"notice": {
+						"type": "boolean"
 					}
 				}
 			},
@@ -1763,14 +1763,14 @@
 							"type": "string"
 						}
 					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
 					"notice": {
 						"type": "boolean"
 					},
 					"title": {
-						"type": "string",
-						"minLength": 1
-					},
-					"content": {
 						"type": "string",
 						"minLength": 1
 					}
@@ -1789,13 +1789,13 @@
 							"type": "string"
 						}
 					},
+					"content": {
+						"type": "string"
+					},
 					"notice": {
 						"type": "boolean"
 					},
 					"title": {
-						"type": "string"
-					},
-					"content": {
 						"type": "string"
 					}
 				}
