@@ -685,13 +685,13 @@
 		"/mypage/posts": {
 			"get": {}
 		},
-		"/mainpage/comment": {
+		"/comment": {
 			"get": {}
 		},
-		"/mainpage/like": {
+		"/like": {
 			"get": {}
 		},
-		"/mainpage/recent": {
+		"/recent": {
 			"get": {}
 		}
 	},
@@ -740,11 +740,11 @@
 			"ApiError": {
 				"type": "object",
 				"properties": {
-					"message": {
-						"type": "string"
-					},
 					"code": {
 						"type": "integer"
+					},
+					"message": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -805,8 +805,17 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
+					"comment": {
+						"readOnly": true
+					},
 					"notice": {
 						"type": "boolean"
+					},
+					"content": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
 					},
 					"tag": {
 						"type": "array",
@@ -814,52 +823,43 @@
 							"type": "string"
 						}
 					},
-					"title": {
-						"type": "string"
-					},
-					"num_like": {
-						"readOnly": true
+					"num_comment": {
+						"type": "integer"
 					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"content": {
-						"type": "string"
-					},
-					"num_comment": {
-						"type": "integer"
+					"num_like": {
+						"readOnly": true
 					},
 					"writer": {
 						"type": "string"
 					},
 					"id": {
 						"type": "string"
-					},
-					"comment": {
-						"readOnly": true
 					}
 				}
 			},
 			"PostRegist": {
 				"type": "object",
 				"properties": {
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
 					"notice": {
 						"type": "boolean"
-					},
-					"content": {
-						"type": "string",
-						"minLength": 1
 					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
+					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
+					"title": {
+						"type": "string",
+						"minLength": 1
 					}
 				},
 				"required": [
@@ -873,29 +873,32 @@
 					"notice": {
 						"type": "boolean"
 					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
 					},
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
-					"num_like": {
-						"readOnly": true
+					"num_comment": {
+						"type": "integer"
 					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"content": {
-						"type": "string",
-						"minLength": 1
+					"is_like": {
+						"readOnly": true
 					},
-					"num_comment": {
-						"type": "integer"
+					"num_like": {
+						"readOnly": true
 					},
 					"writer": {
 						"type": "string",
@@ -904,9 +907,6 @@
 					"id": {
 						"type": "string",
 						"minLength": 1
-					},
-					"is_like": {
-						"readOnly": true
 					}
 				},
 				"required": [
@@ -920,20 +920,20 @@
 			"PostUpdate": {
 				"type": "object",
 				"properties": {
-					"title": {
-						"type": "string"
-					},
 					"notice": {
 						"type": "boolean"
-					},
-					"content": {
-						"type": "string"
 					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
+					},
+					"content": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
 					}
 				}
 			}
