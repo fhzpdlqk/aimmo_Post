@@ -1269,13 +1269,142 @@
 			}
 		},
 		"/mypage/comments": {
-			"get": {}
+			"get": {
+				"summary": "내가 쓴 댓글 목록",
+				"description": "내가 쓴 댓글 목록",
+				"tags": [
+					"mypage"
+				],
+				"security": {
+					"Authorization": [
+						"Authorization"
+					]
+				},
+				"responses": {
+					"200": {
+						"description": "return comments and recomments written by me",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommentMyList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/mypage/likes": {
-			"get": {}
+			"get": {
+				"summary": "내가 좋아요 한 게시물 목록",
+				"description": "내가 좋아요 한 게시물 목록",
+				"tags": [
+					"mypage"
+				],
+				"security": {
+					"Authorization": [
+						"Authorization"
+					]
+				},
+				"responses": {
+					"200": {
+						"description": "return posts liked by me",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/mypage/posts": {
-			"get": {}
+			"get": {
+				"summary": "내가 쓴 게시물 목록",
+				"description": "내가 쓴 게시물 목록",
+				"tags": [
+					"mypage"
+				],
+				"security": {
+					"Authorization": [
+						"Authorization"
+					]
+				},
+				"responses": {
+					"200": {
+						"description": "return lists written by me",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"/mainpage/comment": {
 			"get": {
@@ -1414,25 +1543,17 @@
 		"title": "Swagger petstore",
 		"version": "0.1.1"
 	},
-	"tags": [
-		{
-			"boards": "boards",
-			"posts": "posts",
-			"users": "users",
-			"recomments": "recomments"
-		}
-	],
 	"openapi": "3.0.2",
 	"components": {
 		"schemas": {
 			"UserLogin": {
 				"type": "object",
 				"properties": {
-					"is_master": {
-						"type": "boolean"
-					},
 					"user_pw": {
 						"type": "string"
+					},
+					"is_master": {
+						"type": "boolean"
 					},
 					"user_id": {
 						"type": "string"
@@ -1453,11 +1574,11 @@
 			"ApiError": {
 				"type": "object",
 				"properties": {
-					"message": {
-						"type": "string"
-					},
 					"code": {
 						"type": "integer"
+					},
+					"message": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -1507,12 +1628,12 @@
 			"Board": {
 				"type": "object",
 				"properties": {
-					"id": {
-						"type": "string"
-					},
 					"board_name": {
 						"type": "string",
 						"minLength": 1
+					},
+					"id": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -1547,19 +1668,19 @@
 			"PostList": {
 				"type": "object",
 				"properties": {
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"is_like": {
+						"readOnly": true
+					},
 					"id": {
 						"type": "string",
 						"minLength": 1
-					},
-					"content": {
-						"type": "string",
-						"minLength": 1
-					},
-					"num_like": {
-						"readOnly": true
-					},
-					"num_comment": {
-						"type": "integer"
 					},
 					"tag": {
 						"type": "array",
@@ -1571,17 +1692,17 @@
 						"type": "string",
 						"format": "date-time"
 					},
+					"num_like": {
+						"readOnly": true
+					},
 					"writer": {
 						"type": "string",
 						"minLength": 1
 					},
-					"notice": {
-						"type": "boolean"
+					"num_comment": {
+						"type": "integer"
 					},
-					"is_like": {
-						"readOnly": true
-					},
-					"title": {
+					"content": {
 						"type": "string",
 						"minLength": 1
 					}
@@ -1597,17 +1718,14 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"notice": {
+						"type": "boolean"
+					},
 					"id": {
 						"type": "string"
-					},
-					"content": {
-						"type": "string"
-					},
-					"num_like": {
-						"readOnly": true
-					},
-					"num_comment": {
-						"type": "integer"
 					},
 					"tag": {
 						"type": "array",
@@ -1615,20 +1733,23 @@
 							"type": "string"
 						}
 					},
-					"writer": {
-						"type": "string"
-					},
-					"notice": {
-						"type": "boolean"
+					"comment": {
+						"readOnly": true
 					},
 					"date": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"comment": {
+					"num_like": {
 						"readOnly": true
 					},
-					"title": {
+					"writer": {
+						"type": "string"
+					},
+					"num_comment": {
+						"type": "integer"
+					},
+					"content": {
 						"type": "string"
 					}
 				}
@@ -1636,11 +1757,9 @@
 			"PostRegist": {
 				"type": "object",
 				"properties": {
-					"tag": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
+					"title": {
+						"type": "string",
+						"minLength": 1
 					},
 					"notice": {
 						"type": "boolean"
@@ -1649,9 +1768,11 @@
 						"type": "string",
 						"minLength": 1
 					},
-					"title": {
-						"type": "string",
-						"minLength": 1
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
 					}
 				},
 				"required": [
@@ -1662,11 +1783,8 @@
 			"PostUpdate": {
 				"type": "object",
 				"properties": {
-					"tag": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
+					"title": {
+						"type": "string"
 					},
 					"notice": {
 						"type": "boolean"
@@ -1674,8 +1792,11 @@
 					"content": {
 						"type": "string"
 					},
-					"title": {
-						"type": "string"
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
 					}
 				}
 			},
@@ -1692,6 +1813,17 @@
 				"properties": {
 					"content": {
 						"type": "string"
+					}
+				}
+			},
+			"CommentMyList": {
+				"type": "object",
+				"properties": {
+					"recomments": {
+						"readOnly": true
+					},
+					"comments": {
+						"readOnly": true
 					}
 				}
 			}

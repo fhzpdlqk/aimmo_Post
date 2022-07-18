@@ -52,9 +52,6 @@ def register_swagger(app):
         spec.components.parameter(component_id="page", component=page_scheme, location='query')
         spec.components.parameter(component_id="size", component=size_scheme, location='query')
 
-        spec.tag({"boards": "boards", "posts": "posts", "users": "users", "recomments": "recomments"})
-
-
         with open('./app/static/swagger.json', 'w', encoding='utf-8') as make_file:
             json.dump(spec.to_dict(), make_file, indent="\t", ensure_ascii=False)
 

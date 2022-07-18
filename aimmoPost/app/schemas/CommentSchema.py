@@ -43,8 +43,8 @@ class CommentMyListSchema(Schema):
     comments = fields.Method("comment_list")
     recomments = fields.Method("recomment_list")
 
-    def comment_list(self, obj):
+    def comment_list(self, obj) -> object:
         return CommentListSchema(many=True).dump(obj.comment)
 
-    def recomment_list(self, obj):
+    def recomment_list(self, obj) -> object:
         return ReCommentListSchema(many=True).dump(obj.recomment)
