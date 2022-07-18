@@ -95,7 +95,7 @@ class TestCommentView:
             assert trans_api.status_code == 200
 
         def test_데이터개수_확인(self, trans_api, post, comment, login_user):
-            assert Comment.objects().count() == 0
+            assert Comment.objects(post=post.id, is_deleted=False).count() == 0
             assert Post.objects(id=post.id).get().num_comment == 0
 
     class Test_Like_Comment:

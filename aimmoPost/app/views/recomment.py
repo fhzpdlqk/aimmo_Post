@@ -44,7 +44,7 @@ class ReCommentView(FlaskView):
     @check_comment
     @check_recomment_writer
     def delete(self, board_id, post_id, comment_id, recomment_id):
-        ReComment.objects(id=recomment_id, writer=g.user_id).delete()
+        ReComment.objects(id=recomment_id, writer=g.user_id).update(is_deleted=True)
         comment = Comment.objects(id=comment_id).get()
         comment.update(num_recomment=comment.num_recomment - 1)
         return "", 200

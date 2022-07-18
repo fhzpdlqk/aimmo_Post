@@ -96,7 +96,7 @@ class PostView(FlaskView):
                         application/json:
                             schema: ApiErrorSchema
         """
-        post = Post.objects(board=board_id, id=post_id).get()
+        post = Post.objects(board=board_id, id=post_id, is_deleted=False).get()
         return post, 200
 
     @route("/<string:post_id>", methods=["DELETE"])
@@ -128,7 +128,7 @@ class PostView(FlaskView):
                         application/json:
                             schema: ApiErrorSchema
         """
-        Post.objects(id=post_id, writer=g.user_id).delete()
+        Post.objects(id=post_id, writer=g.user_id).update(is_deleted=True)
         return "", 200
 
     @route("/<string:post_id>", methods=["PUT"])
@@ -252,7 +252,7 @@ class PostView(FlaskView):
                         application/json:
                             schema: ApiErrorSchema
         """
-        posts = Post.objects(board=board_id, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}},
+        posts = Post.objects(board=board_id, is_deleted=False, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}},
                                                               {"title": {"$regex": request.json["search_word"]}}]})
         return posts, 200
 
@@ -268,7 +268,7 @@ class PostView(FlaskView):
                 params["page"] = "1"
             if "size" not in params:
                 params["size"] = "10"
-            posts = Post.objects(board=board_id).order_by("-notice")[(int(params["page"]) - 1) * int(params["size"]): int(params["page"]) * int(params["size"])]
+            posts = Post.objects(board=board_id, is_deleted=False).order_by("-notice")[(int(params["page"]) - 1) * int(params["size"]): int(params["page"]) * int(params["size"])]
             return posts, 200
         except IndexError:
             return ApiError(message="유효하지 않은 페이지 인덱스 입니다."), 404

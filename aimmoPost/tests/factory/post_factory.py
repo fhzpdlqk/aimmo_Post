@@ -19,3 +19,4 @@ class PostFactory(MongoEngineFactory):
     like = factory.LazyAttribute(lambda n: [])
     num_comment = factory.LazyAttribute(lambda n: 0)
     board = factory.SubFactory(BoardFactory)
+    is_deleted = factory.LazyAttribute(lambda n: False)

@@ -10,19 +10,19 @@ class MainPageView(FlaskView):
     @login_required
     @marshal_with(PostListSchema(many=True), code=200, description="게시물 최근목록 10개")
     def recent_post(self):
-        post_list = Post.objects().order_by("-date")[:10]
+        post_list = Post.objects(is_deleted=False).order_by("-date")[:10]
         return post_list, 200
 
     @route("/comment", methods=["GET"])
     @login_required
     @marshal_with(PostListSchema(many=True), code=200, description="게시물 댓글순목록 10개")
     def comment_post(self):
-        post_list = Post.objects().order_by("-num_comment")[:10]
+        post_list = Post.objects(is_deleted=False).order_by("-num_comment")[:10]
         return post_list, 200
 
     @route("/like", methods=["GET"])
     @login_required
     @marshal_with(PostListSchema(many=True), code=200, description="게시물 좋아요순목록 10개")
     def like_post(self):
-        post_list = Post.objects().order_by("-like")[:10]
+        post_list = Post.objects(is_deleted=False).order_by("-like")[:10]
         return post_list, 200
