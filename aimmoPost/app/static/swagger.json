@@ -1,0 +1,965 @@
+{
+	"plugins": [],
+	"paths": {
+		"/users/login": {
+			"post": {}
+		},
+		"/users": {
+			"post": {
+				"summary": "사용자 회원가입",
+				"description": "사용자 회원가입",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserSignup"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Return user information",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "duplicate id information",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "사용자 비밀번호 변경",
+				"description": "사용자 비밀번호 변경",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserUpdate"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token, or wrong origin password",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}": {
+			"delete": {
+				"summary": "게시판 삭제",
+				"description": "게시판 삭제",
+				"tags": [
+					"boards"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					}
+				],
+				"security": {
+					"Authorization": []
+				},
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "not master user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "duplicate board name",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "게시판 이름 수정",
+				"description": "게시판 이름 수정",
+				"tags": [
+					"boards"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					}
+				],
+				"security": {
+					"Authorization": []
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BoardUpdate"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "not master user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "duplicate board name",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards": {
+			"get": {
+				"summary": "게시판 목록 조회",
+				"description": "게시판 목록 조회",
+				"tags": [
+					"boards"
+				],
+				"responses": {
+					"200": {
+						"description": "return board list",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Board"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "게시판 만들기 기능",
+				"description": "게시판 만들기 기능",
+				"tags": [
+					"boards"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BoardRegist"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "not master user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "duplicate board name",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts/{post_id}": {
+			"delete": {
+				"summary": "게시물 삭제",
+				"description": "게시물 삭제",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "no returns"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"summary": "게시물 상세조회",
+				"description": "게시물 상세조회",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "post detail inforamtion",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostDetail"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "게시물 수정",
+				"description": "게시물 수정",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PostUpdate"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "no returns"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts": {
+			"get": {}
+		},
+		"/boards/{board_id}/posts/{post_id}/like": {
+			"post": {
+				"summary": "게시물 좋아요",
+				"description": "게시물 좋아요",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "no returns"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts/": {
+			"post": {
+				"summary": "게시물 글쓰기 기능",
+				"description": "게시물 글쓰기 기능",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PostRegist"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts/search": {
+			"post": {
+				"summary": "게시물 검색",
+				"description": "게시물 검색",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"search_word": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "search post list",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}": {
+			"delete": {},
+			"put": {}
+		},
+		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}/like": {
+			"post": {}
+		},
+		"/boards/{board_id}/posts/{post_id}/comments/": {
+			"post": {}
+		},
+		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}/recomments/{recomment_id}": {
+			"delete": {},
+			"put": {}
+		},
+		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}/recomments/": {
+			"post": {}
+		},
+		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}/recomments/{recomment_id}/like": {
+			"post": {}
+		},
+		"/mypage/comments": {
+			"get": {}
+		},
+		"/mypage/likes": {
+			"get": {}
+		},
+		"/mypage/posts": {
+			"get": {}
+		},
+		"/mainpage/comment": {
+			"get": {}
+		},
+		"/mainpage/like": {
+			"get": {}
+		},
+		"/mainpage/recent": {
+			"get": {}
+		}
+	},
+	"info": {
+		"title": "Swagger petstore",
+		"version": "0.1.1"
+	},
+	"tags": [
+		{
+			"boards": "boards",
+			"posts": "posts"
+		}
+	],
+	"openapi": "3.0.2",
+	"components": {
+		"schemas": {
+			"UserSignup": {
+				"type": "object",
+				"properties": {
+					"user_pw": {
+						"type": "string"
+					},
+					"user_id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user_id",
+					"user_pw"
+				]
+			},
+			"User": {
+				"type": "object",
+				"properties": {
+					"is_master": {
+						"type": "boolean"
+					},
+					"user_id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user_id"
+				]
+			},
+			"ApiError": {
+				"type": "object",
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"code": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"code"
+				]
+			},
+			"UserUpdate": {
+				"type": "object",
+				"properties": {
+					"user_pw": {
+						"type": "string"
+					},
+					"user_origin_pw": {
+						"type": "string"
+					}
+				}
+			},
+			"Board": {
+				"type": "object",
+				"properties": {
+					"board_name": {
+						"type": "string",
+						"minLength": 1
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"board_name",
+					"id"
+				]
+			},
+			"BoardRegist": {
+				"type": "object",
+				"properties": {
+					"board_name": {
+						"type": "string",
+						"minLength": 1
+					}
+				},
+				"required": [
+					"board_name"
+				]
+			},
+			"BoardUpdate": {
+				"type": "object",
+				"properties": {
+					"board_name": {
+						"type": "string",
+						"minLength": 1
+					}
+				},
+				"required": [
+					"board_name"
+				]
+			},
+			"PostDetail": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"comment": {
+						"readOnly": true
+					},
+					"writer": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"title": {
+						"type": "string"
+					},
+					"num_comment": {
+						"type": "integer"
+					},
+					"content": {
+						"type": "string"
+					},
+					"num_like": {
+						"readOnly": true
+					}
+				}
+			},
+			"PostRegist": {
+				"type": "object",
+				"properties": {
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"content",
+					"title"
+				]
+			},
+			"PostList": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"minLength": 1
+					},
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"writer": {
+						"type": "string",
+						"minLength": 1
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"num_comment": {
+						"type": "integer"
+					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
+					"num_like": {
+						"readOnly": true
+					},
+					"is_like": {
+						"readOnly": true
+					}
+				},
+				"required": [
+					"content",
+					"id",
+					"notice",
+					"title",
+					"writer"
+				]
+			},
+			"PostUpdate": {
+				"type": "object",
+				"properties": {
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"content": {
+						"type": "string",
+						"minLength": 1
+					},
+					"tag": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
+		"parameters": {
+			"board_id": {
+				"type": "string",
+				"in": "path",
+				"name": "board_id",
+				"required": true
+			},
+			"post_id": {
+				"type": "string",
+				"in": "path",
+				"name": "post_id",
+				"required": true
+			}
+		},
+		"securitySchemes": {
+			"Authorization": {
+				"type": "uuid",
+				"in": "header",
+				"name": "Authorization"
+			}
+		}
+	}
+}

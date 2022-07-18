@@ -1,4 +1,4 @@
-from flask import jsonify, request, g
+from flask import request, g
 import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
@@ -6,8 +6,7 @@ from flask_apispec import use_kwargs, marshal_with
 from app.models import ReComment, User, Comment
 from app.schemas.ReCommentSchema import ReCommentRegistSchema
 from app.decorator import login_required, check_board, check_post, check_comment, check_recomment_writer, check_recomment
-from app.schemas.errors import ApiErrorSchema
-from app.errors import ApiError
+from app.errors import ApiError, ApiErrorSchema
 
 class ReCommentView(FlaskView):
     @route("/",methods=["POST"])

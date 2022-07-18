@@ -1,11 +1,10 @@
 from functools import wraps
-from flask import g, request, current_app, jsonify
+from flask import g, request, current_app
 import jwt
 from flask_apispec import marshal_with
 
 from app.models import Board, Post, Comment, ReComment
-from app.schemas.errors import ApiErrorSchema
-from app.errors import ApiError
+from app.errors import ApiError, ApiErrorSchema
 
 def login_required(f):
     @wraps(f)

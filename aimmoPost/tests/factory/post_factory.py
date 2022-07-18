@@ -12,8 +12,8 @@ class PostFactory(MongoEngineFactory):
 
     writer = fuzzy.FuzzyText("writer_")
     date = factory.LazyFunction(datetime.datetime.utcnow)
-    title = "sample_post_title"
-    content = "sample_content_title"
+    title = fuzzy.FuzzyText(prefix="post_title_")
+    content = fuzzy.FuzzyText(prefix="post_content_")
     tag = factory.LazyAttribute(lambda n: ["sample_post_tag_1", "sample_post_tag_2"])
     notice = factory.LazyAttribute(lambda n: False)
     like = factory.LazyAttribute(lambda n: [])

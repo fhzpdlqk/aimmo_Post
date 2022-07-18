@@ -1,17 +1,17 @@
-import os
-from flask import Flask, jsonify, current_app
+from flask import Flask
+from flask_apispec import FlaskApiSpec
 from mongoengine import connect
 from flask_cors import CORS
-
 from app.config import Config, TestConfig
-from app.views import register_api
-from flask_swagger import swagger
+from app.views import register_api, UserView
+from flask_classful_apispec import APISpec
 
 __version__ = "0.1.0"
 
 
 def create_app(test_config=None):
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path = '/static')
+
     app.config.from_object('app.config.Config')
     if test_config != None:
         app.config.from_object('app.config.TestConfig')
@@ -20,6 +20,7 @@ def create_app(test_config=None):
         app.config.from_object('app.config.Config')
         connect("test", host=Config.MONGODB_URI)
     CORS(app)
+
     register_api(app)
 
     return app

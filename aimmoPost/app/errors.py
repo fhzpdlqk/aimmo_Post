@@ -5,3 +5,11 @@ class ApiError(Exception):
         Exception.__init__(self)
         self.message = message
         self.status_code = status_code
+
+
+from marshmallow import Schema, fields
+
+
+class ApiErrorSchema(Schema):
+    status_code = fields.Integer(data_key="code", required=True)
+    message = fields.String()
