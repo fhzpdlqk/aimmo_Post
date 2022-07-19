@@ -129,7 +129,36 @@ class TestReCommentView:
                 return ReCommentFactory.create(comment=comment.id, writer=login_user.user_id, like=[login_user])
 
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 400
+
+            def test_데이터_확인(self, trans_api, post, login_user, comment, recomment):
+                assert login_user in ReComment.objects(id=recomment.id).get().like
+
+
+    class Test_UnLike_ReComment:
+        @pytest.fixture
+        def recomment(self, comment, login_user):
+            return ReCommentFactory.create(comment=comment.id, writer=login_user.user_id, like=[login_user])
+
+        @pytest.fixture
+        def trans_api(self, client, headers, board, post, comment, recomment):
+            return client.post(
+                f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}/like_cancel',
+                headers=headers)
+
+        def test_상태코드_200(self, trans_api):
+            assert trans_api.status_code == 200
+
+        def test_데이터_확인(self, trans_api, post, login_user, recomment):
+            assert login_user not in ReComment.objects(id=recomment.id).get().like
+
+        class Test_이미_좋아요가_눌러져_있을_경우:
+            @pytest.fixture
+            def recomment(self, login_user, board, comment):
+                return ReCommentFactory.create(comment=comment.id, writer=login_user.user_id, like=[])
+
+            def test_상태코드_200(self, trans_api):
+                assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, login_user, comment, recomment):
                 assert login_user not in ReComment.objects(id=recomment.id).get().like
