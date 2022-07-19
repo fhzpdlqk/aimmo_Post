@@ -431,7 +431,8 @@ tomli==2.0.1; python_version < "3.11" and python_full_version >= "3.7.2" and pyt
 tomlkit==0.11.0; python_version >= "3.6" and python_version < "4.0" and python_full_version >= "3.7.2" \
     --hash=sha256:0f4050db66fd445b885778900ce4dd9aea8c90c4721141fde0d6ade893820ef1 \
     --hash=sha256:71ceb10c0eefd8b8f11fe34e8a51ad07812cb1dc3de23247425fbc9ddc47b9dd
-webargs==8.1.0; python_version >= "3.7"
+webargs==8.1.0; python_version >= "3.7" \
+    --hash=sha256:8d4025a5efcfe15cc385e39bd84167d3e9ede0eb485e246eec21f340f1a0caf9
 werkzeug==2.1.2; python_version >= "3.7" \
     --hash=sha256:72a4b735692dd3135217911cbeaa1be5fa3f62bffb8745c5215420a03dc55255 \
     --hash=sha256:1ce08e8093ed67d638d63879fd1ba3735817f7a80de3674d293f5984f25fb6e6
