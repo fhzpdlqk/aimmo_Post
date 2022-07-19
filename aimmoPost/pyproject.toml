@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "aimmoPost"
+name = "app"
 version = "0.1.0"
 description = ""
 authors = ["fhzpdlqk <rozencrants@naver.com>"]
