@@ -105,7 +105,8 @@ faker==13.14.0; python_version >= "3.6" \
     --hash=sha256:b9f93ec97a70da79d43f497aa7b2b7d2bcd5d0c6d3ab7c102dde4193d0a38351
 flask-apispec==0.11.1; python_version >= "3.6" \
     --hash=sha256:db2f9a41b3ef5d77857a4e95862dad9f5262344fa27f7c754e8f40bde7d0a762
-flask-classful-apispec==0.1.8; python_version >= "3.6"
+flask-classful-apispec==0.1.8; python_version >= "3.6" \
+    --hash=sha256:c5a6e7009f32c02f52611c4bb112b4e43744332a2861db3a73e0911b901a40c4
 flask-classful==0.14.2 \
     --hash=sha256:ae0cabd3f69e1e16db3bf31f50862d3a5577244bfa0ace2b4612d10436e4bff7 \
     --hash=sha256:3a8f3c8fc549e37acf082f7b0ebf9e53dc35b0c9241c14f7d64433d4c1d629c9
