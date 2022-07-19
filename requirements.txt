@@ -242,7 +242,8 @@ mccabe==0.7.0; python_version >= "3.6" and python_full_version >= "3.7.2" \
 mongoengine==0.24.1; python_version >= "3.6" \
     --hash=sha256:68878b65bcb3751debcba4342180a180161cdb5f46525027e622ad081dd44fac \
     --hash=sha256:01baac85f408f5eefb6195c0afeae631e7fc6fab5cb221a7b46646f94227d6da
-mongomock==4.1.2
+mongomock==4.1.2 \
+    --hash=sha256:08a24938a05c80c69b6b8b19a09888d38d8c6e7328547f94d46cadb7f47209f2
 packaging==21.3; python_version >= "3.7" \
     --hash=sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522 \
     --hash=sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb
