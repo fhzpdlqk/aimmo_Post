@@ -121,7 +121,8 @@ flask-mongoengine==1.0.0 \
 flask-restx==0.5.1 \
     --hash=sha256:63c69a61999a34f1774eaccc6fc8c7f504b1aad7d56a8ec672264e52d9ac05f4 \
     --hash=sha256:96157547acaa8892adcefd8c60abf9040212ac2a8634937a82946e07b46147fd
-flask-swagger-ui==4.11.1
+flask-swagger-ui==4.11.1 \
+    --hash=sha256:c951928fe4592d3561b543e0e1ca32703f55d3474de86c894a9d27f795d96c83
 flask-swagger==0.2.14 \
     --hash=sha256:b4085f5bc36df4c20b6548cd1413adc9cf35719b0f0695367cd542065145294d \
     --hash=sha256:3caddb1311388eafc86f82f8e64ba386a5df6b84e5f16dfae19ca08173eba216
