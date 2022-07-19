@@ -1,7 +1,8 @@
 aniso8601==9.0.1; python_version >= "3.5" \
     --hash=sha256:1d2b7ef82963909e93c4f24ce48d4de9e66009a21bf1c1e1c85bdd0812fe412f \
     --hash=sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973
-apispec-webframeworks==0.5.2; python_version >= "3.6"
+apispec-webframeworks==0.5.2; python_version >= "3.6" \
+    --hash=sha256:482c563abbcc2a261439476cb3f1a7c7284cc997c322c574d48c111643e9c04e
 apispec==5.2.2; python_version >= "3.7"
 astroid==2.11.6; python_full_version >= "3.7.2" \
     --hash=sha256:ba33a82a9a9c06a5ceed98180c5aab16e29c285b828d94696bf32d6015ea82a9 \
