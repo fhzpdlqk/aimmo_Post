@@ -680,6 +680,71 @@
 					"200": {
 						"description": "no returns"
 					},
+					"400": {
+						"desription": "already push like user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts/{post_id}/like_cancel": {
+			"post": {
+				"summary": "게시물 좋아요 취소",
+				"description": "게시물 좋아요 취소",
+				"tags": [
+					"posts"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "no returns"
+					},
+					"400": {
+						"desription": "no push like user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
 					"401": {
 						"description": "not login user or not valid token",
 						"content": {
@@ -910,6 +975,84 @@
 				"responses": {
 					"200": {
 						"description": "no return"
+					},
+					"400": {
+						"description": "already push like user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id or comment id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}/like_cancel": {
+			"post": {
+				"summary": "댓글 좋아요취소 기능",
+				"description": "댓글 좋아요취소 기능",
+				"tags": [
+					"comments"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					},
+					{
+						"$ref": "#/components/parameters/comment_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"400": {
+						"description": "no push like user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
 					},
 					"401": {
 						"description": "not login user or not valid token",
@@ -1235,6 +1378,87 @@
 					"200": {
 						"description": "no return"
 					},
+					"400": {
+						"description": "already push like user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "not login user or not valid token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "not found board id or post id or comment id, recomment id",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/boards/{board_id}/posts/{post_id}/comments/{comment_id}/recomments/{recomment_id}/like_cancel": {
+			"post": {
+				"summary": "대댓글 좋아요 취소 기능",
+				"description": "대댓글 좋아요 취소 기능",
+				"tags": [
+					"recomments"
+				],
+				"security": {
+					"Authorization": []
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/board_id"
+					},
+					{
+						"$ref": "#/components/parameters/post_id"
+					},
+					{
+						"$ref": "#/components/parameters/comment_id"
+					},
+					{
+						"$ref": "#/components/parameters/recomment_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "no return"
+					},
+					"400": {
+						"description": "no push like user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
 					"401": {
 						"description": "not login user or not valid token",
 						"content": {
@@ -1549,13 +1773,13 @@
 			"UserLogin": {
 				"type": "object",
 				"properties": {
-					"user_pw": {
+					"user_id": {
 						"type": "string"
 					},
 					"is_master": {
 						"type": "boolean"
 					},
-					"user_id": {
+					"user_pw": {
 						"type": "string"
 					}
 				}
@@ -1588,10 +1812,10 @@
 			"UserSignup": {
 				"type": "object",
 				"properties": {
-					"user_pw": {
+					"user_id": {
 						"type": "string"
 					},
-					"user_id": {
+					"user_pw": {
 						"type": "string"
 					}
 				},
@@ -1603,11 +1827,11 @@
 			"User": {
 				"type": "object",
 				"properties": {
-					"is_master": {
-						"type": "boolean"
-					},
 					"user_id": {
 						"type": "string"
+					},
+					"is_master": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -1617,10 +1841,10 @@
 			"UserUpdate": {
 				"type": "object",
 				"properties": {
-					"user_origin_pw": {
+					"user_pw": {
 						"type": "string"
 					},
-					"user_pw": {
+					"user_origin_pw": {
 						"type": "string"
 					}
 				}
@@ -1668,6 +1892,20 @@
 			"PostList": {
 				"type": "object",
 				"properties": {
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"writer": {
+						"type": "string",
+						"minLength": 1
+					},
+					"is_like": {
+						"readOnly": true
+					},
 					"id": {
 						"type": "string",
 						"minLength": 1
@@ -1678,33 +1916,19 @@
 							"type": "string"
 						}
 					},
-					"is_like": {
-						"readOnly": true
-					},
 					"title": {
 						"type": "string",
 						"minLength": 1
-					},
-					"num_comment": {
-						"type": "integer"
 					},
 					"content": {
 						"type": "string",
 						"minLength": 1
 					},
-					"date": {
-						"type": "string",
-						"format": "date-time"
-					},
 					"num_like": {
 						"readOnly": true
 					},
-					"writer": {
-						"type": "string",
-						"minLength": 1
-					},
-					"notice": {
-						"type": "boolean"
+					"num_comment": {
+						"type": "integer"
 					}
 				},
 				"required": [
@@ -1718,6 +1942,16 @@
 			"PostDetail": {
 				"type": "object",
 				"properties": {
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"notice": {
+						"type": "boolean"
+					},
+					"writer": {
+						"type": "string"
+					},
 					"id": {
 						"type": "string"
 					},
@@ -1727,14 +1961,8 @@
 							"type": "string"
 						}
 					},
-					"comment": {
-						"readOnly": true
-					},
 					"title": {
 						"type": "string"
-					},
-					"num_comment": {
-						"type": "integer"
 					},
 					"content": {
 						"type": "string"
@@ -1742,35 +1970,31 @@
 					"num_like": {
 						"readOnly": true
 					},
-					"date": {
-						"type": "string",
-						"format": "date-time"
+					"num_comment": {
+						"type": "integer"
 					},
-					"writer": {
-						"type": "string"
-					},
-					"notice": {
-						"type": "boolean"
+					"comment": {
+						"readOnly": true
 					}
 				}
 			},
 			"PostRegist": {
 				"type": "object",
 				"properties": {
+					"title": {
+						"type": "string",
+						"minLength": 1
+					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
 					},
-					"content": {
-						"type": "string",
-						"minLength": 1
-					},
 					"notice": {
 						"type": "boolean"
 					},
-					"title": {
+					"content": {
 						"type": "string",
 						"minLength": 1
 					}
@@ -1783,19 +2007,19 @@
 			"PostUpdate": {
 				"type": "object",
 				"properties": {
+					"title": {
+						"type": "string"
+					},
 					"tag": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						}
 					},
-					"content": {
-						"type": "string"
-					},
 					"notice": {
 						"type": "boolean"
 					},
-					"title": {
+					"content": {
 						"type": "string"
 					}
 				}

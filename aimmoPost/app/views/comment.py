@@ -152,6 +152,7 @@ class CommentView(FlaskView):
     @check_board
     @check_post
     @check_comment
+    @marshal_with(ApiErrorSchema, code=400, description="already push like user")
     def like(self, board_id, post_id, comment_id):
         """ like comment
             ---
@@ -167,6 +168,11 @@ class CommentView(FlaskView):
             responses:
                 200:
                     description: no return
+                400:
+                    description: already push like user
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
                 401:
                     description: not login user or not valid token
                     content:
@@ -186,6 +192,55 @@ class CommentView(FlaskView):
         user = User.objects(user_id=g.user_id).get()
         if user not in Comment.objects(id=comment_id).get().like:
             Comment.objects(id=comment_id).update_one(push__like=user)
+        else:
+            return ApiError(message="이미 좋아요가 눌러져 있습니다"), 400
+        return "", 200
+
+    @route("/<string:comment_id>/like_cancel", methods=["POST"])
+    @login_required
+    @check_board
+    @check_post
+    @check_comment
+    @marshal_with(ApiErrorSchema, code=400, description="no push like user")
+    def like_cancel(self, board_id, post_id, comment_id):
+        """ like cancel comment
+            ---
+            summary: 댓글 좋아요취소 기능
+            description: 댓글 좋아요취소 기능
+            tags: [comments]
+            security:
+                Authorization: []
+            parameters:
+                board_id: []
+                post_id: []
+                comment_id: []
+            responses:
+                200:
+                    description: no return
+                400:
+                    description: no push like user
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                401:
+                    description: not login user or not valid token
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                404:
+                    description: not found board id or post id or comment id
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                422:
+                    description: validation error
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+        """
+        user = User.objects(user_id=g.user_id).get()
+        if user not in Comment.objects(id=comment_id).get().like:
+            return ApiError(message="좋아요가 눌러져 있지 않습니다."), 400
         else:
             Comment.objects(id=comment_id).update_one(pull__like=user)
         return "", 200

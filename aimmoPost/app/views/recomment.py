@@ -158,6 +158,7 @@ class ReCommentView(FlaskView):
     @check_post
     @check_comment
     @check_recomment
+    @marshal_with(ApiErrorSchema, code=400, description="already push like user")
     def recomment_like(self, board_id, post_id, comment_id, recomment_id):
         """ like re_comment
             ---
@@ -174,6 +175,11 @@ class ReCommentView(FlaskView):
             responses:
                 200:
                     description: no return
+                400:
+                    description: already push like user
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
                 401:
                     description: not login user or not valid token
                     content:
@@ -193,6 +199,58 @@ class ReCommentView(FlaskView):
         user = User.objects(user_id=g.user_id).get()
         if user not in ReComment.objects(id=recomment_id).get().like:
             ReComment.objects(id=recomment_id).update_one(push__like=user)
+        else:
+            return ApiError(message="좋아요를 이미 누른 유저입니다."), 400
+        return "", 200
+
+
+    @route("/<recomment_id>/like_cancel", methods=["POST"])
+    @login_required
+    @check_board
+    @check_post
+    @check_comment
+    @check_recomment
+    @marshal_with(ApiErrorSchema, code=400, description="no push like user")
+    def recomment_like_cancel(self, board_id, post_id, comment_id, recomment_id):
+        """ like re_comment
+            ---
+            summary: 대댓글 좋아요 취소 기능
+            description: 대댓글 좋아요 취소 기능
+            tags: [recomments]
+            security:
+                Authorization: []
+            parameters:
+                board_id: []
+                post_id: []
+                comment_id: []
+                recomment_id: []
+            responses:
+                200:
+                    description: no return
+                400:
+                    description: no push like user
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                401:
+                    description: not login user or not valid token
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                404:
+                    description: not found board id or post id or comment id, recomment id
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                422:
+                    description: validation error
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+        """
+        user = User.objects(user_id=g.user_id).get()
+        if user not in ReComment.objects(id=recomment_id).get().like:
+            return ApiError(message="좋아요를 누르지 않은 유저입니다."), 400
         else:
             ReComment.objects(id=recomment_id).update_one(pull__like=user)
         return "", 200

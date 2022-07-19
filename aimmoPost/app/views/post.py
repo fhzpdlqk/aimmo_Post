@@ -182,6 +182,7 @@ class PostView(FlaskView):
     @login_required
     @check_board
     @check_post
+    @marshal_with(ApiErrorSchema, code=400, description="already like user")
     def like(self, board_id, post_id):
         """ like post
             ---
@@ -196,6 +197,11 @@ class PostView(FlaskView):
             responses:
                 200:
                     description: no returns
+                400:
+                    desription: already push like user
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
                 401:
                     description: not login user or not valid token
                     content:
@@ -211,7 +217,49 @@ class PostView(FlaskView):
         if user not in Post.objects(id=post_id).get().like:
             Post.objects(id=post_id).update_one(push__like=user)
         else:
+            return ApiError(message="좋아요가 눌러져 있습니다."), 400
+        return "", 200
+
+    @route("/<string:post_id>/like_cancel", methods=["POST"])
+    @login_required
+    @check_board
+    @check_post
+    @marshal_with(ApiErrorSchema, code=400, description="no like user")
+    def like_cancel(self, board_id, post_id):
+        """ like_cancel post
+            ---
+            summary: 게시물 좋아요 취소
+            description: 게시물 좋아요 취소
+            tags: [posts]
+            security:
+                Authorization: []
+            parameters:
+                board_id: []
+                post_id: []
+            responses:
+                200:
+                    description: no returns
+                400:
+                    desription: no push like user
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                401:
+                    description: not login user or not valid token
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+                404:
+                    description: not found board id or post id
+                    content:
+                        application/json:
+                            schema: ApiErrorSchema
+        """
+        user = User.objects(user_id=g.user_id).get()
+        if user in Post.objects(id=post_id).get().like:
             Post.objects(id=post_id).update_one(pull__like=user)
+        else:
+            return ApiError(message="좋아요가 눌러져 있지 않습니다."), 400
         return "", 200
 
     @route("/search", methods=["POST"])

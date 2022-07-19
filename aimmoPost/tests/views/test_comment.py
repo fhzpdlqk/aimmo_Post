@@ -120,7 +120,34 @@ class TestCommentView:
                 return CommentFactory.create(post=post.id, writer=login_user.user_id, like=[login_user])
 
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 400
+
+            def test_데이터_확인(self, trans_api, post, login_user, comment):
+                assert login_user in Comment.objects(id=comment.id).get().like
+
+    class Test_UnLike_Comment:
+        @pytest.fixture
+        def comment(self, post, login_user):
+            return CommentFactory.create(post=post.id, writer=login_user.user_id, like=[login_user])
+
+        @pytest.fixture
+        def trans_api(self, client, headers, board, post, comment):
+            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/like_cancel',
+                               headers=headers)
+
+        def test_상태코드_200(self, trans_api):
+            assert trans_api.status_code == 200
+
+        def test_데이터_확인(self, trans_api, post, login_user, comment):
+            assert login_user not in Comment.objects(id=comment.id).get().like
+
+        class Test_좋아요가_눌러져_있지_않은_경우:
+            @pytest.fixture
+            def comment(self, login_user, board, post):
+                return CommentFactory.create(post=post.id, writer=login_user.user_id, like=[])
+
+            def test_상태코드_200(self, trans_api):
+                assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, login_user, comment):
                 assert login_user not in Comment.objects(id=comment.id).get().like

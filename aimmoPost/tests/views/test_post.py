@@ -276,7 +276,33 @@ class Test_PostView:
                 return PostFactory.create(board=board, writer=login_user.user_id, like=[login_user])
 
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 400
+
+            def test_데이터_확인(self, trans_api, post, login_user):
+                assert login_user in Post.objects(id=post.id).get().like
+
+    class Test_UnLike_Post:
+        @pytest.fixture
+        def trans_api(self, client, headers, board, post):
+            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/like_cancel', headers=headers)
+
+        @pytest.fixture
+        def post(self, login_user, board):
+            return PostFactory.create(board=board, writer=login_user.user_id, like=[login_user])
+
+        def test_상태코드_200(self, trans_api):
+            assert trans_api.status_code == 200
+
+        def test_데이터_확인(self, trans_api, post, login_user):
+            assert login_user not in Post.objects(id=post.id).get().like
+
+        class Test_좋아요가_눌러져_있지_않은_경우:
+            @pytest.fixture
+            def post(self, login_user, board):
+                return PostFactory.create(board=board, writer=login_user.user_id, like=[])
+
+            def test_상태코드_200(self, trans_api):
+                assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, login_user):
                 assert login_user not in Post.objects(id=post.id).get().like
