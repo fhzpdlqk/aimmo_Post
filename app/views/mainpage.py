@@ -9,7 +9,7 @@ from app.models import Post
 class MainPageView(FlaskView):
     decorators = (doc(tags=["Mainpage"]),)
     @route("/", methods=["GET"])
-    @doc(summary="최근순 게시물 10개", description="최근순 게시물 10개")
+    @doc(summary="메인페이지 게시물", description="메인페이지 게시물")
     @login_required
     @use_kwargs(MainPageFilterSchema, location='query')
     @marshal_with(PostListSchema(many=True), code=200, description="게시물 최근목록 10개")

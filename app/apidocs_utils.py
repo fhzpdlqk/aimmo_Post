@@ -32,10 +32,13 @@ class ApiDocConverter(Converter):
 
     def get_request_body(self, view, parent=None):
         schema, options, locations = self._parse_args_annotation(view, parent)
+        print(schema, options, locations)
         converter = self._resolve_converter(schema)
 
 
         if schema is None:
+            return None
+        if locations != None and locations != 'body':
             return None
         options["location"] = "body"
         params = converter(schema, **options)
