@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'aimmoPost'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3D0E24EA3894471D963EF47D207D078F }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9BE5B1CA970149C89A85908506DE5ACD }}
