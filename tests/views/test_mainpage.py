@@ -22,41 +22,41 @@ class Test_MainPageView:
         PostFactory.create(num_comment=random.randint(1, 10),
                            like=[UserFactory.create() for _ in range(random.randint(1, 10))])
 
-    class Test_Recent_List:
-        @pytest.fixture
-        def trans_api(self, client, post, headers):
-            return client.get('/recent', headers=headers)
+    class Test_Mainpage:
+        class Test_최신순_게시물:
+            @pytest.fixture
+            def trans_api(self, client, post, headers):
+                return client.get('/?filter=date', headers=headers)
 
-        def test_상태코드_200(self, trans_api):
-            assert trans_api.status_code == 200
+            def test_상태코드_200(self, trans_api):
+                assert trans_api.status_code == 200
 
-        def test_목록_최신순_여부(self, trans_api):
-            post_list = trans_api.json
-            for index in range(1, len(post_list)):
-                assert post_list[index - 1]["date"] >= post_list[index]["date"]
+            def test_목록_최신순_여부(self, trans_api):
+                post_list = trans_api.json
+                for index in range(1, len(post_list)):
+                    assert post_list[index - 1]["date"] >= post_list[index]["date"]
+        class Test_댓글순_게시물:
+            @pytest.fixture
+            def trans_api(self, client, post, headers):
+                return client.get('/?filter=comment', headers=headers)
 
-    class Test_Comment_List:
-        @pytest.fixture
-        def trans_api(self, client, post, headers):
-            return client.get('/comment', headers=headers)
+            def test_상태코드_200(self, trans_api):
+                assert trans_api.status_code == 200
 
-        def test_상태코드_200(self, trans_api):
-            assert trans_api.status_code == 200
+            def test_목록_댓글순_여부(self, trans_api):
+                post_list = trans_api.json
+                for index in range(1, len(post_list)):
+                    assert post_list[index - 1]["num_comment"] >= post_list[index]["num_comment"]
 
-        def test_목록_댓글순_여부(self, trans_api):
-            post_list = trans_api.json
-            for index in range(1, len(post_list)):
-                assert post_list[index - 1]["num_comment"] >= post_list[index]["num_comment"]
+        class Test_like_List:
+            @pytest.fixture
+            def trans_api(self, client, post, headers):
+                return client.get('/?filter=like', headers=headers)
 
-    class Test_like_List:
-        @pytest.fixture
-        def trans_api(self, client, post, headers):
-            return client.get('/like', headers=headers)
+            def test_상태코드_200(self, trans_api):
+                assert trans_api.status_code == 200
 
-        def test_상태코드_200(self, trans_api):
-            assert trans_api.status_code == 200
-
-        def test_목록_좋아요순_여부(self, trans_api):
-            post_list = trans_api.json
-            for index in range(1, len(post_list)):
-                assert post_list[index - 1]["num_like"] >= post_list[index]["num_like"]
+            def test_목록_좋아요순_여부(self, trans_api):
+                post_list = trans_api.json
+                for index in range(1, len(post_list)):
+                    assert post_list[index - 1]["num_like"] >= post_list[index]["num_like"]
