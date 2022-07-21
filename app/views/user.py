@@ -3,6 +3,7 @@ import bcrypt
 from flask_classful import FlaskView, route
 from flask import request, g
 from flask_apispec import use_kwargs, marshal_with, doc
+from funcy import project
 from app.schemas.UserSchema import UserSignupSchema, UserSchema, UserLoginSchema, AuthTokenSchema, UserUpdateSchema
 from app.models import User, AuthToken
 from app.errors import ApiError, ApiErrorSchema
@@ -42,13 +43,21 @@ class UserView(FlaskView):
         except marshmallow.exceptions.ValidationError as err:
             return ApiError(message=err.messages), 422
 
+    @route("/", methods=["PUT"])
     @doc(summary="사용자 비밀번호 변경", description="사용자 비밀번호 변경")
-    @use_kwargs(UserUpdateSchema())
     @login_required
+    @use_kwargs(UserUpdateSchema())
     @marshal_with(ApiErrorSchema, code=401, description="비밀번호가 틀림")
-    def put(self, user=None):
-        if not user:
-            return ApiError(message="비밀번호가 틀립니다."), 401
-        else:
-            User.objects(user_id=g.user_id).get().update(user_pw = bcrypt.hashpw(user.user_pw.encode("utf-8"), bcrypt.gensalt()))
-            return "", 200
+    def put(self, user_pw, user_origin_pw):
+        try:
+            user = User.objects(user_id=g.user_id).get()
+            if not bcrypt.checkpw(user_origin_pw.encode("utf-8"), user.user_pw.encode("utf-8")):
+                return ApiError(message="비밀번호가 틀립니다."), 401
+            else:
+                password = bcrypt.hashpw(user_pw.encode("utf-8"), bcrypt.gensalt())
+                User.objects(user_id=g.user_id).update(user_pw = password.decode("utf-8"))
+                return "", 200
+        except marshmallow.exceptions.ValidationError as err:
+            return ApiError(message=err.messages), 422
+
+

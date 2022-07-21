@@ -40,11 +40,7 @@ class UserUpdateSchema(Schema):
 
     @post_load
     def check_user(self, data, **kwargs):
-        user = User.objects(user_id=g.user_id)
-        if bcrypt.checkpw(data["user_origin_pw"].encode("utf-8"), user.user_pw.encode("utf-8")):
-            return {'user': user[0]}
-        else:
-            return {'user': False}
+        return {"user_origin_pw": data["user_origin_pw"], "user_pw": data["user_pw"]}
 
 
 class AuthTokenSchema(Schema):

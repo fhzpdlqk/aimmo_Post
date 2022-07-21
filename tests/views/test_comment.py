@@ -9,7 +9,7 @@ from tests.factory.post_factory import PostFactory
 from tests.factory.comment_factory import CommentFactory
 
 
-class TestCommentView:
+class Describe_CommentView:
     @pytest.fixture
     def login_user(self):
         return UserFactory.create()
@@ -114,7 +114,7 @@ class TestCommentView:
         def test_데이터_확인(self, trans_api, post, login_user, comment):
             assert login_user in Comment.objects(id=comment.id).get().like
 
-        class Test_이미_좋아요가_눌러져_있을_경우:
+        class Context_이미_좋아요가_눌러져_있을_경우:
             @pytest.fixture
             def comment(self, login_user, board, post):
                 return CommentFactory.create(post=post.id, writer=login_user.user_id, like=[login_user])
@@ -141,7 +141,7 @@ class TestCommentView:
         def test_데이터_확인(self, trans_api, post, login_user, comment):
             assert login_user not in Comment.objects(id=comment.id).get().like
 
-        class Test_좋아요가_눌러져_있지_않은_경우:
+        class Context_좋아요가_눌러져_있지_않은_경우:
             @pytest.fixture
             def comment(self, login_user, board, post):
                 return CommentFactory.create(post=post.id, writer=login_user.user_id, like=[])

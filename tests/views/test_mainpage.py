@@ -7,7 +7,7 @@ from tests.factory.post_factory import PostFactory
 from tests.factory.user_factory import UserFactory
 
 
-class Test_MainPageView:
+class Describe_MainPageView:
     @pytest.fixture
     def login_user(self):
         return UserFactory.create()
@@ -23,7 +23,7 @@ class Test_MainPageView:
                            like=[UserFactory.create() for _ in range(random.randint(1, 10))])
 
     class Test_Mainpage:
-        class Test_최신순_게시물:
+        class Context_최신순_게시물:
             @pytest.fixture
             def trans_api(self, client, post, headers):
                 return client.get('/?filter=date', headers=headers)
@@ -35,7 +35,7 @@ class Test_MainPageView:
                 post_list = trans_api.json
                 for index in range(1, len(post_list)):
                     assert post_list[index - 1]["date"] >= post_list[index]["date"]
-        class Test_댓글순_게시물:
+        class Context_댓글순_게시물:
             @pytest.fixture
             def trans_api(self, client, post, headers):
                 return client.get('/?filter=comment', headers=headers)
@@ -48,7 +48,7 @@ class Test_MainPageView:
                 for index in range(1, len(post_list)):
                     assert post_list[index - 1]["num_comment"] >= post_list[index]["num_comment"]
 
-        class Test_like_List:
+        class Context_like_List:
             @pytest.fixture
             def trans_api(self, client, post, headers):
                 return client.get('/?filter=like', headers=headers)
