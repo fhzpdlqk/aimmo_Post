@@ -7,7 +7,7 @@ from flask import current_app
 class User(Document):
     user_id = StringField(required=True, max_length=200, unique=True)
     user_pw = StringField(required=True, max_length=100)
-    is_master = BooleanField(default=False)
+    is_master = BooleanField(default=True)
 
 
 class Board(Document):

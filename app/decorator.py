@@ -5,6 +5,8 @@ from flask_apispec import marshal_with
 
 from app.models import Board, Post, Comment, ReComment
 from app.errors import ApiError, ApiErrorSchema
+import inspect
+import re
 
 def login_required(f):
     @wraps(f)
@@ -106,3 +108,54 @@ def check_recomment_writer(f):
             return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
     return decorated_function
+
+
+def get_decorators(function):
+    source = inspect.getsource(function)
+    index = source.find("def ")
+    return [
+        line.strip()
+        for line in source[:index].strip().splitlines()
+        if line.strip()[0] == "@"
+    ]
+# 삽질의 흔적
+# class doc(object):
+#     def __init__(self, summary=None, description=None, tags=None):
+#         self.summary = summary
+#         self.description = description
+#         self.tags = tags
+#         self.response = {}
+#     def __call__(self, func):
+#         for i in get_decorators(func):
+#             print(i)
+#             if i.startswith('@marshal_with'):
+#                 startindex= i.find("code=")
+#                 endindex=i.find(",", startindex)
+#                 if endindex == -1:
+#                     endindex = len(i)
+#                 code = re.sub(r'[^0-9]', '', i[startindex:endindex])
+#                 print(code)
+#                 pass
+#             elif i.startswith('@use_kwargs'):
+#                 pass
+#             elif i.startswith('@doc'):
+#                 pass
+#             else:
+#                 pass
+#         func.__doc__="aa"
+#         @wraps(func)
+#         def wrappee(*args, **kwargs):
+#             try:
+#                 return func(*args, **kwargs)
+#             except Exception as e:
+#                 print(f"ERR {func.__name__}() : {str(e)}")
+#         return wrappee
+#
+#     def get_decorators(self,function):
+#         source = inspect.getsource(function)
+#         index = source.find("def ")
+#         return [
+#             line.strip()
+#             for line in source[:index].strip().splitlines()
+#             if line.strip()[0] == "@"
+#         ]
