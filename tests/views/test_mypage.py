@@ -8,7 +8,7 @@ from app.models import Post
 import pytest
 
 
-class Test_MyPageView:
+class Describe_MyPageView:
     @pytest.fixture
     def login_user(self):
         return UserFactory.create()

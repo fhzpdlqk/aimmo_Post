@@ -7,9 +7,10 @@ from app.config import TestConfig
 from tests.factory.user_factory import UserFactory
 from tests.factory.board_factory import BoardFactory
 from tests.factory.post_factory import PostFactory
+from tests.factory.comment_factory import CommentFactory
 
 
-class Test_PostView:
+class Describe_PostView:
     @pytest.fixture
     def login_user(self):
         return UserFactory.create()
@@ -54,7 +55,7 @@ class Test_PostView:
             assert Post.objects()[0].notice == form["notice"]
             assert not Post.objects()[0].is_deleted
 
-        class Test_제목이_누락되었을_경우:
+        class Context_제목이_누락되었을_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -65,8 +66,10 @@ class Test_PostView:
 
             def test_상태코드_422(self, trans_api):
                 assert trans_api.status_code == 422
+            def test_데이터_삽입_여부(self, trans_api):
+                assert len(Post.objects())==0
 
-        class Test_내용이_누락되었을_경우:
+        class Context_내용이_누락되었을_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -77,8 +80,10 @@ class Test_PostView:
 
             def test_상태코드_422(self, trans_api):
                 assert trans_api.status_code == 422
+            def test_데이터_삽입_여부(self, trans_api):
+                assert len(Post.objects())==0
 
-        class Test_태그가_누락되었을_경우:
+        class Context_태그가_누락되었을_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -99,7 +104,7 @@ class Test_PostView:
                 assert Post.objects()[0].tag == []
                 assert Post.objects()[0].notice == form["notice"]
 
-        class Test_공지여부가_누락되었을_경우:
+        class Context_공지여부가_누락되었을_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -122,8 +127,12 @@ class Test_PostView:
 
     class Test_Get_Post:
         @pytest.fixture
-        def trans_api(self, client, headers, board, post):
+        def trans_api(self, client, headers, board, post, comment):
             return client.get(f'/boards/{str(board.id)}/posts/{str(post.id)}', headers=headers)
+        @pytest.fixture
+        def comment(self, post):
+            return [CommentFactory.create(post=post) for _ in range(20)]
+
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
@@ -138,9 +147,9 @@ class Test_PostView:
             assert post.tag == trans_api.json["tag"]
             assert post.date.isoformat(timespec='microseconds') == trans_api.json["date"]
             assert post.num_comment == trans_api.json["num_comment"]
-            assert trans_api.json["comment"] == []
+            assert len(trans_api.json["comment"]) == 20
             assert not post.is_deleted
-        class Test_게시물이_삭제된_게시물일_경우:
+        class Context_게시물이_삭제된_게시물일_경우:
             @pytest.fixture
             def post(self, board, login_user):
                 return PostFactory.create(board=board, writer=login_user.user_id, is_deleted=True)
@@ -183,7 +192,7 @@ class Test_PostView:
             assert Post.objects(id=post.id).get().notice == form["notice"]
             assert not Post.objects(id=post.id).get().is_deleted
 
-        class Test_제목이_누락되었을_경우:
+        class Context_제목이_누락되었을_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -202,7 +211,7 @@ class Test_PostView:
                 assert Post.objects(id=post.id).get().notice == form["notice"]
                 assert not Post.objects(id=post.id).get().is_deleted
 
-        class Test_내용이_누락되었을_경우:
+        class Context_내용이_누락되었을_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -221,7 +230,7 @@ class Test_PostView:
                 assert Post.objects(id=post.id).get().notice == form["notice"]
                 assert not Post.objects(id=post.id).get().is_deleted
 
-        class Test_태그가_누락되었을_경우:
+        class Context_태그가_누락되었을_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -240,7 +249,7 @@ class Test_PostView:
                 assert Post.objects(id=post.id).get().notice == form["notice"]
                 assert not Post.objects(id=post.id).get().is_deleted
 
-        class Test_공지여부가_누락되었을_경우:
+        class Context_공지여부가_누락되었을_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -270,7 +279,7 @@ class Test_PostView:
         def test_데이터_확인(self, trans_api, post, login_user):
             assert login_user in Post.objects(id=post.id).get().like
 
-        class Test_이미_좋아요가_눌러져_있을_경우:
+        class Context_이미_좋아요가_눌러져_있을_경우:
             @pytest.fixture
             def post(self, login_user, board):
                 return PostFactory.create(board=board, writer=login_user.user_id, like=[login_user])
@@ -296,7 +305,7 @@ class Test_PostView:
         def test_데이터_확인(self, trans_api, post, login_user):
             assert login_user not in Post.objects(id=post.id).get().like
 
-        class Test_좋아요가_눌러져_있지_않은_경우:
+        class Context_좋아요가_눌러져_있지_않은_경우:
             @pytest.fixture
             def post(self, login_user, board):
                 return PostFactory.create(board=board, writer=login_user.user_id, like=[])
@@ -334,7 +343,7 @@ class Test_PostView:
             assert trans_api.json[0]["num_comment"] == post.num_comment
             assert not Post.objects(id=post.id).get().is_deleted
 
-        class Test_제목에서_찾은_경우:
+        class Context_제목에서_찾은_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -358,7 +367,7 @@ class Test_PostView:
                 assert trans_api.json[0]["num_comment"] == post.num_comment
                 assert not Post.objects(id=post.id).get().is_deleted
 
-        class Test_내용에서_찾은_경우:
+        class Context_내용에서_찾은_경우:
             @pytest.fixture
             def form(self):
                 return {
@@ -426,7 +435,7 @@ class Test_PostView:
             for i in posts:
                 assert (login_user in Post.objects(id=i["id"]).get().like) == i["is_like"]
 
-        class Test_페이지_인덱스가_음수일_경우:
+        class Context_페이지_인덱스가_음수일_경우:
             @pytest.fixture
             def trans_api(self, client, board, headers):
                 return client.get(f"/boards/{str(board.id)}/posts/?page=-1&size=10", headers=headers)
@@ -434,7 +443,7 @@ class Test_PostView:
             def test_상태코드_404(self, trans_api):
                 assert trans_api.status_code == 404
 
-        class Test_페이지_인덱스가_매우_클경우:
+        class Context_페이지_인덱스가_매우_클경우:
             @pytest.fixture
             def trans_api(self, client, board, headers):
                 return client.get(f"/boards/{str(board.id)}/posts/?page=100&size=10", headers=headers)

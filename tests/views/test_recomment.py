@@ -10,7 +10,7 @@ from tests.factory.comment_factory import CommentFactory
 from tests.factory.recomment_factory import ReCommentFactory
 
 
-class TestReCommentView:
+class Describe_ReCommentView:
     @pytest.fixture
     def login_user(self):
         return UserFactory.create()
@@ -123,7 +123,7 @@ class TestReCommentView:
         def test_데이터_확인(self, trans_api, post, login_user, recomment):
             assert login_user in ReComment.objects(id=recomment.id).get().like
 
-        class Test_이미_좋아요가_눌러져_있을_경우:
+        class Context_이미_좋아요가_눌러져_있을_경우:
             @pytest.fixture
             def recomment(self, login_user, board, comment):
                 return ReCommentFactory.create(comment=comment.id, writer=login_user.user_id, like=[login_user])
@@ -152,7 +152,7 @@ class TestReCommentView:
         def test_데이터_확인(self, trans_api, post, login_user, recomment):
             assert login_user not in ReComment.objects(id=recomment.id).get().like
 
-        class Test_이미_좋아요가_눌러져_있을_경우:
+        class Context_이미_좋아요가_눌러져_있을_경우:
             @pytest.fixture
             def recomment(self, login_user, board, comment):
                 return ReCommentFactory.create(comment=comment.id, writer=login_user.user_id, like=[])
