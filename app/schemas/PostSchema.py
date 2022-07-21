@@ -77,7 +77,6 @@ class PostListFilterSchema(Schema):
 
     @post_load
     def list_info(self, data, **kwargs):
-        print(data)
         return {
             'page': data['page'],
             'size': data['size']
