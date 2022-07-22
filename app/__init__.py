@@ -1,10 +1,8 @@
-from flask import Flask, render_template, url_for
-from flask_apispec import FlaskApiSpec
+from flask import Flask
 from mongoengine import connect
 from flask_cors import CORS
 from app.config import Config, TestConfig
 from app.views import register_api, UserView
-from flask_classful_apispec import APISpec
 
 __version__ = "0.1.0"
 

@@ -69,7 +69,7 @@ def register_swagger(bp):
 
     @bp.route("/apispec")
     def apispec():
-        return jsonify(generate_api_spec(title="abcd", version="v1", bp_name=bp.name if isinstance(bp, Blueprint) else None))
+        return jsonify(generate_api_spec(title="Aimmo On-Boarding 게시판 만들기", version="v1", bp_name=bp.name if isinstance(bp, Blueprint) else None))
 
     # spec = APISpec(app)
 

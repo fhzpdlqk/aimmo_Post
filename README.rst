@@ -59,7 +59,7 @@ AIMMO 신입사원 On-Boarding 과제
  - flask-classful: class 기반으로 flask를 구현할 수 있도록 하는 라이브러리
  - flask-apispec: flask에서 rest api를 빌드 할 수 있도록 하는 라이브러리
  - mongoengine: python mongodb 드라이버
- - marshmellow: datatype을 python datatype으로 혹은 반대로 바꿔주는 라이브러리
+ - marshmallow: datatype을 python datatype으로 혹은 반대로 바꿔주는 라이브러리
 
 3. 패키지매니저
 ----------------------
@@ -67,4 +67,35 @@ AIMMO 신입사원 On-Boarding 과제
 
 4. API 명세
 ---------------------
-http://localhost:5000/api-docs
+https://aimmopost.azurewebsites.net/api-docs/
+
+5. 주요 내용
+---------------------
+1. `decorator <./readme/decorator.rst>`_
+2. `marshmallow <./readme/marshmallow.rst>`_
+3. `flask_classful <./readme/marshmallow.rst>`_
+4. `flask_apispec <./readme/flask_apispec.rst>`_
+5. `swagger <./readme/swagger.rst>`_
+
+6. 명령어
+-------------------------------------------
+배포를 위한 requirements.txt 만들기
+
+.. code-block:: none
+    poetry export --without-hashes --format=requirements.txt > requirements.txt
+
+poetry 설치
+
+.. code-block:: none
+    curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+
+app 실행
+
+.. code-block:: none
+    poetry run flask run
+
+unit test 실행
+
+.. code-block:: none
+    poetry run pytest
+

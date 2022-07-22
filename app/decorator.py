@@ -5,8 +5,6 @@ from flask_apispec import marshal_with
 
 from app.models import Board, Post, Comment, ReComment
 from app.errors import ApiError, ApiErrorSchema
-import inspect
-import re
 
 def login_required(f):
     @wraps(f)
@@ -109,15 +107,17 @@ def check_recomment_writer(f):
         return f(*args, **kwargs)
     return decorated_function
 
+#
+# def get_decorators(function):
+#     source = inspect.getsource(function)
+#     index = source.find("def ")
+#     return [
+#         line.strip()
+#         for line in source[:index].strip().splitlines()
+#         if line.strip()[0] == "@"
+#     ]
+#
 
-def get_decorators(function):
-    source = inspect.getsource(function)
-    index = source.find("def ")
-    return [
-        line.strip()
-        for line in source[:index].strip().splitlines()
-        if line.strip()[0] == "@"
-    ]
 # 삽질의 흔적
 # class doc(object):
 #     def __init__(self, summary=None, description=None, tags=None):
