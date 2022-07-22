@@ -9,6 +9,7 @@
 2.예시
 ^^^^^^^^^^^^^^
 .. code-block:: python
+
     from functools import wraps
 
     def decorate(f):
@@ -28,6 +29,7 @@
 test_function 함수를 실행하기전 decorated_function을 통해 추가 기능이 실행된 후test_function이 실행된다
 
 .. code-block:: python
+
     class decorate(object):
         def __init__(self, param=None):
             self.param = param

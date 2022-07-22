@@ -9,6 +9,7 @@ class 기반으로 flask를 구현할 수 있도록 하는 라이브러리
 2. 이용법
 ^^^^^^^^^^^^^^^^^
 .. code-block:: python
+
     from flask_classful import FlaskView, route
     from flask import Flask
 

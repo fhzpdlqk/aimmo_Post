@@ -15,6 +15,7 @@ flask-swagger-ui 라이브러리를 통해 해당 json을 프론트에 보여줄
 먼저 각 api 함수에 flask-apispec을 활용하여 use_kwargs와 marshal_with, doc데코레이션을 달아둔다.
 
 .. code-block:: python
+
     #새로운 blueprint를 만들어준다.
     api = Blueprint("api", __name__)
 
@@ -29,6 +30,7 @@ flask-swagger-ui 라이브러리를 통해 해당 json을 프론트에 보여줄
 
 
 .. code-block:: python
+
     # apispec을 dic형태로 만들어 반환하는 함수이다.
     # 해당 apispec을 만들고 해당 app의 endpoint들과 view_function을 apispec에 path 함수를 이용하여 등록한다.
     def generate_api_spec(title=None, version=None, bp_name=None, global_params=None) -> dict:
@@ -59,6 +61,7 @@ flask-swagger-ui 라이브러리를 통해 해당 json을 프론트에 보여줄
         return spec.to_dict()
 
 .. code-block:: python
+
     #기존 apispec의 converter를 바탕으로 재정의 해준다.
     #아마도 버전이 달라서 저장되는 dic형태가 swagger에서 인식할 수 없도록 되어 있다.
     #따라서 converter의 함수를 활용하고 필요한 부분을 재정의해서 파싱하여 dic형태를 다시 만들어주었다.

@@ -81,21 +81,25 @@ https://aimmopost.azurewebsites.net/api-docs/
 -------------------------------------------
 배포를 위한 requirements.txt 만들기
 
-.. code-block:: none
+.. code-block:: console
+
     poetry export --without-hashes --format=requirements.txt > requirements.txt
 
 poetry 설치
 
-.. code-block:: none
+.. code-block:: console
+
     curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 
 app 실행
 
-.. code-block:: none
+.. code-block:: console
+
     poetry run flask run
 
 unit test 실행
 
-.. code-block:: none
+.. code-block:: console
+
     poetry run pytest
 
