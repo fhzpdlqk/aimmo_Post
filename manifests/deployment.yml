@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "aimmopostcluster-b0f2"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "aimmopostcluster-b0f2"
+  template:
+    metadata:
+      labels:
+        app: "aimmopostcluster-b0f2"
+    spec:
+      containers:
+        - name: "aimmopostcluster-b0f2"
+          image: "aimmopost1.azurecr.io/aimmopostcluster"
+          ports:
+          - containerPort: 80
