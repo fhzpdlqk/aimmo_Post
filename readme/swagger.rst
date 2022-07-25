@@ -12,7 +12,8 @@ flask-swagger-ui 라이브러리를 통해 해당 json을 프론트에 보여줄
 
 2. 이용법
 ^^^^^^^^^^^^^^^^
-먼저 각 api 함수에 flask-apispec을 활용하여 use_kwargs와 marshal_with, doc데코레이션을 달아둔다.
+먼저 각 api 함수에 flask-apispec을 활용하여 use_kwargs와 marshal_with, doc데코레이션을 달아준다.
+이후 annotation을 swagger가 인식할 수 있는 형태로 변경 시키기 위해서 기존 converter를 상속하여 converter를 만들어 준다.
 
 .. code-block:: python
 

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aimmopost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aimmopost
+  template:
+    metadata:
+      labels:
+        app: aimmopost
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: aimmopost
+        image: aimmopost.azurecr.io/aimmopost:v1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aimmopost
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: aimmopost

@@ -37,9 +37,10 @@ test_function 함수를 실행하기전 decorated_function을 통해 추가 기�
             @wraps(func)
             def decorated_function(*args, **kwargs):
                 #추가기능 작성
-                print(summary)
+                print(self.param)
                 return func(*args, **kwargs)
-    @decorate(param="test_param)
+
+    @decorate(param="test_param")
     def test_function():
         print("test_function")
 
