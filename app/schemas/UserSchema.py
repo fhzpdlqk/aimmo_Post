@@ -1,13 +1,14 @@
 import bcrypt
-from flask import g
 from marshmallow import fields, Schema, post_load
 from funcy import project
 from app.models import User
+from app.errors import ApiError
 
 
 class UserSignupSchema(Schema):
     user_id = fields.Str(required=True)
     user_pw = fields.Str(required=True)
+    is_master = fields.Boolean(default=False)
 
     @post_load
     def make_user(self, data, **kwargs):
@@ -40,6 +41,8 @@ class UserUpdateSchema(Schema):
 
     @post_load
     def check_user(self, data, **kwargs):
+        if data["user_origin_pw"] == data["user_pw"]:
+            raise ApiError(message="기존 비밀번호와 같습니다", status_code=409)
         return {"user_origin_pw": data["user_origin_pw"], "user_pw": data["user_pw"]}
 
 
