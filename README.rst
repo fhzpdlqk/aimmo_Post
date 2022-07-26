@@ -67,7 +67,7 @@ AIMMO 신입사원 On-Boarding 과제
 
 4. API 명세
 ---------------------
-https://aimmopost.azurewebsites.net/api-docs/
+http://20.196.240.16:5000/api-docs/
 
 5. 주요 내용
 ---------------------

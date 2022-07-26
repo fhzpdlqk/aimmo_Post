@@ -2,6 +2,8 @@ from functools import wraps
 from flask import g, request, current_app
 import jwt
 from flask_apispec import marshal_with
+from funcy import partial
+from marshmallow import Schema
 
 from app.models import Board, Post, Comment, ReComment
 from app.errors import ApiError, ApiErrorSchema
@@ -107,6 +109,7 @@ def check_recomment_writer(f):
         return f(*args, **kwargs)
     return decorated_function
 
+marshal_empty = partial(marshal_with, Schema)
 #
 # def get_decorators(function):
 #     source = inspect.getsource(function)

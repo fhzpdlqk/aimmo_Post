@@ -5,7 +5,7 @@ from flask_classful import FlaskView, route
 from flask_apispec import use_kwargs, marshal_with, doc
 from app.models import ReComment, User, Comment
 from app.schemas.ReCommentSchema import ReCommentSchema
-from app.decorator import login_required, check_board, check_post, check_comment, check_recomment_writer, check_recomment
+from app.decorator import login_required, check_board, check_post, check_comment, check_recomment_writer, check_recomment, marshal_empty
 from app.errors import ApiError, ApiErrorSchema
 
 class ReCommentView(FlaskView):
@@ -18,6 +18,7 @@ class ReCommentView(FlaskView):
     @check_post
     @check_comment
     @use_kwargs(ReCommentSchema)
+    @marshal_empty(code=200, description="대댓글 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     def post(self, board_id, post_id, comment_id, recomment):
         try:
@@ -37,6 +38,7 @@ class ReCommentView(FlaskView):
     @check_post
     @check_comment
     @check_recomment_writer
+    @marshal_empty(code=200, description="대댓글 수정 성공")
     @use_kwargs(ReCommentSchema)
     def put(self, board_id, post_id, comment_id, recomment_id, recomment):
         ReComment.objects(id=recomment_id, writer=g.user_id).update(**request.json)
@@ -49,6 +51,7 @@ class ReCommentView(FlaskView):
     @check_post
     @check_comment
     @check_recomment_writer
+    @marshal_empty(code=200, description="대댓글 삭제 성공")
     def delete(self, board_id, post_id, comment_id, recomment_id):
         ReComment.objects(id=recomment_id, writer=g.user_id).update(is_deleted=True)
         comment = Comment.objects(id=comment_id).get()
@@ -62,6 +65,7 @@ class ReCommentView(FlaskView):
     @check_post
     @check_comment
     @check_recomment
+    @marshal_empty(code=200, description="대댓글 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already push like user")
     def recomment_like(self, board_id, post_id, comment_id, recomment_id):
         user = User.objects(user_id=g.user_id).get()
@@ -79,6 +83,7 @@ class ReCommentView(FlaskView):
     @check_post
     @check_comment
     @check_recomment
+    @marshal_empty(code=200, description="대댓글 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no push like user")
     def recomment_like_cancel(self, board_id, post_id, comment_id, recomment_id):
         user = User.objects(user_id=g.user_id).get()

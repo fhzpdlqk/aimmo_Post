@@ -5,7 +5,7 @@ from flask import g, request
 from flask_apispec import marshal_with, use_kwargs, doc
 from app.schemas.PostSchema import PostListSchema, PostRegistSchema, PostDetailSchema, PostUpdateSchema, PostSearchSchema, PostListFilterSchema
 from app.models import Post, User
-from app.decorator import login_required, check_board, check_post, check_post_writer
+from app.decorator import login_required, check_board, check_post, check_post_writer, marshal_empty
 from app.errors import ApiError, ApiErrorSchema
 
 
@@ -16,6 +16,7 @@ class PostView(FlaskView):
     @login_required
     @check_board
     @use_kwargs(PostRegistSchema())
+    @marshal_empty(code=200, description="게시물 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, post):
         try:
@@ -41,6 +42,7 @@ class PostView(FlaskView):
     @login_required
     @check_board
     @check_post_writer
+    @marshal_empty(code=200, description="게시물 삭제 성공")
     def delete(self, board_id, post_id):
         Post.objects(id=post_id, writer=g.user_id).update(is_deleted=True)
         return "", 200
@@ -51,6 +53,7 @@ class PostView(FlaskView):
     @login_required
     @check_board
     @check_post_writer
+    @marshal_empty(code=200, description="게시물 수정 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def put(self, board_id, post_id, post):
         try:
@@ -64,6 +67,7 @@ class PostView(FlaskView):
     @login_required
     @check_board
     @check_post
+    @marshal_empty(code=200, description="게시물 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already like user")
     def like(self, board_id, post_id):
         user = User.objects(user_id=g.user_id).get()
@@ -78,6 +82,7 @@ class PostView(FlaskView):
     @login_required
     @check_board
     @check_post
+    @marshal_empty(code=200, description="게시물 좋아요 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no like user")
     def like_cancel(self, board_id, post_id):
         user = User.objects(user_id=g.user_id).get()
