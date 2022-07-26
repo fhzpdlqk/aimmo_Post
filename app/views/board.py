@@ -1,7 +1,6 @@
 from flask import request
 from flask_classful import FlaskView, route
 from flask_apispec import use_kwargs, marshal_with, doc
-import marshmallow.exceptions
 
 from app.models import Board
 from app.decorator import login_required, master_required, check_board, marshal_empty
@@ -20,13 +19,10 @@ class BoardView(FlaskView):
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     @marshal_empty(code=200)
     def post(self, board=False):
-        try:
-            if not board:
-                return ApiError(message="이미 등록된 게시판입니다."), 409
-            board.save()
-            return '', 200
-        except marshmallow.exceptions.ValidationError as err:
-            return ApiError(message=err.messages), 422
+        if not board:
+            raise ApiError(message="이미 등록된 게시판입니다.", status_code=409)
+        board.save()
+        return '', 200
 
     @route("/", methods=["GET"])
     @doc(summary="게시판 목록 조회", description="게시판 목록 조회")
@@ -44,13 +40,10 @@ class BoardView(FlaskView):
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     @marshal_empty(code=200)
     def update(self, board_id: str, board=False):
-        try:
-            if not board:
-                return ApiError(message="이미 등록된 게시판입니다."), 409
-            Board.objects(id=board_id).get().update(**request.json)
-            return "", 200
-        except marshmallow.exceptions.ValidationError as err:
-            return ApiError({"message": err.messages}), 422
+        if not board:
+            raise ApiError(message="이미 등록된 게시판입니다.", status_code=409)
+        Board.objects(id=board_id).get().update(**request.json)
+        return "", 200
 
     @route("/<string:board_id>", methods=["DELETE"])
     @doc(summary="게시판 삭제", description="게시판 삭제")
@@ -60,8 +53,5 @@ class BoardView(FlaskView):
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     @marshal_empty(code=200)
     def delete(self, board_id):
-        try:
-            Board.objects(id=board_id).update(is_deleted=True)
-            return "", 200
-        except marshmallow.exceptions.ValidationError as err:
-            return ApiError(message= err.messages), 422
+        Board.objects(id=board_id).update(is_deleted=True)
+        return "", 200

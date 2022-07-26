@@ -1,4 +1,3 @@
-import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
 from flask import g, request
@@ -17,13 +16,10 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, post):
-        try:
-            post.writer = g.user_id
-            post.board = ObjectId(board_id)
-            post.save()
-            return "", 200
-        except marshmallow.exceptions.ValidationError as err:
-            return ApiError(message=err.messages), 422
+        post.writer = g.user_id
+        post.board = ObjectId(board_id)
+        post.save()
+        return "", 200
 
     @route("/<string:post_id>", methods=["GET"])
     @doc(summary="게시물 상세 조회", description="게시물 상세 조회")
@@ -48,11 +44,8 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 수정 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def put(self, board_id, post_id, post):
-        try:
-            Post.objects(id=post_id, writer=g.user_id).update(**request.json)
-            return "", 200
-        except marshmallow.exceptions.ValidationError as err:
-            return ApiError(message=err.messages), 422
+        Post.objects(id=post_id, writer=g.user_id).update(**request.json)
+        return "", 200
 
     @route("/<string:post_id>/like", methods=["POST"])
     @doc(summary="게시물 좋아요", description="게시물 좋아요")
@@ -64,7 +57,7 @@ class PostView(FlaskView):
         if user not in Post.objects(id=post_id).get().like:
             Post.objects(id=post_id).update_one(push__like=user)
         else:
-            return ApiError(message="좋아요가 눌러져 있습니다."), 400
+            raise ApiError(message="좋아요가 눌러져 있습니다.", status_code=400)
         return "", 200
 
     @route("/<string:post_id>/like_cancel", methods=["POST"])
@@ -77,7 +70,7 @@ class PostView(FlaskView):
         if user in Post.objects(id=post_id).get().like:
             Post.objects(id=post_id).update_one(pull__like=user)
         else:
-            return ApiError(message="좋아요가 눌러져 있지 않습니다."), 400
+            raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=400)
         return "", 200
 
     @route("/search", methods=["POST"])
@@ -99,4 +92,4 @@ class PostView(FlaskView):
             posts = Post.objects(board=board_id, is_deleted=False).order_by("-notice")[(page - 1) * size: page * size]
             return posts, 200
         except IndexError:
-            return ApiError(message="유효하지 않은 페이지 인덱스 입니다."), 404
+            raise ApiError(message="유효하지 않은 페이지 인덱스 입니다.", status_code=404)
