@@ -10,14 +10,15 @@ from app.errors import ApiError, ApiErrorSchema
 
 class BoardView(FlaskView):
     decorators = (doc(tags=["Board"]),)
+
     @route("/", methods=["POST"])
     @doc(summary="게시판 만들기", description="게시판 만들기")
     @use_kwargs(BoardRegistSchema())
     @login_required
     @master_required
-    @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=409, description="중복 게시판")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
+    @marshal_empty(code=200)
     def post(self, board=False):
         try:
             if not board:
@@ -39,9 +40,9 @@ class BoardView(FlaskView):
     @login_required
     @master_required
     @check_board
-    @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=409, description='이미 등록된 게시판')
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
+    @marshal_empty(code=200)
     def update(self, board_id: str, board=False):
         try:
             if not board:
@@ -56,8 +57,8 @@ class BoardView(FlaskView):
     @login_required
     @master_required
     @check_board
-    @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
+    @marshal_empty(code=200)
     def delete(self, board_id):
         try:
             Board.objects(id=board_id).update(is_deleted=True)
