@@ -21,7 +21,7 @@ def login_required(f):
         g.is_master = decoded["is_master"]
         g.user_id = decoded["user_id"]
         return f(*args, **kwargs)
-
+    marshal_with(ApiErrorSchema, code=401, description="유효하지 않은 토큰")(f)
     return decorated_function
 
 
@@ -30,8 +30,9 @@ def master_required(f):
     @marshal_with(ApiErrorSchema, code=403, description="허가되지 않은 사용자")
     def decorated_function(*args, **kwargs):
         if g.is_master is False:
-            return ApiError(message="허가되지 않은 사용자입니다."), 403
+            return ApiError(message="허가되지 않은 사용자입니다.", status_code=403), 403
         return f(*args, **kwargs)
+    marshal_with(ApiErrorSchema, code=403, description="허가되지 않은 사용자")(f)
     return decorated_function
 
 def check_board(f):
@@ -41,6 +42,7 @@ def check_board(f):
         if not Board.objects(id=kwargs["board_id"], is_deleted=False):
             return ApiError(message="없는 게시판입니다"), 404
         return f(*args, **kwargs)
+    marshal_with(ApiErrorSchema, code=404, description="없는 게시판")(f)
     return decorated_function
 
 def check_post(f):
@@ -50,6 +52,8 @@ def check_post(f):
         if not Post.objects(id=kwargs["post_id"], is_deleted=False):
             return ApiError(message="없는 게시물입니다"), 404
         return f(*args, **kwargs)
+
+    marshal_with(ApiErrorSchema, code=404, description="없는 게시물")(f)
     return decorated_function
 
 def check_post_writer(f):
@@ -63,6 +67,8 @@ def check_post_writer(f):
         elif post.get().writer != g.user_id:
             return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
+    marshal_with(ApiErrorSchema, code=404, description="없는 게시물")(f)
+    marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")(f)
     return decorated_function
 
 def check_comment(f):
@@ -72,6 +78,7 @@ def check_comment(f):
         if not Comment.objects(id=kwargs["comment_id"], is_deleted=False):
             return ApiError(message="없는 댓글입니다"), 404
         return f(*args, **kwargs)
+    marshal_with(ApiErrorSchema, code=404, description="없는 댓글")(f)
     return decorated_function
 
 def check_comment_writer(f):
@@ -85,6 +92,9 @@ def check_comment_writer(f):
         elif comment.get().writer != g.user_id:
             return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
+
+    marshal_with(ApiErrorSchema, code=404, description="없는 댓글")(f)
+    marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")(f)
     return decorated_function
 
 def check_recomment(f):
@@ -94,6 +104,8 @@ def check_recomment(f):
         if not ReComment.objects(id=kwargs["recomment_id"], is_deleted=False):
             return ApiError(message="없는 대댓글입니다"), 404
         return f(*args, **kwargs)
+
+    marshal_with(ApiErrorSchema, code=404, description="없는 대댓글")(f)
     return decorated_function
 
 def check_recomment_writer(f):
@@ -107,6 +119,8 @@ def check_recomment_writer(f):
         elif recomment.get().writer != g.user_id:
             return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
+    marshal_with(ApiErrorSchema, code=404, description="없는 대댓글")(f)
+    marshal_with(ApiErrorSchema, code=401, description="작성자가 아님")(f)
     return decorated_function
 
 marshal_empty = partial(marshal_with, Schema)

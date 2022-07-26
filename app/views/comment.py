@@ -9,13 +9,10 @@ from app.decorator import login_required, check_post, check_board, check_comment
 from app.errors import ApiError, ApiErrorSchema
 
 class CommentView(FlaskView):
-    decorators = (doc(tags=["Comment"]),)
+    decorators = (doc(tags=["Comment"]),login_required, check_board, check_post)
 
     @route('/', methods=["POST"])
     @doc(summary="댓글 작성", description="댓글 작성")
-    @login_required
-    @check_board
-    @check_post
     @use_kwargs(CommentSchema())
     @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
@@ -32,9 +29,6 @@ class CommentView(FlaskView):
 
     @route("/<string:comment_id>", methods=["PUT"])
     @doc(summary="댓글 수정", description="댓글 수정")
-    @login_required
-    @check_board
-    @check_post
     @check_comment_writer
     @marshal_empty(code=200)
     @use_kwargs(CommentSchema())
@@ -44,9 +38,6 @@ class CommentView(FlaskView):
 
     @route("/<string:comment_id>", methods=["DELETE"])
     @doc(summary="댓글 삭제", description="댓글 삭제")
-    @login_required
-    @check_board
-    @check_post
     @check_comment_writer
     @marshal_empty(code=200)
     def delete(self, board_id, post_id, comment_id):
@@ -58,9 +49,6 @@ class CommentView(FlaskView):
 
     @route("/<string:comment_id>/like", methods=["POST"])
     @doc(summary="댓글 좋아요", description="댓글 좋아요")
-    @login_required
-    @check_board
-    @check_post
     @check_comment
     @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=400, description="already push like user")
@@ -74,9 +62,6 @@ class CommentView(FlaskView):
 
     @route("/<string:comment_id>/like_cancel", methods=["POST"])
     @doc(summary="댓글 좋아요 취소", description="댓글 좋아요 취소")
-    @login_required
-    @check_board
-    @check_post
     @check_comment
     @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=400, description="no push like user")

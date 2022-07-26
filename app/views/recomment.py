@@ -9,14 +9,10 @@ from app.decorator import login_required, check_board, check_post, check_comment
 from app.errors import ApiError, ApiErrorSchema
 
 class ReCommentView(FlaskView):
-    decorators = (doc(tags=["ReComment"]),)
+    decorators = (doc(tags=["ReComment"]), login_required, check_board, check_post, check_comment)
 
     @route("/",methods=["POST"])
     @doc(summary="대댓글 작성", description="대댓글 작성")
-    @login_required
-    @check_board
-    @check_post
-    @check_comment
     @use_kwargs(ReCommentSchema)
     @marshal_empty(code=200, description="대댓글 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
@@ -33,10 +29,6 @@ class ReCommentView(FlaskView):
 
     @route("/<recomment_id>", methods=["PUT"])
     @doc(summary="대댓글 수정", description="대댓글 수정")
-    @login_required
-    @check_board
-    @check_post
-    @check_comment
     @check_recomment_writer
     @marshal_empty(code=200, description="대댓글 수정 성공")
     @use_kwargs(ReCommentSchema)
@@ -46,10 +38,6 @@ class ReCommentView(FlaskView):
 
     @route("/<recomment_id>", methods=["DELETE"])
     @doc(summary="대댓글 삭제", description="대댓글 삭제")
-    @login_required
-    @check_board
-    @check_post
-    @check_comment
     @check_recomment_writer
     @marshal_empty(code=200, description="대댓글 삭제 성공")
     def delete(self, board_id, post_id, comment_id, recomment_id):
@@ -59,11 +47,7 @@ class ReCommentView(FlaskView):
         return "", 200
 
     @route("/<recomment_id>/like", methods=["POST"])
-    @doc(summary="대댓글 좋아요", description="대댓글 대아요")
-    @login_required
-    @check_board
-    @check_post
-    @check_comment
+    @doc(summary="대댓글 좋아요", description="대댓글 좋아요")
     @check_recomment
     @marshal_empty(code=200, description="대댓글 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already push like user")
@@ -78,10 +62,6 @@ class ReCommentView(FlaskView):
 
     @route("/<recomment_id>/like_cancel", methods=["POST"])
     @doc(summary="대댓글 좋아요 취소", description="대댓글 좋아요 취소")
-    @login_required
-    @check_board
-    @check_post
-    @check_comment
     @check_recomment
     @marshal_empty(code=200, description="대댓글 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no push like user")

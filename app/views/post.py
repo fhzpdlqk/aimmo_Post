@@ -10,11 +10,9 @@ from app.errors import ApiError, ApiErrorSchema
 
 
 class PostView(FlaskView):
-    decorators = (doc(tags=["Post"]),)
+    decorators = (doc(tags=["Post"]), check_board, login_required)
     @route("/", methods=["POST"])
     @doc(summary="게시물 작성", description="게시물 작성")
-    @login_required
-    @check_board
     @use_kwargs(PostRegistSchema())
     @marshal_empty(code=200, description="게시물 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
@@ -29,8 +27,6 @@ class PostView(FlaskView):
 
     @route("/<string:post_id>", methods=["GET"])
     @doc(summary="게시물 상세 조회", description="게시물 상세 조회")
-    @login_required
-    @check_board
     @check_post
     @marshal_with(PostDetailSchema, code=200, description="게시물 상세 정보")
     def get_detail(self, board_id, post_id):
@@ -39,8 +35,6 @@ class PostView(FlaskView):
 
     @route("/<string:post_id>", methods=["DELETE"])
     @doc(summary="게시물 삭제", description="게시물 삭제")
-    @login_required
-    @check_board
     @check_post_writer
     @marshal_empty(code=200, description="게시물 삭제 성공")
     def delete(self, board_id, post_id):
@@ -50,8 +44,6 @@ class PostView(FlaskView):
     @route("/<string:post_id>", methods=["PUT"])
     @doc(summary="게시물 수정", description="게시물 수정")
     @use_kwargs(PostUpdateSchema())
-    @login_required
-    @check_board
     @check_post_writer
     @marshal_empty(code=200, description="게시물 수정 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
@@ -64,8 +56,6 @@ class PostView(FlaskView):
 
     @route("/<string:post_id>/like", methods=["POST"])
     @doc(summary="게시물 좋아요", description="게시물 좋아요")
-    @login_required
-    @check_board
     @check_post
     @marshal_empty(code=200, description="게시물 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already like user")
@@ -79,8 +69,6 @@ class PostView(FlaskView):
 
     @route("/<string:post_id>/like_cancel", methods=["POST"])
     @doc(summary="게시물 좋아요 취소", description="게시물 좋아요 취소")
-    @login_required
-    @check_board
     @check_post
     @marshal_empty(code=200, description="게시물 좋아요 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no like user")
@@ -94,8 +82,6 @@ class PostView(FlaskView):
 
     @route("/search", methods=["POST"])
     @doc(summary="게시물 검색", description="게시물 검색")
-    @login_required
-    @check_board
     @use_kwargs(PostSearchSchema)
     @marshal_with(PostListSchema(many=True), code=200, description="검색 게시물 리스트")
     def post_search(self, board_id, search_word):
@@ -105,8 +91,6 @@ class PostView(FlaskView):
 
     @route("/", methods=["GET"])
     @doc(summary="게시물 목록 조회", description="게시물 목록 조회")
-    @login_required
-    @check_board
     @use_kwargs(PostListFilterSchema, location='query')
     @marshal_with(PostListSchema(many=True), code=200, description='목록')
     @marshal_with(ApiErrorSchema, code=404, description='적합하지 않은 인덱스')
