@@ -20,6 +20,7 @@ def login_required(f):
         g.is_master = decoded["is_master"]
         g.user_id = decoded["user_id"]
         return f(*args, **kwargs)
+
     marshal_with(ApiErrorSchema, code=401, description="유효하지 않은 토큰")(f)
     return decorated_function
 
@@ -30,6 +31,7 @@ def master_required(f):
         if g.is_master is False:
             raise ApiError(message="허가되지 않은 사용자입니다.", status_code=403)
         return f(*args, **kwargs)
+
     marshal_with(ApiErrorSchema, code=403, description="허가되지 않은 사용자")(f)
     return decorated_function
 
@@ -39,6 +41,7 @@ def check_board(f):
         if not Board.objects(id=kwargs["board_id"], is_deleted=False):
             raise ApiError(message="없는 게시판입니다", status_code=404)
         return f(*args, **kwargs)
+
     marshal_with(ApiErrorSchema, code=404, description="없는 게시판")(f)
     return decorated_function
 
@@ -112,11 +115,6 @@ def check_recomment_writer(f):
     return decorated_function
 
 marshal_empty = partial(marshal_with, Schema)
-
-
-
-
-
 
 #
 # def get_decorators(function):

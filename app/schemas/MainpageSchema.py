@@ -1,5 +1,4 @@
 from marshmallow import fields, Schema, post_load
-from marshmallow.validate import Length
 
 class MainPageFilterSchema(Schema):
     filter = fields.Str()

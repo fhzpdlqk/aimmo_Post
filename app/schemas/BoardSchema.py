@@ -1,29 +1,23 @@
 from marshmallow import fields, Schema, post_load
-from marshmallow.validate import Length
 from app.models import Board
 
 
 class BoardRegistSchema(Schema):
-    board_name = fields.Str(unique=True, required=True, validate=Length(min=1))
+    board_name = fields.Str(unique=True, required=True)
 
     @post_load
     def make_board(self, data, **kwargs):
-        board = Board.objects(**data, is_deleted=False)
-        if not board:
-            return {'board': Board(**data)}
-        return {'board': False}
+        return {'board': Board(**data)}
 
 
 class BoardSchema(Schema):
-    board_name = fields.Str(unique=True, required=True, validate=Length(min=1))
+    board_name = fields.Str(unique=True, required=True)
     id = fields.Str(required=True)
 
 
 class BoardUpdateSchema(Schema):
-    board_name = fields.Str(unique=True, required=True, validate=Length(min=1))
+    board_name = fields.Str(unique=True, required=True)
 
     @post_load
     def update_board(self, data, **kwargs):
-        if not Board.objects(**data):
-            return {'board': True}
-        return {'board': False}
+        return {'board': Board(**data)}
