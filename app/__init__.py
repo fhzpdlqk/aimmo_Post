@@ -21,4 +21,5 @@ def create_app(test_config=None):
 
     register_api(app)
 
+
     return app

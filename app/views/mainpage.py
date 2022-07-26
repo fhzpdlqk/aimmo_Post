@@ -1,4 +1,3 @@
-from flask import jsonify
 from flask_classful import FlaskView, route
 from flask_apispec import use_kwargs, marshal_with, doc
 from app.schemas.PostSchema import PostListSchema

@@ -1,9 +1,9 @@
-from flask import jsonify, g
+from flask import g
 from flask_classful import FlaskView, route
-from flask_apispec import marshal_with, use_kwargs, doc
+from flask_apispec import marshal_with, doc
 from app.schemas.PostSchema import PostListSchema
-from app.schemas.CommentSchema import Comment, CommentListSchema, CommentMyListSchema
-from app.schemas.ReCommentSchema import ReComment, ReCommentListSchema
+from app.schemas.CommentSchema import Comment, CommentMyListSchema
+from app.schemas.ReCommentSchema import ReComment
 from app.schemas.UserSchema import User
 from app.models import Post
 from app.decorator import login_required

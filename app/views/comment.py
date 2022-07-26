@@ -17,15 +17,12 @@ class CommentView(FlaskView):
     @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, post_id, comment):
-        try:
-            comment.writer = g.user_id
-            comment.post = ObjectId(post_id)
-            comment.save()
-            post = Post.objects(id=post_id).get()
-            post.update(num_comment=post.num_comment+1)
-            return "", 200
-        except marshmallow.exceptions.ValidationError as err:
-            return ApiError(message=err.messages), 422
+        comment.writer = g.user_id
+        comment.post = ObjectId(post_id)
+        comment.save()
+        post = Post.objects(id=post_id).get()
+        post.update(num_comment=post.num_comment+1)
+        return "", 200
 
     @route("/<string:comment_id>", methods=["PUT"])
     @doc(summary="댓글 수정", description="댓글 수정")
@@ -57,7 +54,7 @@ class CommentView(FlaskView):
         if user not in Comment.objects(id=comment_id).get().like:
             Comment.objects(id=comment_id).update_one(push__like=user)
         else:
-            return ApiError(message="이미 좋아요가 눌러져 있습니다"), 400
+            raise ApiError(message="이미 좋아요가 눌러져 있습니다", status_code=400)
         return "", 200
 
     @route("/<string:comment_id>/like_cancel", methods=["POST"])
@@ -68,7 +65,7 @@ class CommentView(FlaskView):
     def like_cancel(self, board_id, post_id, comment_id):
         user = User.objects(user_id=g.user_id).get()
         if user not in Comment.objects(id=comment_id).get().like:
-            return ApiError(message="좋아요가 눌러져 있지 않습니다."), 400
+            raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=400)
         else:
             Comment.objects(id=comment_id).update_one(pull__like=user)
         return "", 200

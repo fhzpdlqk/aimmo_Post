@@ -1,5 +1,4 @@
 from flask import request, g
-import marshmallow
 from bson import ObjectId
 from flask_classful import FlaskView, route
 from flask_apispec import use_kwargs, marshal_with, doc
@@ -17,15 +16,12 @@ class ReCommentView(FlaskView):
     @marshal_empty(code=200, description="대댓글 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     def post(self, board_id, post_id, comment_id, recomment):
-        try:
-            recomment.writer = g.user_id
-            recomment.comment = ObjectId(comment_id)
-            recomment.save()
-            comment = Comment.objects(id=comment_id).get()
-            comment.update(num_recomment=comment.num_recomment + 1)
-            return "", 200
-        except marshmallow.exceptions.ValidationError as err:
-            return ApiError(message=err.messages), 422
+        recomment.writer = g.user_id
+        recomment.comment = ObjectId(comment_id)
+        recomment.save()
+        comment = Comment.objects(id=comment_id).get()
+        comment.update(num_recomment=comment.num_recomment + 1)
+        return "", 200
 
     @route("/<recomment_id>", methods=["PUT"])
     @doc(summary="대댓글 수정", description="대댓글 수정")
@@ -56,7 +52,7 @@ class ReCommentView(FlaskView):
         if user not in ReComment.objects(id=recomment_id).get().like:
             ReComment.objects(id=recomment_id).update_one(push__like=user)
         else:
-            return ApiError(message="좋아요를 이미 누른 유저입니다."), 400
+            raise ApiError(message="좋아요를 이미 누른 유저입니다.", status_code=400)
         return "", 200
 
 
@@ -68,7 +64,7 @@ class ReCommentView(FlaskView):
     def recomment_like_cancel(self, board_id, post_id, comment_id, recomment_id):
         user = User.objects(user_id=g.user_id).get()
         if user not in ReComment.objects(id=recomment_id).get().like:
-            return ApiError(message="좋아요를 누르지 않은 유저입니다."), 400
+            raise ApiError(message="좋아요를 누르지 않은 유저입니다.", status_code=400)
         else:
             ReComment.objects(id=recomment_id).update_one(pull__like=user)
         return "", 200
