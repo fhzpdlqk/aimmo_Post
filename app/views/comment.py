@@ -5,7 +5,7 @@ from flask import request, g
 from flask_apispec import marshal_with, use_kwargs, doc
 from app.models import Comment, User, Post
 from app.schemas.CommentSchema import CommentSchema
-from app.decorator import login_required, check_post, check_board, check_comment, check_comment_writer
+from app.decorator import login_required, check_post, check_board, check_comment, check_comment_writer, marshal_empty
 from app.errors import ApiError, ApiErrorSchema
 
 class CommentView(FlaskView):
@@ -17,6 +17,7 @@ class CommentView(FlaskView):
     @check_board
     @check_post
     @use_kwargs(CommentSchema())
+    @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, post_id, comment):
         try:
@@ -35,6 +36,7 @@ class CommentView(FlaskView):
     @check_board
     @check_post
     @check_comment_writer
+    @marshal_empty(code=200)
     @use_kwargs(CommentSchema())
     def put(self, board_id,post_id,comment_id, comment):
         Comment.objects(id=comment_id, writer=g.user_id).update(**request.json)
@@ -46,6 +48,7 @@ class CommentView(FlaskView):
     @check_board
     @check_post
     @check_comment_writer
+    @marshal_empty(code=200)
     def delete(self, board_id, post_id, comment_id):
         Comment.objects(id=comment_id, writer=g.user_id).update(is_deleted=True)
         post = Post.objects(id=post_id).get()
@@ -59,6 +62,7 @@ class CommentView(FlaskView):
     @check_board
     @check_post
     @check_comment
+    @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=400, description="already push like user")
     def like(self, board_id, post_id, comment_id):
         user = User.objects(user_id=g.user_id).get()
@@ -74,6 +78,7 @@ class CommentView(FlaskView):
     @check_board
     @check_post
     @check_comment
+    @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=400, description="no push like user")
     def like_cancel(self, board_id, post_id, comment_id):
         user = User.objects(user_id=g.user_id).get()

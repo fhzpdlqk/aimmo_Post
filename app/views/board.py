@@ -4,7 +4,7 @@ from flask_apispec import use_kwargs, marshal_with, doc
 import marshmallow.exceptions
 
 from app.models import Board
-from app.decorator import login_required, master_required, check_board
+from app.decorator import login_required, master_required, check_board, marshal_empty
 from app.schemas.BoardSchema import BoardRegistSchema, BoardSchema, BoardUpdateSchema
 from app.errors import ApiError, ApiErrorSchema
 
@@ -13,10 +13,11 @@ class BoardView(FlaskView):
     @route("/", methods=["POST"])
     @doc(summary="게시판 만들기", description="게시판 만들기")
     @use_kwargs(BoardRegistSchema())
-    @marshal_with(ApiErrorSchema, code=409, description="중복 게시판")
-    @marshal_with(ApiErrorSchema, code=422, description="validation error")
     @login_required
     @master_required
+    @marshal_empty(code=200)
+    @marshal_with(ApiErrorSchema, code=409, description="중복 게시판")
+    @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board=False):
         try:
             if not board:
@@ -38,6 +39,7 @@ class BoardView(FlaskView):
     @login_required
     @master_required
     @check_board
+    @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=409, description='이미 등록된 게시판')
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     def update(self, board_id: str, board=False):
@@ -54,6 +56,7 @@ class BoardView(FlaskView):
     @login_required
     @master_required
     @check_board
+    @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     def delete(self, board_id):
         try:

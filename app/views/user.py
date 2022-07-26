@@ -3,11 +3,10 @@ import bcrypt
 from flask_classful import FlaskView, route
 from flask import request, g
 from flask_apispec import use_kwargs, marshal_with, doc
-from funcy import project
 from app.schemas.UserSchema import UserSignupSchema, UserSchema, UserLoginSchema, AuthTokenSchema, UserUpdateSchema
 from app.models import User, AuthToken
 from app.errors import ApiError, ApiErrorSchema
-from app.decorator import login_required
+from app.decorator import login_required, marshal_empty
 
 
 class UserView(FlaskView):
@@ -47,6 +46,7 @@ class UserView(FlaskView):
     @doc(summary="사용자 비밀번호 변경", description="사용자 비밀번호 변경")
     @login_required
     @use_kwargs(UserUpdateSchema())
+    @marshal_empty(code=200, description="비밀번호 변경 성공")
     @marshal_with(ApiErrorSchema, code=401, description="비밀번호가 틀림")
     def put(self, user_pw, user_origin_pw):
         try:
