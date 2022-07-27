@@ -64,12 +64,14 @@ class PostUpdateSchema(Schema):
     def make_post(self, data, **kwargs):
         return {'post': Post(**data)}
 
+
 class PostSearchSchema(Schema):
     search_word = fields.Str()
 
     @post_load
     def search_post(self, data, **kwargs):
         return {'search_word': data['search_word']}
+
 
 class PostListFilterSchema(Schema):
     page = fields.Int()

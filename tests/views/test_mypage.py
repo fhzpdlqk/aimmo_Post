@@ -9,60 +9,52 @@ import pytest
 
 
 class Describe_MyPageView:
-    @pytest.fixture
-    def login_user(self):
-        return UserFactory.create()
-
-    @pytest.fixture
-    def token(self, login_user):
-        return jwt.encode({"user_id": login_user["user_id"], "is_master": login_user["is_master"]},
-                          TestConfig.TOKEN_KEY, TestConfig.ALGORITHM)
-
     class Test_My_Post:
         @pytest.fixture
-        def posts(self, login_user):
-            return [PostFactory.create() for _ in range(10)] + [PostFactory.create(writer=login_user.user_id) for _ in
+        def posts(self, logged_in_user):
+            return [PostFactory.create() for _ in range(10)] + [PostFactory.create(writer=logged_in_user.user_id) for _ in
                                                                 range(20)]
 
         @pytest.fixture
         def trans_api(self, client, headers, posts):
             return client.get('/mypage/posts', headers=headers)
 
-        def test_상태코드_200(self, trans_api):
-            assert trans_api.status_code == 200
+        class Context_정상_요청:
+            def test_상태코드_200(self, trans_api):
+                assert trans_api.status_code == 200
 
-        def test_post_목록_작성자_여부(self, trans_api, login_user):
-            post_list = trans_api.json
-            assert len(post_list) == 20
-            for post in post_list:
-                assert post["writer"] == login_user.user_id
+            def test_post_목록_작성자_여부(self, trans_api, logged_in_user):
+                post_list = trans_api.json
+                assert len(post_list) == 20
+                for post in post_list:
+                    assert post["writer"] == logged_in_user.user_id
 
     class Test_My_Comment:
         @pytest.fixture
-        def posts(self, login_user):
-            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=login_user.user_id) for _ in range(20)]+ [ReCommentFactory.create(writer=login_user.user_id) for _ in range(20)]
+        def comments(self, logged_in_user):
+            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=logged_in_user.user_id) for _ in range(20)]+ [ReCommentFactory.create(writer=logged_in_user.user_id) for _ in range(20)]
 
         @pytest.fixture
-        def trans_api(self, client, headers, posts):
+        def trans_api(self, client, headers, comments):
             return client.get('/mypage/comments', headers=headers)
 
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
 
-        def test_댓글_목록_작성자_여부(self, trans_api, login_user):
+        def test_댓글_목록_작성자_여부(self, trans_api, logged_in_user):
             comment_list = trans_api.json["comments"]
             assert len(comment_list) == 20
             for comment in comment_list:
-                assert comment["writer"] == login_user.user_id
+                assert comment["writer"] == logged_in_user.user_id
             recomment_list = trans_api.json["recomments"]
             assert len(recomment_list) == 20
             for recomment in recomment_list:
-                assert recomment["writer"] == login_user.user_id
+                assert recomment["writer"] == logged_in_user.user_id
 
     class Test_My_Like:
         @pytest.fixture
-        def posts(self, login_user):
-            return [PostFactory.create() for _ in range(10)] + [PostFactory.create(like=[login_user]) for _ in
+        def posts(self, logged_in_user):
+            return [PostFactory.create() for _ in range(10)] + [PostFactory.create(like=[logged_in_user]) for _ in
                                                                 range(20)]
 
         @pytest.fixture
@@ -72,8 +64,8 @@ class Describe_MyPageView:
         def test_상태코드_200(self, trans_api):
             assert trans_api.status_code == 200
 
-        def test_게시글_목록_좋아요_여부(self, trans_api, login_user):
+        def test_게시글_목록_좋아요_여부(self, trans_api, logged_in_user):
             post_list = trans_api.json
             assert len(post_list) == 20
             for post in post_list:
-                assert login_user in Post.objects(id=post["id"]).get().like
+                assert logged_in_user in Post.objects(id=post["id"]).get().like

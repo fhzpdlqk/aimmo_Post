@@ -27,16 +27,6 @@ class Post(Document):
     num_comment = IntField(default=0)
     is_deleted = BooleanField(default=False)
 
-    @classmethod
-    def post_save(cls, sender, document, **kwargs):
-        post = Post.objects(id=document.post).get()
-        post.update(num_comment=post.num_comment + 1)
-
-    @classmethod
-    def post_delete(cls, sender, document, **kwargs):
-        post = Post.objects(id=document.post).get()
-        post.update(num_comment=post.num_comment - 1)
-
 
 class Comment(Document):
     writer = StringField(required=True)

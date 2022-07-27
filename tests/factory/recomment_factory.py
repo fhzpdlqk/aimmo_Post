@@ -15,3 +15,4 @@ class ReCommentFactory(MongoEngineFactory):
     content = fuzzy.FuzzyText(prefix="recomment_content_")
     like = factory.LazyAttribute(lambda n: [])
     comment = factory.SubFactory(CommentFactory)
+    is_deleted = factory.LazyAttribute(lambda n: False)
