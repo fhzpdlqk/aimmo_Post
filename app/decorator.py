@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import g, request, current_app
 import jwt
-from flask_apispec import marshal_with
+from flask_apispec import marshal_with, doc
 from funcy import partial
 from marshmallow import Schema
 
@@ -22,6 +22,12 @@ def login_required(f):
         return f(*args, **kwargs)
 
     marshal_with(ApiErrorSchema, code=401, description="유효하지 않은 토큰")(f)
+    doc(params={
+        'Authorization': {
+            'description': '액세스 토큰',
+            'in': 'header', 'type': 'string', 'required': True
+        }
+    })(f)
     return decorated_function
 
 

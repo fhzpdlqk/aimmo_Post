@@ -8,19 +8,6 @@ from tests.factory.user_factory import UserFactory
 
 
 class Describe_MainPageView:
-    @pytest.fixture
-    def login_user(self):
-        return UserFactory.create()
-
-    @pytest.fixture
-    def token(self, login_user):
-        return jwt.encode({"user_id": login_user["user_id"], "is_master": login_user["is_master"]},
-                          TestConfig.TOKEN_KEY, TestConfig.ALGORITHM)
-
-    @pytest.fixture
-    def post(self):
-        PostFactory.create(num_comment=random.randint(1, 10),
-                           like=[UserFactory.create() for _ in range(random.randint(1, 10))])
 
     class Test_Mainpage:
         class Context_최신순_게시물:
@@ -35,6 +22,7 @@ class Describe_MainPageView:
                 post_list = trans_api.json
                 for index in range(1, len(post_list)):
                     assert post_list[index - 1]["date"] >= post_list[index]["date"]
+
         class Context_댓글순_게시물:
             @pytest.fixture
             def trans_api(self, client, post, headers):
