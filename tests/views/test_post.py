@@ -137,7 +137,7 @@ class Describe_PostView:
         class Context_게시물이_삭제된_게시물일_경우:
             @pytest.fixture
             def post(self, board, logged_in_user):
-                return PostFactory.create(board=board, writer=logged_in_user.user_id, is_deleted=True)
+                return PostFactory.create(board=board, writer=logged_in_user.email, is_deleted=True)
 
             def test_상태코드_404(self, trans_api):
                 assert trans_api.status_code == 404
@@ -270,7 +270,7 @@ class Describe_PostView:
         class Context_이미_좋아요가_눌러져_있을_경우:
             @pytest.fixture
             def post(self, logged_in_user, board):
-                return PostFactory.create(board=board, writer=logged_in_user.user_id, like=[logged_in_user])
+                return PostFactory.create(board=board, writer=logged_in_user.email, like=[logged_in_user])
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 400
@@ -285,7 +285,7 @@ class Describe_PostView:
 
         @pytest.fixture
         def post(self, logged_in_user, board):
-            return PostFactory.create(board=board, writer=logged_in_user.user_id, like=[logged_in_user])
+            return PostFactory.create(board=board, writer=logged_in_user.email, like=[logged_in_user])
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
@@ -296,7 +296,7 @@ class Describe_PostView:
         class Context_좋아요가_눌러져_있지_않은_경우:
             @pytest.fixture
             def post(self, logged_in_user, board):
-                return PostFactory.create(board=board, writer=logged_in_user.user_id, like=[])
+                return PostFactory.create(board=board, writer=logged_in_user.email, like=[])
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 400

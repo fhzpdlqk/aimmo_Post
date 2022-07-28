@@ -16,7 +16,7 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, post):
-        post.writer = g.user_id
+        post.writer = g.email
         post.board = ObjectId(board_id)
         post.save()
         return "", 200
@@ -34,7 +34,7 @@ class PostView(FlaskView):
     @check_post_writer
     @marshal_empty(code=200, description="게시물 삭제 성공")
     def delete(self, board_id, post_id):
-        Post.objects(id=post_id, writer=g.user_id).update(is_deleted=True)
+        Post.objects(id=post_id, writer=g.email).update(is_deleted=True)
         return "", 200
 
     @route("/<string:post_id>", methods=["PUT"])
@@ -44,7 +44,7 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 수정 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def put(self, board_id, post_id, post):
-        Post.objects(id=post_id, writer=g.user_id).update(**request.json)
+        Post.objects(id=post_id, writer=g.email).update(**request.json)
         return "", 200
 
     @route("/<string:post_id>/like", methods=["POST"])
@@ -53,7 +53,7 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already like user")
     def like(self, board_id, post_id):
-        user = User.objects(user_id=g.user_id).get()
+        user = User.objects(email=g.email).get()
         if user not in Post.objects(id=post_id).get().like:
             Post.objects(id=post_id).update_one(push__like=user)
         else:
@@ -66,7 +66,7 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 좋아요 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no like user")
     def like_cancel(self, board_id, post_id):
-        user = User.objects(user_id=g.user_id).get()
+        user = User.objects(email=g.email).get()
         if user in Post.objects(id=post_id).get().like:
             Post.objects(id=post_id).update_one(pull__like=user)
         else:

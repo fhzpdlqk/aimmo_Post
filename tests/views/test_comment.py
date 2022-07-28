@@ -28,7 +28,7 @@ class Describe_CommentView:
 
             def test_데이터_확인(self, trans_api, form, logged_in_user, post):
                 assert Comment.objects()[0].content == form["content"]
-                assert Comment.objects()[0].writer == logged_in_user.user_id
+                assert Comment.objects()[0].writer == logged_in_user.email
                 assert Comment.objects()[0].post == Post.objects(id=post.id).get()
 
     class Test_Update_Comment:
@@ -48,7 +48,7 @@ class Describe_CommentView:
 
             def test_데이터_확인(self, trans_api, form, post, comment, logged_in_user):
                 assert Comment.objects(id=comment.id).get().content == form["content"]
-                assert Comment.objects(id=comment.id).get().writer == logged_in_user.user_id
+                assert Comment.objects(id=comment.id).get().writer == logged_in_user.email
                 assert Comment.objects(id=comment.id).get().post == post
 
     class Test_Delete_Comment:
@@ -81,7 +81,7 @@ class Describe_CommentView:
         class Context_이미_좋아요가_눌러져_있을_경우:
             @pytest.fixture
             def comment(self, logged_in_user, board, post):
-                return CommentFactory.create(post=post.id, writer=logged_in_user.user_id, like=[logged_in_user])
+                return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[logged_in_user])
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 400
@@ -92,7 +92,7 @@ class Describe_CommentView:
     class Test_UnLike_Comment:
         @pytest.fixture
         def comment(self, post, logged_in_user):
-            return CommentFactory.create(post=post.id, writer=logged_in_user.user_id, like=[logged_in_user])
+            return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[logged_in_user])
 
         @pytest.fixture
         def trans_api(self, client, headers, board, post, comment):
@@ -108,7 +108,7 @@ class Describe_CommentView:
         class Context_좋아요가_눌러져_있지_않은_경우:
             @pytest.fixture
             def comment(self, logged_in_user, board, post):
-                return CommentFactory.create(post=post.id, writer=logged_in_user.user_id, like=[])
+                return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[])
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 400

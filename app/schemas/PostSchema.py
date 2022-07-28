@@ -7,7 +7,7 @@ from flask import g
 
 class PostListSchema(Schema):
     id = fields.Str(required=True, validate=Length(min=1))
-    writer = fields.Str(required=True, validate=Length(min=1))
+    writer = fields.Email(required=True)
     date = fields.DateTime()
     title = fields.Str(required=True, validate=Length(min=1))
     content = fields.Str(required=True, validate=Length(min=1))
@@ -21,7 +21,7 @@ class PostListSchema(Schema):
         return len(obj.like)
 
     def islike(self, obj):
-        return User.objects(user_id=g.user_id).get() in obj.like
+        return User.objects(email=g.email).get() in obj.like
 
 
 class PostRegistSchema(Schema):
@@ -39,7 +39,7 @@ class PostDetailSchema(Schema):
     id = fields.Str()
     content = fields.Str()
     title = fields.Str()
-    writer = fields.Str()
+    writer = fields.Email()
     notice = fields.Bool()
     num_like = fields.Method("like_count")
     tag = fields.List(fields.Str())

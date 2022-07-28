@@ -10,7 +10,7 @@ class Describe_ReCommentView:
 
     @pytest.fixture
     def recomment(self, comment, logged_in_user):
-        return ReCommentFactory.create(comment=comment, writer=logged_in_user.user_id)
+        return ReCommentFactory.create(comment=comment, writer=logged_in_user.email)
 
     class Test_Make_ReComment:
         @pytest.fixture
@@ -35,7 +35,7 @@ class Describe_ReCommentView:
 
             def test_데이터_확인(self, trans_api, form, logged_in_user, comment):
                 assert ReComment.objects()[0].content == form["content"]
-                assert ReComment.objects()[0].writer == logged_in_user.user_id
+                assert ReComment.objects()[0].writer == logged_in_user.email
                 assert ReComment.objects()[0].comment == Comment.objects(id=comment.id).get()
 
     class Test_Update_ReComment:
@@ -57,7 +57,7 @@ class Describe_ReCommentView:
 
             def test_데이터_확인(self, trans_api, form, logged_in_user, comment):
                 assert ReComment.objects()[0].content == form["content"]
-                assert ReComment.objects()[0].writer == logged_in_user.user_id
+                assert ReComment.objects()[0].writer == logged_in_user.email
                 assert ReComment.objects()[0].comment == Comment.objects(id=comment.id).get()
 
     class Test_Delete_ReComment:
@@ -78,7 +78,7 @@ class Describe_ReCommentView:
     class Test_Like_ReComment:
         @pytest.fixture
         def recomment(self, comment, logged_in_user):
-            return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.user_id)
+            return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email)
 
         @pytest.fixture
         def trans_api(self, client, headers, board, post, comment, recomment):
@@ -95,7 +95,7 @@ class Describe_ReCommentView:
         class Context_이미_좋아요가_눌러져_있을_경우:
             @pytest.fixture
             def recomment(self, logged_in_user, board, comment):
-                return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.user_id, like=[logged_in_user])
+                return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[logged_in_user])
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 400
@@ -107,7 +107,7 @@ class Describe_ReCommentView:
     class Test_UnLike_ReComment:
         @pytest.fixture
         def recomment(self, comment, logged_in_user):
-            return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.user_id, like=[logged_in_user])
+            return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[logged_in_user])
 
         @pytest.fixture
         def trans_api(self, client, headers, board, post, comment, recomment):
@@ -124,7 +124,7 @@ class Describe_ReCommentView:
         class Context_이미_좋아요가_눌러져_있을_경우:
             @pytest.fixture
             def recomment(self, logged_in_user, board, comment):
-                return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.user_id, like=[])
+                return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[])
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 400

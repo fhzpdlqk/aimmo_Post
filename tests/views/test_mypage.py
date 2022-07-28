@@ -12,7 +12,7 @@ class Describe_MyPageView:
     class Test_My_Post:
         @pytest.fixture
         def posts(self, logged_in_user):
-            return [PostFactory.create() for _ in range(10)] + [PostFactory.create(writer=logged_in_user.user_id) for _ in
+            return [PostFactory.create() for _ in range(10)] + [PostFactory.create(writer=logged_in_user.email) for _ in
                                                                 range(20)]
 
         @pytest.fixture
@@ -27,12 +27,12 @@ class Describe_MyPageView:
                 post_list = trans_api.json
                 assert len(post_list) == 20
                 for post in post_list:
-                    assert post["writer"] == logged_in_user.user_id
+                    assert post["writer"] == logged_in_user.email
 
     class Test_My_Comment:
         @pytest.fixture
         def comments(self, logged_in_user):
-            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=logged_in_user.user_id) for _ in range(20)]+ [ReCommentFactory.create(writer=logged_in_user.user_id) for _ in range(20)]
+            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=logged_in_user.email) for _ in range(20)]+ [ReCommentFactory.create(writer=logged_in_user.email) for _ in range(20)]
 
         @pytest.fixture
         def trans_api(self, client, headers, comments):
@@ -45,11 +45,11 @@ class Describe_MyPageView:
             comment_list = trans_api.json["comments"]
             assert len(comment_list) == 20
             for comment in comment_list:
-                assert comment["writer"] == logged_in_user.user_id
+                assert comment["writer"] == logged_in_user.email
             recomment_list = trans_api.json["recomments"]
             assert len(recomment_list) == 20
             for recomment in recomment_list:
-                assert recomment["writer"] == logged_in_user.user_id
+                assert recomment["writer"] == logged_in_user.email
 
     class Test_My_Like:
         @pytest.fixture
