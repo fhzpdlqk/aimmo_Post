@@ -19,7 +19,7 @@ class BoardView(FlaskView):
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     @marshal_empty(code=200)
     def post(self, board):
-        if Board.objects(board_name=board.board_name, is_deleted=False):
+        if Board.objects(name=board.name, is_deleted=False):
             raise ApiError(message="이미 등록된 게시판입니다.", status_code=409)
         board.save()
         return '', 200
@@ -40,7 +40,7 @@ class BoardView(FlaskView):
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     @marshal_empty(code=200)
     def update(self, board_id: str, board):
-        if Board.objects(board_name=board.board_name, is_deleted=False):
+        if Board.objects(name=board.name, is_deleted=False):
             raise ApiError(message="이미 등록된 게시판입니다.", status_code=409)
         Board.objects(id=board_id).get().update(**request.json)
         return "", 200

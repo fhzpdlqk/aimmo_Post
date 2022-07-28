@@ -11,7 +11,7 @@ class User(Document):
 
 
 class Board(Document):
-    board_name = StringField(reuired=True)
+    name = StringField(reuired=True)
     is_deleted = BooleanField(default=False)
 
 

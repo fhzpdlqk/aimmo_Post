@@ -14,7 +14,7 @@ class Describe_BoardView:
         @pytest.fixture
         def form(self):
             return {
-                "board_name": 'board_new_name'
+                "name": 'board_new_name'
             }
 
         @pytest.fixture
@@ -26,18 +26,18 @@ class Describe_BoardView:
                 assert trans_api.status_code == 200
 
             def test_데이터_삽입여부(self, trans_api, form):
-                assert len(Board.objects(board_name=form["board_name"])) == 1
+                assert len(Board.objects(name=form["name"])) == 1
 
         class Context_이미_존재하는_게시판일_경우:
             @pytest.fixture
             def form(self, board):
                 return {
-                    "board_name": board.board_name
+                    "name": board.name
                 }
 
             def test_상태코드_409(self, trans_api, form):
                 assert trans_api.status_code == 409
-                assert len(Board.objects(board_name=form["board_name"])) == 1
+                assert len(Board.objects(name=form["name"])) == 1
 
         class Context_생성되었다가_삭제된_게시판일_경우:
             @pytest.fixture
@@ -47,12 +47,12 @@ class Describe_BoardView:
             @pytest.fixture
             def form(self, board):
                 return {
-                    "board_name": board.board_name
+                    "name": board.name
                 }
 
             def test_상태코드_200(self, trans_api, form):
                 assert trans_api.status_code == 200
-                assert len(Board.objects(board_name=form["board_name"], is_deleted=False)) == 1
+                assert len(Board.objects(name=form["name"], is_deleted=False)) == 1
 
         class Context_마스터계정이_아닐_경우:
             @pytest.fixture
@@ -82,7 +82,7 @@ class Describe_BoardView:
         @pytest.fixture
         def form(self):
             return {
-                "board_name": "test_update_board_name"
+                "name": "test_update_board_name"
             }
 
         @pytest.fixture
@@ -94,7 +94,7 @@ class Describe_BoardView:
                 assert trans_api.status_code == 200
 
             def test_업데이트_정보(self, board, trans_api, form):
-                assert Board.objects(id=board.id).get().board_name == form["board_name"]
+                assert Board.objects(id=board.id).get().name == form["name"]
 
         class Context_마스터계정이_아닌_경우:
             @pytest.fixture
@@ -111,7 +111,7 @@ class Describe_BoardView:
             @pytest.fixture
             def form(self, board):
                 return {
-                    "board_name": board.board_name
+                    "name": board.name
                 }
 
             def test_상태코드_409(self, trans_api):
