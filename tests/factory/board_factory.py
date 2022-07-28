@@ -8,5 +8,5 @@ class BoardFactory(MongoEngineFactory):
     class Meta:
         model = Board
 
-    board_name = fuzzy.FuzzyText(prefix="board_", length=10)
+    name = fuzzy.FuzzyText(prefix="board_", length=10)
     is_deleted = factory.LazyAttribute(lambda n: False)

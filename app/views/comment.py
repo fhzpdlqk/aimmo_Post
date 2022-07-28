@@ -17,7 +17,7 @@ class CommentView(FlaskView):
     @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, post_id, comment):
-        comment.writer = g.user_id
+        comment.writer = g.email
         comment.post = ObjectId(post_id)
         comment.save()
         post = Post.objects(id=post_id).get()
@@ -30,7 +30,7 @@ class CommentView(FlaskView):
     @marshal_empty(code=200)
     @use_kwargs(CommentSchema())
     def put(self, board_id,post_id,comment_id, comment):
-        Comment.objects(id=comment_id, writer=g.user_id).update(**request.json)
+        Comment.objects(id=comment_id, writer=g.email).update(**request.json)
         return "", 200
 
     @route("/<string:comment_id>", methods=["DELETE"])
@@ -38,7 +38,7 @@ class CommentView(FlaskView):
     @check_comment_writer
     @marshal_empty(code=200)
     def delete(self, board_id, post_id, comment_id):
-        Comment.objects(id=comment_id, writer=g.user_id).update(is_deleted=True)
+        Comment.objects(id=comment_id, writer=g.email).update(is_deleted=True)
         post = Post.objects(id=post_id).get()
         post.update(num_comment=post.num_comment - 1)
         return "", 200
@@ -50,7 +50,7 @@ class CommentView(FlaskView):
     @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=400, description="already push like user")
     def like(self, board_id, post_id, comment_id):
-        user = User.objects(user_id=g.user_id).get()
+        user = User.objects(email=g.email).get()
         if user not in Comment.objects(id=comment_id).get().like:
             Comment.objects(id=comment_id).update_one(push__like=user)
         else:
@@ -63,7 +63,7 @@ class CommentView(FlaskView):
     @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=400, description="no push like user")
     def like_cancel(self, board_id, post_id, comment_id):
-        user = User.objects(user_id=g.user_id).get()
+        user = User.objects(email=g.email).get()
         if user not in Comment.objects(id=comment_id).get().like:
             raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=400)
         else:
