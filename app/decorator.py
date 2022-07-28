@@ -18,7 +18,7 @@ def login_required(f):
         except jwt.InvalidTokenError:
             raise ApiError(message="유효하지 않은 토큰입니다.", status_code=401)
         g.is_master = decoded["is_master"]
-        g.user_id = decoded["user_id"]
+        g.email = decoded["email"]
         return f(*args, **kwargs)
 
     marshal_with(ApiErrorSchema, code=401, description="유효하지 않은 토큰")(f)
@@ -67,7 +67,7 @@ def check_post_writer(f):
         post = Post.objects(id=kwargs["post_id"])
         if (not post) or post.get().is_deleted:
             raise ApiError(message="없는 게시물입니다", status_code=404)
-        elif post.get().writer != g.user_id:
+        elif post.get().writer != g.email:
             raise ApiError(message="작성자 아이디가 아닙니다.", status_code=404)
         return f(*args, **kwargs)
     marshal_with(ApiErrorSchema, code=404, description="없는 게시물")(f)
@@ -89,7 +89,7 @@ def check_comment_writer(f):
         comment = Comment.objects(id=kwargs["comment_id"], is_deleted=False)
         if not comment:
             raise ApiError(message="없는 댓글입니다", status_code=404)
-        elif comment.get().writer != g.user_id:
+        elif comment.get().writer != g.email:
             raise ApiError(message="작성자 아이디가 아닙니다.", status_code=401)
         return f(*args, **kwargs)
 
@@ -113,7 +113,7 @@ def check_recomment_writer(f):
         recomment = ReComment.objects(id=kwargs["recomment_id"], is_deleted=False)
         if not recomment:
             raise ApiError(message="없는 대댓글입니다", status_code=404)
-        elif recomment.get().writer != g.user_id:
+        elif recomment.get().writer != g.email:
             return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
     marshal_with(ApiErrorSchema, code=404, description="없는 대댓글")(f)

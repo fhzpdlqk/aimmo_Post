@@ -5,8 +5,8 @@ from flask import current_app
 
 
 class User(Document):
-    user_id = StringField(required=True, max_length=200, unique=True)
-    user_pw = StringField(required=True, max_length=100)
+    email = EmailField(required=True, unique=True)
+    password = StringField(required=True, max_length=100)
     is_master = BooleanField(default=True)
 
 
@@ -48,7 +48,7 @@ class ReComment(Document):
 class AuthToken(Document):
     token = StringField(required=True)
     @classmethod
-    def create(cls, user_id, is_master):
-        token = jwt.encode({"user_id": user_id, "is_master": is_master}, current_app.config["TOKEN_KEY"], current_app.config["ALGORITHM"])
+    def create(cls, email, is_master):
+        token = jwt.encode({"email": email, "is_master": is_master}, current_app.config["TOKEN_KEY"], current_app.config["ALGORITHM"])
         authtoken = cls(token=token)
         return authtoken
