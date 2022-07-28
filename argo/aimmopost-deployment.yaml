@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aimmopost
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: aimmopost
+  template:
+    metadata:
+      labels:
+        app: aimmopost
+    spec:
+      containers:
+      - image: aimmopost1.azurecr.io/aimmopostcluster
+        name: aimmopost
+        ports:
+        - containerPort: 5000
