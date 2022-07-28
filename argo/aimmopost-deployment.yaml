@@ -14,7 +14,7 @@ spec:
         app: aimmopost
     spec:
       containers:
-      - image: aimmopost1.azurecr.io/aimmopostcluster
+      - image: aimmopost1.azurecr.io/aimmopostcluster:latest
         name: aimmopost
         ports:
         - containerPort: 5000
