@@ -4,8 +4,7 @@ from flask_apispec import marshal_with, doc
 from app.schemas.PostSchema import PostListSchema
 from app.schemas.CommentSchema import Comment, CommentMyListSchema
 from app.schemas.ReCommentSchema import ReComment
-from app.schemas.UserSchema import User
-from app.models import Post
+from app.models import Post, User
 from app.decorator import login_required
 
 class MyPageView(FlaskView):

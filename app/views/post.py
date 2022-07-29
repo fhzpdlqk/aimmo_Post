@@ -23,7 +23,7 @@ class PostView(FlaskView):
     @doc(summary="게시물 상세 조회", description="게시물 상세 조회")
     @check_post
     @marshal_with(PostDetailSchema, code=200, description="게시물 상세 정보")
-    def get_detail(self, board_id, post_id):
+    def get(self, board_id, post_id):
         post = Post.objects(board=board_id, id=post_id, is_deleted=False).get()
         return post, 200
 
@@ -85,7 +85,7 @@ class PostView(FlaskView):
     @use_kwargs(PostListFilterSchema, location='query')
     @marshal_with(PostListSchema(many=True), code=200, description='목록')
     @marshal_with(ApiErrorSchema, code=404, description='적합하지 않은 인덱스')
-    def get(self, board_id, size=10, page=1):
+    def index(self, board_id, size=10, page=1):
         try:
             posts = Post.objects(board=board_id, is_deleted=False).order_by("-notice")[(page - 1) * size: page * size]
             return posts, 200
