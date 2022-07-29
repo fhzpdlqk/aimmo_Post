@@ -1,5 +1,4 @@
 from marshmallow import fields, Schema, post_load
-from app.models import Board
 
 
 class BoardRegistSchema(Schema):
@@ -7,7 +6,7 @@ class BoardRegistSchema(Schema):
 
     @post_load
     def make_board(self, data, **kwargs):
-        return {'board': Board(**data)}
+        return {'board_name': data["name"]}
 
 
 class BoardSchema(Schema):
@@ -20,4 +19,4 @@ class BoardUpdateSchema(Schema):
 
     @post_load
     def update_board(self, data, **kwargs):
-        return {'board': Board(**data)}
+        return dict(data)

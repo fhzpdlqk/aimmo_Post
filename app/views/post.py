@@ -3,7 +3,7 @@ from flask_classful import FlaskView, route
 from flask import g, request
 from flask_apispec import marshal_with, use_kwargs, doc
 from app.schemas.PostSchema import PostListSchema, PostRegistSchema, PostDetailSchema, PostUpdateSchema, PostSearchSchema, PostListFilterSchema
-from app.models import Post, User
+from app.models import Post, User, Board
 from app.decorator import login_required, check_board, check_post, check_post_writer, marshal_empty
 from app.errors import ApiError, ApiErrorSchema
 
@@ -15,10 +15,8 @@ class PostView(FlaskView):
     @use_kwargs(PostRegistSchema())
     @marshal_empty(code=200, description="게시물 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
-    def post(self, board_id, post):
-        post.writer = User.objects().get(email=g.email)
-        post.board = ObjectId(board_id)
-        post.save()
+    def post(self, board_id, title, content, tag=None, notice=False):
+        Post(title=title, content=content, tag=tag, notice=notice, writer=User.objects().get(email=g.email), board=Board.objects().get(id=board_id)).save()
         return "", 200
 
     @route("/<string:post_id>", methods=["GET"])
@@ -43,8 +41,8 @@ class PostView(FlaskView):
     @check_post_writer
     @marshal_empty(code=200, description="게시물 수정 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
-    def put(self, board_id, post_id, post):
-        Post.objects(id=post_id, writer=User.objects().get(email=g.email)).update(**request.json)
+    def put(self, board_id, post_id, title, content, tag, notice):
+        Post.objects(id=post_id, writer=User.objects().get(email=g.email)).update(title=title, content=content, tag=tag, notice=notice)
         return "", 200
 
     @route("/<string:post_id>/like", methods=["POST"])

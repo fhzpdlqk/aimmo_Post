@@ -18,10 +18,10 @@ class BoardView(FlaskView):
     @marshal_with(ApiErrorSchema, code=409, description="중복 게시판")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     @marshal_empty(code=200)
-    def post(self, board):
-        if Board.objects(name=board.name, is_deleted=False):
+    def post(self, board_name):
+        if Board.objects().filter(name=board_name, is_deleted=False):
             raise ApiError(message="이미 등록된 게시판입니다.", status_code=409)
-        board.save()
+        Board(name=board_name).save()
         return '', 200
 
     @route("/", methods=["GET"])
@@ -39,10 +39,10 @@ class BoardView(FlaskView):
     @marshal_with(ApiErrorSchema, code=409, description='이미 등록된 게시판')
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     @marshal_empty(code=200)
-    def update(self, board_id: str, board):
-        if Board.objects(name=board.name, is_deleted=False):
+    def update(self, board_id: str, name):
+        if Board.objects().filter(name=name, is_deleted=False):
             raise ApiError(message="이미 등록된 게시판입니다.", status_code=409)
-        Board.objects(id=board_id).get().update(**request.json)
+        Board.objects(id=board_id).get().update(name=name)
         return "", 200
 
     @route("/<string:board_id>", methods=["DELETE"])

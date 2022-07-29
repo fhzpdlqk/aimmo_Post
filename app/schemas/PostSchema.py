@@ -28,14 +28,14 @@ class PostListSchema(Schema):
 
 
 class PostRegistSchema(Schema):
-    title = fields.Str(required=True, validate=Length(min=1))
-    content = fields.Str(required=True, validate=Length(min=1))
-    tag = fields.List(fields.Str())
+    title = fields.Str(required=True)
+    content = fields.Str(required=True)
+    tag = fields.List(fields.Str(), required=True)
     notice = fields.Bool(default=False)
 
     @post_load
     def make_post(self, data, **kwargs):
-        return {'post': Post(**data)}
+        return dict(data)
 
 
 class PostDetailSchema(Schema):
@@ -61,14 +61,14 @@ class PostDetailSchema(Schema):
 
 
 class PostUpdateSchema(Schema):
-    title = fields.Str()
-    content = fields.Str()
-    tag = fields.List(fields.Str())
+    title = fields.Str(required=True)
+    content = fields.Str(required=True)
+    tag = fields.List(fields.Str(), required=True)
     notice = fields.Bool(default=False)
 
     @post_load
     def make_post(self, data, **kwargs):
-        return {'post': Post(**data)}
+        return dict(data)
 
 
 class PostSearchSchema(Schema):
@@ -85,7 +85,4 @@ class PostListFilterSchema(Schema):
 
     @post_load
     def list_info(self, data, **kwargs):
-        return {
-            'page': data['page'],
-            'size': data['size']
-        }
+        return dict(data)
