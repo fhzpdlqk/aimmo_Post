@@ -19,7 +19,7 @@ class CommentView(FlaskView):
     def post(self, board_id, post_id, content):
         post = Post.objects(id=post_id).get()
         Comment(content=content, writer=User.objects().get(email=g.email), post=post).save()
-        post.update(num_comment=post.num_comment+1)
+        post.modify(inc__num_comment=1)
         return "", 200
 
     @route("/<string:comment_id>", methods=["PUT"])
@@ -38,7 +38,7 @@ class CommentView(FlaskView):
     def delete(self, board_id, post_id, comment_id):
         Comment.objects(id=comment_id, writer=User.objects.get(email=g.email)).update(is_deleted=True)
         post = Post.objects(id=post_id).get()
-        post.update(num_comment=post.num_comment - 1)
+        post.modify(dec__num_comment=1)
         return "", 200
 
 
