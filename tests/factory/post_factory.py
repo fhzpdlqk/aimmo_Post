@@ -12,7 +12,7 @@ class PostFactory(MongoEngineFactory):
     class Meta:
         model = Post
 
-    writer = factory.Faker('email')
+    writer = factory.SubFactory(UserFactory)
     date = factory.LazyFunction(datetime.datetime.utcnow)
     title = fuzzy.FuzzyText(prefix="post_title_")
     content = fuzzy.FuzzyText(prefix="post_content_")

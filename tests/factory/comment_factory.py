@@ -2,7 +2,8 @@ import factory
 from factory import fuzzy
 from factory.mongoengine import MongoEngineFactory
 from app.models import Comment
-from .post_factory import PostFactory
+from tests.factory.post_factory import PostFactory
+from tests.factory.user_factory import UserFactory
 import datetime
 import random
 
@@ -11,7 +12,7 @@ class CommentFactory(MongoEngineFactory):
     class Meta:
         model = Comment
 
-    writer = fuzzy.FuzzyText(prefix="writer_")
+    writer = factory.SubFactory(UserFactory)
     date = factory.LazyFunction(datetime.datetime.utcnow)
     content = fuzzy.FuzzyText(prefix="comment_content")
     like = factory.LazyAttribute(lambda n: [])

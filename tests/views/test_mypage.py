@@ -12,7 +12,7 @@ class Describe_MyPageView:
     class Test_My_Post:
         @pytest.fixture
         def posts(self, logged_in_user):
-            return [PostFactory.create() for _ in range(10)] + [PostFactory.create(writer=logged_in_user.email) for _ in
+            return [PostFactory.create() for _ in range(10)] + [PostFactory.create(writer=logged_in_user) for _ in
                                                                 range(20)]
 
         @pytest.fixture
@@ -32,7 +32,7 @@ class Describe_MyPageView:
     class Test_My_Comment:
         @pytest.fixture
         def comments(self, logged_in_user):
-            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=logged_in_user.email) for _ in range(20)]+ [ReCommentFactory.create(writer=logged_in_user.email) for _ in range(20)]
+            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=logged_in_user) for _ in range(20)]+ [ReCommentFactory.create(writer=logged_in_user) for _ in range(20)]
 
         @pytest.fixture
         def trans_api(self, client, headers, comments):

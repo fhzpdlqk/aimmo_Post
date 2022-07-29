@@ -16,7 +16,7 @@ class Board(Document):
 
 
 class Post(Document):
-    writer = StringField(required=True)
+    writer = ReferenceField(User, required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
     title = StringField(required=True, max_length=100)
     content = StringField(required=True)
@@ -29,7 +29,7 @@ class Post(Document):
 
 
 class Comment(Document):
-    writer = StringField(required=True)
+    writer = ReferenceField(User, required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
     like = ListField(ReferenceField(User), default=list)
     content = StringField(required=True)
@@ -38,7 +38,7 @@ class Comment(Document):
     is_deleted = BooleanField(default=False)
 
 class ReComment(Document):
-    writer = StringField(required=True)
+    writer = ReferenceField(User, required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
     content = StringField(required=True)
     like = ListField(ReferenceField(User), default=list)

@@ -17,7 +17,7 @@ class CommentView(FlaskView):
     @marshal_empty(code=200)
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, post_id, comment):
-        comment.writer = g.email
+        comment.writer = User.objects().get(email=g.email)
         comment.post = ObjectId(post_id)
         comment.save()
         post = Post.objects(id=post_id).get()
@@ -27,10 +27,10 @@ class CommentView(FlaskView):
     @route("/<string:comment_id>", methods=["PUT"])
     @doc(summary="댓글 수정", description="댓글 수정")
     @check_comment_writer
-    @marshal_empty(code=200)
     @use_kwargs(CommentSchema())
+    @marshal_empty(code=200)
     def put(self, board_id,post_id,comment_id, comment):
-        Comment.objects(id=comment_id, writer=g.email).update(**request.json)
+        Comment.objects(id=comment_id, writer=User.objects().get(email=g.email)).update(**request.json)
         return "", 200
 
     @route("/<string:comment_id>", methods=["DELETE"])
@@ -38,7 +38,7 @@ class CommentView(FlaskView):
     @check_comment_writer
     @marshal_empty(code=200)
     def delete(self, board_id, post_id, comment_id):
-        Comment.objects(id=comment_id, writer=g.email).update(is_deleted=True)
+        Comment.objects(id=comment_id, writer=User.objects.get(email=g.email)).update(is_deleted=True)
         post = Post.objects(id=post_id).get()
         post.update(num_comment=post.num_comment - 1)
         return "", 200

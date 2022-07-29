@@ -5,10 +5,13 @@ from app.schemas.ReCommentSchema import ReCommentDetailSchema, ReCommentListSche
 
 class CommentListSchema(Schema):
     id = fields.Str()
-    writer = fields.Str()
+    writer = fields.Method("get_writer")
     date = fields.DateTime()
     num_like = fields.Method("like_count")
     content = fields.Str()
+
+    def get_writer(self, obj) -> str:
+        return obj.writer.email
 
     def like_count(self, obj):
         return len(obj.like)
@@ -16,12 +19,15 @@ class CommentListSchema(Schema):
 
 class CommentDetailSchema(Schema):
     id = fields.Str()
-    writer = fields.Str()
+    writer = fields.Method("get_writer")
     date = fields.DateTime()
     num_like = fields.Method("like_count")
     content = fields.Str()
     like = fields.List(fields.Str())
     recomment = fields.Method("recomment_list")
+
+    def get_writer(self, obj) -> str:
+        return obj.writer.email
 
     def like_count(self, obj):
         return len(obj.like)
