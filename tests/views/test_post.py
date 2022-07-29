@@ -135,7 +135,7 @@ class Describe_PostView:
     class Test_UnLike_Post:
         @pytest.fixture
         def trans_api(self, client, headers, board, post):
-            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/like_cancel', headers=headers)
+            return client.delete(f'/boards/{str(board.id)}/posts/{str(post.id)}/like', headers=headers)
 
         @pytest.fixture
         def post(self, logged_in_user, board):

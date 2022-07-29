@@ -54,7 +54,7 @@ class ReCommentView(FlaskView):
         return "", 200
 
 
-    @route("/<recomment_id>/like_cancel", methods=["POST"])
+    @route("/<recomment_id>/like", methods=["DELETE"])
     @doc(summary="대댓글 좋아요 취소", description="대댓글 좋아요 취소")
     @check_recomment
     @marshal_empty(code=200, description="대댓글 취소 성공")
