@@ -1,5 +1,4 @@
 from marshmallow import fields, Schema, post_load
-from app.models import ReComment
 
 
 class ReCommentListSchema(Schema):
@@ -7,28 +6,22 @@ class ReCommentListSchema(Schema):
     writer = fields.Method("get_writer")
     date = fields.DateTime()
     content = fields.Str()
-    num_like = fields.Method("like_count")
+    num_like = fields.Int()
 
     def get_writer(self, obj) -> str:
         return obj.writer.email
-
-    def like_count(self, obj):
-        return len(obj.like)
 
 
 class ReCommentDetailSchema(Schema):
     id = fields.Str()
     writer = fields.Method("get_writer")
     date = fields.DateTime()
-    num_like = fields.Method("like_count")
+    num_like = fields.Int()
     content = fields.Str()
     like = fields.List(fields.Str())
 
     def get_writer(self, obj) -> str:
         return obj.writer.email
-
-    def like_count(self, obj):
-        return len(obj.like)
 
 
 class ReCommentSchema(Schema):

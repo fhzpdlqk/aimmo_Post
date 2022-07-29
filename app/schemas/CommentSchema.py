@@ -7,30 +7,25 @@ class CommentListSchema(Schema):
     id = fields.Str()
     writer = fields.Method("get_writer")
     date = fields.DateTime()
-    num_like = fields.Method("like_count")
+    num_like = fields.Int()
     content = fields.Str()
 
     def get_writer(self, obj) -> str:
         return obj.writer.email
 
-    def like_count(self, obj):
-        return len(obj.like)
 
 
 class CommentDetailSchema(Schema):
     id = fields.Str()
     writer = fields.Method("get_writer")
     date = fields.DateTime()
-    num_like = fields.Method("like_count")
+    num_like = fields.Int()
     content = fields.Str()
     like = fields.List(fields.Str())
     recomment = fields.Method("recomment_list")
 
     def get_writer(self, obj) -> str:
         return obj.writer.email
-
-    def like_count(self, obj):
-        return len(obj.like)
 
     def recomment_list(self, obj):
         return ReCommentDetailSchema(many=True).dump(ReComment.objects(comment=obj.id, is_deleted=False))

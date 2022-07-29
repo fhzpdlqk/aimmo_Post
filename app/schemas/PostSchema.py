@@ -13,15 +13,12 @@ class PostListSchema(Schema):
     content = fields.Str(required=True, validate=Length(min=1))
     tag = fields.List(fields.String)
     notice = fields.Bool(required=True)
-    num_like = fields.Method("like_count")
+    num_like = fields.Int()
     num_comment = fields.Int()
     is_like = fields.Method("islike")
 
     def get_writer(self, obj) -> str:
         return obj.writer.email
-
-    def like_count(self, obj):
-        return len(obj.like)
 
     def islike(self, obj):
         return User.objects(email=g.email).get() in obj.like
@@ -44,7 +41,7 @@ class PostDetailSchema(Schema):
     title = fields.Str()
     writer = fields.Method("get_writer")
     notice = fields.Bool()
-    num_like = fields.Method("like_count")
+    num_like = fields.Int()
     tag = fields.List(fields.Str())
     date = fields.DateTime()
     num_comment = fields.Int()
@@ -52,9 +49,6 @@ class PostDetailSchema(Schema):
 
     def get_writer(self, obj) -> str:
         return obj.writer.email
-
-    def like_count(self, obj):
-        return len(obj.like)
 
     def comment_list(self, obj):
         return CommentDetailSchema(many=True).dump(Comment.objects(post=obj.id, is_deleted=False))

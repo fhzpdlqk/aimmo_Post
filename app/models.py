@@ -27,6 +27,10 @@ class Post(Document):
     num_comment = IntField(default=0)
     is_deleted = BooleanField(default=False)
 
+    @property
+    def num_like(self) -> int:
+        return len(self.like)
+
 
 class Comment(Document):
     writer = ReferenceField(User, required=True)
@@ -37,6 +41,10 @@ class Comment(Document):
     num_recomment = IntField(default=0)
     is_deleted = BooleanField(default=False)
 
+    @property
+    def num_like(self) -> int:
+        return len(self.like)
+
 class ReComment(Document):
     writer = ReferenceField(User, required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
@@ -44,6 +52,10 @@ class ReComment(Document):
     like = ListField(ReferenceField(User), default=list)
     comment = ReferenceField(Comment, required=True, reverse_delete_rule=CASCADE)
     is_deleted = BooleanField(default=False)
+
+    @property
+    def num_like(self) -> int:
+        return len(self.like)
 
 class AuthToken(Document):
     token = StringField(required=True)
