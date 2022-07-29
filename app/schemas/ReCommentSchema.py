@@ -36,4 +36,4 @@ class ReCommentSchema(Schema):
 
     @post_load
     def make_recomment(self, data, **kwargs):
-        return {"recomment": ReComment(**data)}
+        return dict(data)

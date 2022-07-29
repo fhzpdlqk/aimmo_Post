@@ -15,11 +15,9 @@ class ReCommentView(FlaskView):
     @use_kwargs(ReCommentSchema)
     @marshal_empty(code=200, description="대댓글 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
-    def post(self, board_id, post_id, comment_id, recomment):
-        recomment.writer = User.objects().get(email=g.email)
-        recomment.comment = ObjectId(comment_id)
-        recomment.save()
-        comment = Comment.objects(id=comment_id).get()
+    def post(self, board_id, post_id, comment_id, content):
+        comment = Comment.objects().get(id=comment_id)
+        ReComment(content=content, writer=User.objects().get(email=g.email), comment=comment).save()
         comment.update(num_recomment=comment.num_recomment + 1)
         return "", 200
 
@@ -28,8 +26,8 @@ class ReCommentView(FlaskView):
     @check_recomment_writer
     @marshal_empty(code=200, description="대댓글 수정 성공")
     @use_kwargs(ReCommentSchema)
-    def put(self, board_id, post_id, comment_id, recomment_id, recomment):
-        ReComment.objects(id=recomment_id, writer=User.objects.get(email=g.email)).update(**request.json)
+    def put(self, board_id, post_id, comment_id, recomment_id, content):
+        ReComment.objects().get(id=recomment_id, writer=User.objects.get(email=g.email)).update(content=content)
         return "", 200
 
     @route("/<recomment_id>", methods=["DELETE"])

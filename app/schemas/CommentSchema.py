@@ -41,7 +41,7 @@ class CommentSchema(Schema):
 
     @post_load
     def make_comment(self, data, **kwargs):
-        return {'comment': Comment(**data)}
+        return dict(data)
 
 
 class CommentMyListSchema(Schema):
