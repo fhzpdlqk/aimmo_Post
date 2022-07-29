@@ -58,7 +58,7 @@ class PostView(FlaskView):
             raise ApiError(message="좋아요가 눌러져 있습니다.", status_code=400)
         return "", 200
 
-    @route("/<string:post_id>/like_cancel", methods=["POST"])
+    @route("/<string:post_id>/like", methods=["DELETE"])
     @doc(summary="게시물 좋아요 취소", description="게시물 좋아요 취소")
     @check_post
     @marshal_empty(code=200, description="게시물 좋아요 취소 성공")

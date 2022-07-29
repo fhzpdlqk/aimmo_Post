@@ -96,7 +96,7 @@ class Describe_CommentView:
 
         @pytest.fixture
         def trans_api(self, client, headers, board, post, comment):
-            return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/like_cancel',
+            return client.delete(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/like',
                                headers=headers)
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):

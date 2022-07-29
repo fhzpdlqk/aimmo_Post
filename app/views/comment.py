@@ -55,7 +55,7 @@ class CommentView(FlaskView):
             raise ApiError(message="이미 좋아요가 눌러져 있습니다", status_code=400)
         return "", 200
 
-    @route("/<string:comment_id>/like_cancel", methods=["POST"])
+    @route("/<string:comment_id>/like", methods=["DELETE"])
     @doc(summary="댓글 좋아요 취소", description="댓글 좋아요 취소")
     @check_comment
     @marshal_empty(code=200)
