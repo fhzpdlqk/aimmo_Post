@@ -27,7 +27,7 @@ class BoardView(FlaskView):
     @route("/", methods=["GET"])
     @doc(summary="게시판 목록 조회", description="게시판 목록 조회")
     @marshal_with(BoardSchema(many=True), code=200, description="게시판 목록")
-    def get(self):
+    def index(self):
         return Board.objects(), 200
 
     @route("/<string:board_id>", methods=["PUT"])
