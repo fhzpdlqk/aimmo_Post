@@ -29,8 +29,8 @@ def board():
 
 @pytest.fixture
 def post(board, logged_in_user):
-    return PostFactory.create(board=board, writer=logged_in_user.email)
+    return PostFactory.create(board=board, writer=logged_in_user)
 
 @pytest.fixture
 def comment(post, logged_in_user):
-    return CommentFactory.create(post=post.id, writer=logged_in_user.email)
+    return CommentFactory.create(post=post.id, writer=logged_in_user)

@@ -9,6 +9,6 @@ class UserFactory(MongoEngineFactory):
     class Meta:
         model = User
 
-    email = factory.Faker('email')
+    email = factory.sequence(lambda n: f'{n}_' + "@example.com")
     password = bcrypt.hashpw("test_user_pw".encode("utf-8"), bcrypt.gensalt())
     is_master = False

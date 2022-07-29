@@ -7,7 +7,7 @@ from flask import g
 
 class PostListSchema(Schema):
     id = fields.Str(required=True, validate=Length(min=1))
-    writer = fields.Email(required=True)
+    writer = fields.Method("get_writer")
     date = fields.DateTime()
     title = fields.Str(required=True, validate=Length(min=1))
     content = fields.Str(required=True, validate=Length(min=1))
@@ -16,6 +16,9 @@ class PostListSchema(Schema):
     num_like = fields.Method("like_count")
     num_comment = fields.Int()
     is_like = fields.Method("islike")
+
+    def get_writer(self, obj) -> str:
+        return obj.writer.email
 
     def like_count(self, obj):
         return len(obj.like)
@@ -39,13 +42,16 @@ class PostDetailSchema(Schema):
     id = fields.Str()
     content = fields.Str()
     title = fields.Str()
-    writer = fields.Email()
+    writer = fields.Method("get_writer")
     notice = fields.Bool()
     num_like = fields.Method("like_count")
     tag = fields.List(fields.Str())
     date = fields.DateTime()
     num_comment = fields.Int()
     comment = fields.Method("comment_list")
+
+    def get_writer(self, obj) -> str:
+        return obj.writer.email
 
     def like_count(self, obj):
         return len(obj.like)

@@ -14,15 +14,15 @@ class MyPageView(FlaskView):
     @doc(summary='내가 쓴 게시물', description='내가 쓴 게시물')
     @marshal_with(PostListSchema(many=True), code=200, description="내가 쓴 게시물 목록")
     def my_post(self):
-        posts = Post.objects(writer=g.email, is_deleted=False)
+        posts = Post.objects(writer=User.objects().get(email=g.email), is_deleted=False)
         return posts, 200
 
     @route("/comments", methods=["GET"])
     @doc(summary='내가 쓴 댓글', description='내가 쓴 댓글')
     @marshal_with(CommentMyListSchema, code=200, description="내가 쓴 댓글 목록")
     def my_comment(self):
-        comments = Comment.objects(writer=g.email, is_deleted=False)
-        recomments = ReComment.objects(writer=g.email, is_deleted=False)
+        comments = Comment.objects(writer=User.objects().get(email=g.email), is_deleted=False)
+        recomments = ReComment.objects(writer=User.objects().get(email=g.email), is_deleted=False)
         class ReturnObject():
             def __init__(self, comment, recomment):
                 self.comment = comment

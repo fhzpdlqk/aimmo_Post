@@ -28,7 +28,7 @@ class Describe_CommentView:
 
             def test_데이터_확인(self, trans_api, form, logged_in_user, post):
                 assert Comment.objects()[0].content == form["content"]
-                assert Comment.objects()[0].writer == logged_in_user.email
+                assert Comment.objects()[0].writer.email == logged_in_user.email
                 assert Comment.objects()[0].post == Post.objects(id=post.id).get()
 
     class Test_Update_Comment:
@@ -48,7 +48,7 @@ class Describe_CommentView:
 
             def test_데이터_확인(self, trans_api, form, post, comment, logged_in_user):
                 assert Comment.objects(id=comment.id).get().content == form["content"]
-                assert Comment.objects(id=comment.id).get().writer == logged_in_user.email
+                assert Comment.objects(id=comment.id).get().writer.email == logged_in_user.email
                 assert Comment.objects(id=comment.id).get().post == post
 
     class Test_Delete_Comment:

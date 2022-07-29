@@ -10,7 +10,7 @@ class Describe_ReCommentView:
 
     @pytest.fixture
     def recomment(self, comment, logged_in_user):
-        return ReCommentFactory.create(comment=comment, writer=logged_in_user.email)
+        return ReCommentFactory.create(comment=comment, writer=logged_in_user)
 
     class Test_Make_ReComment:
         @pytest.fixture
@@ -35,7 +35,7 @@ class Describe_ReCommentView:
 
             def test_데이터_확인(self, trans_api, form, logged_in_user, comment):
                 assert ReComment.objects()[0].content == form["content"]
-                assert ReComment.objects()[0].writer == logged_in_user.email
+                assert ReComment.objects()[0].writer.email == logged_in_user.email
                 assert ReComment.objects()[0].comment == Comment.objects(id=comment.id).get()
 
     class Test_Update_ReComment:
@@ -57,7 +57,7 @@ class Describe_ReCommentView:
 
             def test_데이터_확인(self, trans_api, form, logged_in_user, comment):
                 assert ReComment.objects()[0].content == form["content"]
-                assert ReComment.objects()[0].writer == logged_in_user.email
+                assert ReComment.objects()[0].writer.email == logged_in_user.email
                 assert ReComment.objects()[0].comment == Comment.objects(id=comment.id).get()
 
     class Test_Delete_ReComment:

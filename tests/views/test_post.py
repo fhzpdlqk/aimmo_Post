@@ -126,7 +126,7 @@ class Describe_PostView:
                 assert str(post.id) == trans_api.json["id"]
                 assert post.title == trans_api.json["title"]
                 assert post.content == trans_api.json["content"]
-                assert post.writer == trans_api.json["writer"]
+                assert post.writer.email == trans_api.json["writer"]
                 assert post.notice == trans_api.json["notice"]
                 assert len(post.like) == trans_api.json["num_like"]
                 assert post.tag == trans_api.json["tag"]
@@ -323,7 +323,7 @@ class Describe_PostView:
                 assert len(trans_api.json) == 1
                 assert trans_api.json[0]["title"] == post.title
                 assert trans_api.json[0]["id"] == str(post.id)
-                assert trans_api.json[0]["writer"] == post.writer
+                assert trans_api.json[0]["writer"] == post.writer.email
                 assert trans_api.json[0]["date"] == post.date.isoformat(timespec='microseconds')
                 assert trans_api.json[0]["content"] == post.content
                 assert trans_api.json[0]["tag"] == post.tag
@@ -347,7 +347,7 @@ class Describe_PostView:
                 assert trans_api.json[0]["title"] == post.title
                 assert form["search_word"] in trans_api.json[0]["title"]
                 assert trans_api.json[0]["id"] == str(post.id)
-                assert trans_api.json[0]["writer"] == post.writer
+                assert trans_api.json[0]["writer"] == post.writer.email
                 assert trans_api.json[0]["date"] == post.date.isoformat(timespec='microseconds')
                 assert trans_api.json[0]["content"] == post.content
                 assert trans_api.json[0]["tag"] == post.tag
@@ -371,7 +371,7 @@ class Describe_PostView:
                 assert trans_api.json[0]["title"] == post.title
                 assert form["search_word"] in trans_api.json[0]["content"]
                 assert trans_api.json[0]["id"] == str(post.id)
-                assert trans_api.json[0]["writer"] == post.writer
+                assert trans_api.json[0]["writer"] == post.writer.email
                 assert trans_api.json[0]["date"] == post.date.isoformat(timespec='microseconds')
                 assert trans_api.json[0]["content"] == post.content
                 assert trans_api.json[0]["tag"] == post.tag

@@ -16,7 +16,7 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, post):
-        post.writer = g.email
+        post.writer = User.objects().get(email=g.email)
         post.board = ObjectId(board_id)
         post.save()
         return "", 200
@@ -34,7 +34,7 @@ class PostView(FlaskView):
     @check_post_writer
     @marshal_empty(code=200, description="게시물 삭제 성공")
     def delete(self, board_id, post_id):
-        Post.objects(id=post_id, writer=g.email).update(is_deleted=True)
+        Post.objects(id=post_id, writer=User.objects().get(email=g.email)).update(is_deleted=True)
         return "", 200
 
     @route("/<string:post_id>", methods=["PUT"])
@@ -44,7 +44,7 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 수정 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def put(self, board_id, post_id, post):
-        Post.objects(id=post_id, writer=g.email).update(**request.json)
+        Post.objects(id=post_id, writer=User.objects().get(email=g.email)).update(**request.json)
         return "", 200
 
     @route("/<string:post_id>/like", methods=["POST"])
