@@ -45,13 +45,10 @@ class PostDetailSchema(Schema):
     tag = fields.List(fields.Str())
     date = fields.DateTime()
     num_comment = fields.Int()
-    comment = fields.Method("comment_list")
+    comment = fields.Nested(CommentDetailSchema(many=True))
 
     def get_writer(self, obj) -> str:
         return obj.writer.email
-
-    def comment_list(self, obj):
-        return CommentDetailSchema(many=True).dump(Comment.objects(post=obj.id, is_deleted=False))
 
 
 class PostUpdateSchema(Schema):

@@ -22,13 +22,12 @@ class CommentDetailSchema(Schema):
     num_like = fields.Int()
     content = fields.Str()
     like = fields.List(fields.Str())
-    recomment = fields.Method("recomment_list")
+    recomment = fields.Nested(ReCommentDetailSchema(many=True))
+    post = fields.Nested("PostDetailSchema", only=("id",))
 
     def get_writer(self, obj) -> str:
         return obj.writer.email
 
-    def recomment_list(self, obj):
-        return ReCommentDetailSchema(many=True).dump(ReComment.objects(comment=obj.id, is_deleted=False))
 
 
 class CommentSchema(Schema):

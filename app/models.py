@@ -23,7 +23,7 @@ class Post(Document):
     tag = ListField(StringField(), default=list)
     notice = BooleanField(default=False)
     like = ListField(ReferenceField(User), default=list)
-    board = ReferenceField(Board)
+    board = ReferenceField(Board, required=True)
     num_comment = IntField(default=0)
     is_deleted = BooleanField(default=False)
 
@@ -31,13 +31,17 @@ class Post(Document):
     def num_like(self) -> int:
         return len(self.like)
 
+    @property
+    def comment(self):
+        return Comment.objects().filter(post=self)
+
 
 class Comment(Document):
     writer = ReferenceField(User, required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
     like = ListField(ReferenceField(User), default=list)
     content = StringField(required=True)
-    post = ReferenceField(Post)
+    post = ReferenceField(Post, required=True)
     num_recomment = IntField(default=0)
     is_deleted = BooleanField(default=False)
 
@@ -45,12 +49,16 @@ class Comment(Document):
     def num_like(self) -> int:
         return len(self.like)
 
+    @property
+    def recomment(self):
+        return ReComment.objects().filter(comment=self)
+
 class ReComment(Document):
     writer = ReferenceField(User, required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
     content = StringField(required=True)
     like = ListField(ReferenceField(User), default=list)
-    comment = ReferenceField(Comment, required=True, reverse_delete_rule=CASCADE)
+    comment = ReferenceField(Comment, required=True)
     is_deleted = BooleanField(default=False)
 
     @property
