@@ -46,7 +46,7 @@ class UserView(FlaskView):
     @marshal_empty(code=200, description="비밀번호 변경 성공")
     @marshal_with(ApiErrorSchema, code=401, description="비밀번호가 틀림")
     def put(self, password, origin_password):
-        user = User.objects(email=g.email).get()
+        user = User.objects().get(email=g.email)
         if not bcrypt.checkpw(origin_password.encode("utf-8"), user.password.encode("utf-8")):
             raise ApiError(message="비밀번호가 틀립니다.", status_code=401)
         else:

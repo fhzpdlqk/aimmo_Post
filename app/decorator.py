@@ -1,4 +1,6 @@
 from functools import wraps
+
+import app.models
 from flask import g, request, current_app
 import jwt
 from flask_apispec import marshal_with, doc
@@ -64,10 +66,11 @@ def check_post(f):
 def check_post_writer(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        post = Post.objects(id=kwargs["post_id"])
-        if (not post) or post.get().is_deleted:
+        try:
+            post = Post.objects().get(id=kwargs["post_id"], is_deleted=False)
+        except app.models.DoesNotExist:
             raise ApiError(message="없는 게시물입니다", status_code=404)
-        elif post.get().writer.email != g.email:
+        if post.writer.email != g.email:
             raise ApiError(message="작성자 아이디가 아닙니다.", status_code=404)
         return f(*args, **kwargs)
     marshal_with(ApiErrorSchema, code=404, description="없는 게시물")(f)
@@ -86,10 +89,11 @@ def check_comment(f):
 def check_comment_writer(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        comment = Comment.objects(id=kwargs["comment_id"], is_deleted=False)
-        if not comment:
+        try:
+            comment = Comment.objects().get(id=kwargs["comment_id"], is_deleted=False)
+        except app.models.DoesNotExist:
             raise ApiError(message="없는 댓글입니다", status_code=404)
-        elif comment.get().writer != User.objects().get(email=g.email):
+        if comment.writer != User.objects().get(email=g.email):
             raise ApiError(message="작성자 아이디가 아닙니다.", status_code=401)
         return f(*args, **kwargs)
 
@@ -100,7 +104,9 @@ def check_comment_writer(f):
 def check_recomment(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not ReComment.objects(id=kwargs["recomment_id"], is_deleted=False):
+        try:
+            recomment = ReComment.objects().get(id=kwargs["recomment_id"], is_deleted=False)
+        except app.models.DoesNotExist:
             return ApiError(message="없는 대댓글입니다", status_code=404)
         return f(*args, **kwargs)
 
@@ -110,10 +116,11 @@ def check_recomment(f):
 def check_recomment_writer(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        recomment = ReComment.objects(id=kwargs["recomment_id"], is_deleted=False)
-        if not recomment:
+        try:
+            recomment = ReComment.objects().get(id=kwargs["recomment_id"], is_deleted=False)
+        except app.models.DoesNotExist:
             raise ApiError(message="없는 대댓글입니다", status_code=404)
-        elif recomment.get().writer.email != g.email:
+        if recomment.writer.email != g.email:
             return ApiError(message="작성자 아이디가 아닙니다."), 401
         return f(*args, **kwargs)
     marshal_with(ApiErrorSchema, code=404, description="없는 대댓글")(f)

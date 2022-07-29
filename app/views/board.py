@@ -42,7 +42,7 @@ class BoardView(FlaskView):
     def update(self, board_id: str, name):
         if Board.objects().filter(name=name, is_deleted=False):
             raise ApiError(message="이미 등록된 게시판입니다.", status_code=409)
-        Board.objects(id=board_id).get().update(name=name)
+        Board.objects().get(id=board_id).update(name=name)
         return "", 200
 
     @route("/<string:board_id>", methods=["DELETE"])
