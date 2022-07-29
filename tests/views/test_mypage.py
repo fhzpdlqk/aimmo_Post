@@ -42,11 +42,25 @@ class Describe_MyPageView:
             assert trans_api.status_code == 200
 
         def test_댓글_목록_작성자_여부(self, trans_api, logged_in_user):
-            comment_list = trans_api.json["comments"]
+            comment_list = trans_api.json
             assert len(comment_list) == 20
             for comment in comment_list:
                 assert comment["writer"] == logged_in_user.email
-            recomment_list = trans_api.json["recomments"]
+
+    class Test_My_ReComment:
+        @pytest.fixture
+        def comments(self, logged_in_user):
+            return [CommentFactory.create() for _ in range(10)] + [CommentFactory.create(writer=logged_in_user) for _ in range(20)]+ [ReCommentFactory.create(writer=logged_in_user) for _ in range(20)]
+
+        @pytest.fixture
+        def trans_api(self, client, headers, comments):
+            return client.get('/mypage/recomments', headers=headers)
+
+        def test_상태코드_200(self, trans_api):
+            assert trans_api.status_code == 200
+
+        def test_댓글_목록_작성자_여부(self, trans_api, logged_in_user):
+            recomment_list = trans_api.json
             assert len(recomment_list) == 20
             for recomment in recomment_list:
                 assert recomment["writer"] == logged_in_user.email

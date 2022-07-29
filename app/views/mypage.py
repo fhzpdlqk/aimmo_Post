@@ -2,13 +2,14 @@ from flask import g
 from flask_classful import FlaskView, route
 from flask_apispec import marshal_with, doc
 from app.schemas.PostSchema import PostListSchema
-from app.schemas.CommentSchema import Comment, CommentMyListSchema
-from app.schemas.ReCommentSchema import ReComment
-from app.models import Post, User
+from app.schemas.CommentSchema import Comment, CommentListSchema
+from app.schemas.ReCommentSchema import ReCommentListSchema
+from app.models import Post, User, ReComment
 from app.decorator import login_required
 
 class MyPageView(FlaskView):
     decorators = (doc(tags=["MyPage"]),login_required)
+
     @route("/posts", methods=["GET"])
     @doc(summary='내가 쓴 게시물', description='내가 쓴 게시물')
     @marshal_with(PostListSchema(many=True), code=200, description="내가 쓴 게시물 목록")
@@ -18,15 +19,15 @@ class MyPageView(FlaskView):
 
     @route("/comments", methods=["GET"])
     @doc(summary='내가 쓴 댓글', description='내가 쓴 댓글')
-    @marshal_with(CommentMyListSchema, code=200, description="내가 쓴 댓글 목록")
+    @marshal_with(CommentListSchema(many=True), code=200, description="내가 쓴 댓글 목록")
     def my_comment(self):
-        comments = Comment.objects(writer=User.objects().get(email=g.email), is_deleted=False)
-        recomments = ReComment.objects(writer=User.objects().get(email=g.email), is_deleted=False)
-        class ReturnObject():
-            def __init__(self, comment, recomment):
-                self.comment = comment
-                self.recomment = recomment
-        return ReturnObject(comments, recomments), 200
+        return Comment.objects().filter(writer=User.objects().get(email=g.email), is_deleted=False), 200
+
+    @route("/recomments", methods=["GET"])
+    @doc(summary="내가 쓴 대댓글", description="내가 쓴 대댓글")
+    @marshal_with(ReCommentListSchema(many=True), code=200, description="내가 쓴 대댓글 목록")
+    def my_recomment(self):
+        return ReComment.objects().filter(writer=User.objects().get(email=g.email), is_deleted=False), 200
 
     @route("/likes", methods=["GET"])
     @doc(summary='내가 좋아요 한 게시물', description='내가 좋아요 한 게시물')
