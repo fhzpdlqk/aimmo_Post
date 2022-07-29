@@ -24,7 +24,7 @@ class PostView(FlaskView):
     @check_post
     @marshal_with(PostDetailSchema, code=200, description="게시물 상세 정보")
     def get(self, board_id, post_id):
-        post = Post.objects(board=board_id, id=post_id, is_deleted=False).get()
+        post = Post.objects().get(board=board_id, id=post_id, is_deleted=False)
         return post, 200
 
     @route("/<string:post_id>", methods=["DELETE"])
@@ -51,8 +51,8 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already like user")
     def like(self, board_id, post_id):
-        user = User.objects(email=g.email).get()
-        if user not in Post.objects(id=post_id).get().like:
+        user = User.objects().get(email=g.email)
+        if user not in Post.objects().get(id=post_id).like:
             Post.objects(id=post_id).update_one(push__like=user)
         else:
             raise ApiError(message="좋아요가 눌러져 있습니다.", status_code=400)
@@ -64,8 +64,8 @@ class PostView(FlaskView):
     @marshal_empty(code=200, description="게시물 좋아요 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no like user")
     def like_cancel(self, board_id, post_id):
-        user = User.objects(email=g.email).get()
-        if user in Post.objects(id=post_id).get().like:
+        user = User.objects().get(email=g.email)
+        if user in Post.objects().get(id=post_id).like:
             Post.objects(id=post_id).update_one(pull__like=user)
         else:
             raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=400)
@@ -76,7 +76,7 @@ class PostView(FlaskView):
     @use_kwargs(PostSearchSchema)
     @marshal_with(PostListSchema(many=True), code=200, description="검색 게시물 리스트")
     def post_search(self, board_id, search_word):
-        posts = Post.objects(board=board_id, is_deleted=False, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}},
+        posts = Post.objects().filter(board=board_id, is_deleted=False, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}},
                                                               {"title": {"$regex": request.json["search_word"]}}]})
         return posts, 200
 

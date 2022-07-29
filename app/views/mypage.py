@@ -34,6 +34,6 @@ class MyPageView(FlaskView):
     def my_like_post(self):
         #posts = Post.objects.fields(like=[1,{"$elemMatch": {"user_id": g.user_id}}], title=1, writer=1, content=1, date=1, id=1, notice=1, num_comment=1, tag=1, board=1)
         #posts = Post.objects(__raw__={"like": {"$elemMatch": {"user_id": g.user_id}}})
-        user = User.objects(email=g.email).get()
+        user = User.objects().get(email=g.email)
         posts = Post.objects.filter(like__contains=user, is_deleted=False)
         return posts, 200

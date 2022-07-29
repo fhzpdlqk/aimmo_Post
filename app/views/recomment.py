@@ -36,7 +36,7 @@ class ReCommentView(FlaskView):
     @marshal_empty(code=200, description="대댓글 삭제 성공")
     def delete(self, board_id, post_id, comment_id, recomment_id):
         ReComment.objects(id=recomment_id, writer=User.objects.get(email=g.email)).update(is_deleted=True)
-        comment = Comment.objects(id=comment_id).get()
+        comment = Comment.objects().get(id=comment_id)
         comment.modify(dec__num_recomment=1)
         return "", 200
 
@@ -46,8 +46,8 @@ class ReCommentView(FlaskView):
     @marshal_empty(code=200, description="대댓글 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already push like user")
     def recomment_like(self, board_id, post_id, comment_id, recomment_id):
-        user = User.objects(email=g.email).get()
-        if user not in ReComment.objects(id=recomment_id).get().like:
+        user = User.objects().get(email=g.email)
+        if user not in ReComment.objects().get(id=recomment_id).like:
             ReComment.objects(id=recomment_id).update_one(push__like=user)
         else:
             raise ApiError(message="좋아요를 이미 누른 유저입니다.", status_code=400)
@@ -60,8 +60,8 @@ class ReCommentView(FlaskView):
     @marshal_empty(code=200, description="대댓글 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no push like user")
     def recomment_like_cancel(self, board_id, post_id, comment_id, recomment_id):
-        user = User.objects(email=g.email).get()
-        if user not in ReComment.objects(id=recomment_id).get().like:
+        user = User.objects().get(email=g.email)
+        if user not in ReComment.objects().get(id=recomment_id).like:
             raise ApiError(message="좋아요를 누르지 않은 유저입니다.", status_code=400)
         else:
             ReComment.objects(id=recomment_id).update_one(pull__like=user)
