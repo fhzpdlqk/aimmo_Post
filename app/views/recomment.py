@@ -18,7 +18,7 @@ class ReCommentView(FlaskView):
     def post(self, board_id, post_id, comment_id, content):
         comment = Comment.objects().get(id=comment_id)
         ReComment(content=content, writer=User.objects().get(email=g.email), comment=comment).save()
-        comment.update(num_recomment=comment.num_recomment + 1)
+        comment.modify(inc__num_recomment=1)
         return "", 200
 
     @route("/<recomment_id>", methods=["PUT"])
@@ -37,7 +37,7 @@ class ReCommentView(FlaskView):
     def delete(self, board_id, post_id, comment_id, recomment_id):
         ReComment.objects(id=recomment_id, writer=User.objects.get(email=g.email)).update(is_deleted=True)
         comment = Comment.objects(id=comment_id).get()
-        comment.update(num_recomment=comment.num_recomment - 1)
+        comment.modify(dec__num_recomment=1)
         return "", 200
 
     @route("/<recomment_id>/like", methods=["POST"])
