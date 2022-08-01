@@ -16,6 +16,7 @@ spec:
       containers:
       - image: aimmoregistry.azurecr.io/aimmopost:v1
         imagePullPolicy: Always
+        command: ['sh', '-c', 'echo 'xxx && sleep 6000']
         name: aimmopost
         ports:
         - containerPort: 5000
