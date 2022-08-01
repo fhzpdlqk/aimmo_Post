@@ -26,7 +26,7 @@ class Describe_ReCommentView:
                                headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_201(self, trans_api):
                 assert trans_api.status_code == 201
 
             def test_데이터_삽입여부(self, trans_api, form, comment):
@@ -52,8 +52,8 @@ class Describe_ReCommentView:
                 data=dumps(form),
                 headers=headers)
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+            def test_상태코드_201(self, trans_api):
+                assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, form, logged_in_user, comment):
                 assert ReComment.objects()[0].content == form["content"]
@@ -68,7 +68,7 @@ class Describe_ReCommentView:
                 headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_204(self, trans_api):
                 assert trans_api.status_code == 204
 
             def test_데이터_개수_확인(self, trans_api, comment):
@@ -86,7 +86,7 @@ class Describe_ReCommentView:
                 f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}/like',
                 headers=headers)
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_201(self, trans_api):
                 assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, logged_in_user, recomment):
@@ -97,7 +97,7 @@ class Describe_ReCommentView:
             def recomment(self, logged_in_user, board, comment):
                 return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_400(self, trans_api):
                 assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment, recomment):
@@ -115,7 +115,7 @@ class Describe_ReCommentView:
                 f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}/like',
                 headers=headers)
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_204(self, trans_api):
                 assert trans_api.status_code == 204
 
             def test_데이터_확인(self, trans_api, logged_in_user, recomment):
@@ -126,7 +126,7 @@ class Describe_ReCommentView:
             def recomment(self, logged_in_user, board, comment):
                 return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_400(self, trans_api):
                 assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment, recomment):

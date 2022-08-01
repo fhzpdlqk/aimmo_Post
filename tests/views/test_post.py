@@ -24,7 +24,7 @@ class Describe_PostView:
             return client.post(f'/boards/{str(board.id)}/posts/', data=dumps(form), headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_201(self, trans_api):
                 assert trans_api.status_code == 201
 
             def test_데이터_삽입여부(self, trans_api, form):
@@ -77,7 +77,7 @@ class Describe_PostView:
             return client.delete(f"/boards/{str(board.id)}/posts/{str(post.id)}", headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_204(self, trans_api):
                 assert trans_api.status_code == 204
 
             def test_삭제_여부(self, post, trans_api):
@@ -98,8 +98,8 @@ class Describe_PostView:
             return client.put(f'/boards/{str(board.id)}/posts/{str(post.id)}', data=dumps(form), headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+            def test_상태코드_201(self, trans_api):
+                assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, form, post):
                 assert Post.objects(id=post.id).get().title == form["title"]
@@ -115,7 +115,7 @@ class Describe_PostView:
             return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/like', headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_201(self, trans_api):
                 assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, post, logged_in_user):
@@ -126,7 +126,7 @@ class Describe_PostView:
             def post(self, logged_in_user, board):
                 return PostFactory.create(board=board, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_400(self, trans_api):
                 assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, logged_in_user):
@@ -141,7 +141,7 @@ class Describe_PostView:
         def post(self, logged_in_user, board):
             return PostFactory.create(board=board, writer=logged_in_user.email, like=[logged_in_user])
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_204(self, trans_api):
                 assert trans_api.status_code == 204
 
             def test_데이터_확인(self, trans_api, post, logged_in_user):
@@ -152,7 +152,7 @@ class Describe_PostView:
             def post(self, logged_in_user, board):
                 return PostFactory.create(board=board, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_400(self, trans_api):
                 assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, logged_in_user):

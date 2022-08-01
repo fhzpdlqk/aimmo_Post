@@ -24,11 +24,11 @@ class ReCommentView(FlaskView):
     @route("/<recomment_id>", methods=["PUT"])
     @doc(summary="대댓글 수정", description="대댓글 수정")
     @check_recomment_writer
-    @marshal_empty(code=200, description="대댓글 수정 성공")
+    @marshal_empty(code=201, description="대댓글 수정 성공")
     @use_kwargs(ReCommentSchema)
     def put(self, board_id, post_id, comment_id, recomment_id, content):
         ReComment.objects().get(id=recomment_id, writer=User.objects.get(email=g.email)).update(content=content)
-        return "", 200
+        return "", 201
 
     @route("/<recomment_id>", methods=["DELETE"])
     @doc(summary="대댓글 삭제", description="대댓글 삭제")

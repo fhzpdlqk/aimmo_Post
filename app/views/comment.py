@@ -26,10 +26,10 @@ class CommentView(FlaskView):
     @doc(summary="댓글 수정", description="댓글 수정")
     @check_comment_writer
     @use_kwargs(CommentSchema())
-    @marshal_empty(code=200)
+    @marshal_empty(code=201)
     def put(self, board_id,post_id,comment_id, content):
         Comment.objects().get(id=comment_id, writer=User.objects().get(email=g.email)).update(content=content)
-        return "", 200
+        return "", 201
 
     @route("/<string:comment_id>", methods=["DELETE"])
     @doc(summary="댓글 삭제", description="댓글 삭제")

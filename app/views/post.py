@@ -39,11 +39,11 @@ class PostView(FlaskView):
     @doc(summary="게시물 수정", description="게시물 수정")
     @use_kwargs(PostUpdateSchema())
     @check_post_writer
-    @marshal_empty(code=200, description="게시물 수정 성공")
+    @marshal_empty(code=201, description="게시물 수정 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def put(self, board_id, post_id, title, content, tag, notice):
         Post.objects(id=post_id, writer=User.objects().get(email=g.email)).update(title=title, content=content, tag=tag, notice=notice)
-        return "", 200
+        return "", 201
 
     @route("/<string:post_id>/like", methods=["POST"])
     @doc(summary="게시물 좋아요", description="게시물 좋아요")
@@ -76,8 +76,8 @@ class PostView(FlaskView):
     @use_kwargs(PostSearchSchema)
     @marshal_with(PostListSchema(many=True), code=200, description="검색 게시물 리스트")
     def post_search(self, board_id, search_word):
-        posts = Post.objects().filter(board=board_id, is_deleted=False, __raw__={"$or": [{"content": {"$regex": request.json["search_word"]}},
-                                                              {"title": {"$regex": request.json["search_word"]}}]})
+        posts = Post.objects().filter(board=board_id, is_deleted=False, __raw__={"$or": [{"content": {"$regex": search_word}},
+                                                              {"title": {"$regex": search_word}}]})
         return posts, 200
 
     @route("/", methods=["GET"])
