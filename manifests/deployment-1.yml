@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "aimmopostcluster-d4f8"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "aimmopostcluster-d4f8"
+  template:
+    metadata:
+      labels:
+        app: "aimmopostcluster-d4f8"
+    spec:
+      containers:
+        - name: "aimmopostcluster-d4f8"
+          image: "aimmoregistry.azurecr.io/aimmopostcluster"
+          ports:
+          - containerPort: 5000
