@@ -30,6 +30,7 @@ apispec-webframeworks = "^0.5.2"
 Flask-Classy = "^0.6.10"
 flask-classful-apispec = "^0.1.8"
 flask-swagger-ui = "^4.11.1"
+marshmallow-enum = "^1.5.1"
 
 
 [tool.poetry.dev-dependencies]

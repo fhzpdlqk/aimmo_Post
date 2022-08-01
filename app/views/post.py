@@ -13,11 +13,11 @@ class PostView(FlaskView):
     @route("/", methods=["POST"])
     @doc(summary="게시물 작성", description="게시물 작성")
     @use_kwargs(PostRegistSchema())
-    @marshal_empty(code=200, description="게시물 작성 성공")
+    @marshal_empty(code=201, description="게시물 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     def post(self, board_id, title, content, tag=None, notice=False):
         Post(title=title, content=content, tag=tag, notice=notice, writer=User.objects().get(email=g.email), board=Board.objects().get(id=board_id)).save()
-        return "", 200
+        return "", 201
 
     @route("/<string:post_id>", methods=["GET"])
     @doc(summary="게시물 상세 조회", description="게시물 상세 조회")
@@ -30,10 +30,10 @@ class PostView(FlaskView):
     @route("/<string:post_id>", methods=["DELETE"])
     @doc(summary="게시물 삭제", description="게시물 삭제")
     @check_post_writer
-    @marshal_empty(code=200, description="게시물 삭제 성공")
+    @marshal_empty(code=204, description="게시물 삭제 성공")
     def delete(self, board_id, post_id):
         Post.objects(id=post_id, writer=User.objects().get(email=g.email)).update(is_deleted=True)
-        return "", 200
+        return "", 204
 
     @route("/<string:post_id>", methods=["PUT"])
     @doc(summary="게시물 수정", description="게시물 수정")
@@ -48,7 +48,7 @@ class PostView(FlaskView):
     @route("/<string:post_id>/like", methods=["POST"])
     @doc(summary="게시물 좋아요", description="게시물 좋아요")
     @check_post
-    @marshal_empty(code=200, description="게시물 좋아요 성공")
+    @marshal_empty(code=201, description="게시물 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already like user")
     def like(self, board_id, post_id):
         user = User.objects().get(email=g.email)
@@ -56,12 +56,12 @@ class PostView(FlaskView):
             Post.objects(id=post_id).update_one(push__like=user)
         else:
             raise ApiError(message="좋아요가 눌러져 있습니다.", status_code=400)
-        return "", 200
+        return "", 201
 
     @route("/<string:post_id>/like", methods=["DELETE"])
     @doc(summary="게시물 좋아요 취소", description="게시물 좋아요 취소")
     @check_post
-    @marshal_empty(code=200, description="게시물 좋아요 취소 성공")
+    @marshal_empty(code=204, description="게시물 좋아요 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no like user")
     def like_cancel(self, board_id, post_id):
         user = User.objects().get(email=g.email)
@@ -69,7 +69,7 @@ class PostView(FlaskView):
             Post.objects(id=post_id).update_one(pull__like=user)
         else:
             raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=400)
-        return "", 200
+        return "", 204
 
     @route("/search", methods=["POST"])
     @doc(summary="게시물 검색", description="게시물 검색")

@@ -20,7 +20,7 @@ class Describe_CommentView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 201
 
             def test_데이터_삽입여부(self, trans_api, form, post):
                 assert len(Comment.objects()) == 1
@@ -59,7 +59,7 @@ class Describe_CommentView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 204
 
             def test_데이터개수_확인(self, trans_api, post, comment):
                 assert Comment.objects(post=post.id, is_deleted=False).count() == 0
@@ -73,7 +73,7 @@ class Describe_CommentView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
                 assert logged_in_user in Comment.objects(id=comment.id).get().like
@@ -100,7 +100,7 @@ class Describe_CommentView:
                                headers=headers)
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 204
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
                 assert logged_in_user not in Comment.objects(id=comment.id).get().like

@@ -614,6 +614,17 @@ lint = ["mypy (==0.961)", "flake8 (==4.0.1)", "flake8-bugbear (==22.6.22)", "pre
 tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
+name = "marshmallow-enum"
+version = "1.5.1"
+description = "Enum field for Marshmallow"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+marshmallow = ">=2.0.0"
+
+[[package]]
 name = "marshmallow-mongoengine"
 version = "0.30.2"
 description = "Mongoengine integration with the marshmallow (de)serialization library"
@@ -1146,7 +1157,7 @@ email = ["email-validator"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "71321a02f67325232e9da75e28c10fae4f5ab282b6f5f3d1755b6d23a8ab64e2"
+content-hash = "284972df4ac3b0594451ba1d34ba24b3bd600d6472b3efe3d9025eb7098282a9"
 
 [metadata.files]
 aniso8601 = [
@@ -1420,6 +1431,10 @@ markupsafe = [
 marshmallow = [
     {file = "marshmallow-3.17.0-py3-none-any.whl", hash = "sha256:00040ab5ea0c608e8787137627a8efae97fabd60552a05dc889c888f814e75eb"},
     {file = "marshmallow-3.17.0.tar.gz", hash = "sha256:635fb65a3285a31a30f276f30e958070f5214c7196202caa5c7ecf28f5274bc7"},
+]
+marshmallow-enum = [
+    {file = "marshmallow-enum-1.5.1.tar.gz", hash = "sha256:38e697e11f45a8e64b4a1e664000897c659b60aa57bfa18d44e226a9920b6e58"},
+    {file = "marshmallow_enum-1.5.1-py2.py3-none-any.whl", hash = "sha256:57161ab3dbfde4f57adeb12090f39592e992b9c86d206d02f6bd03ebec60f072"},
 ]
 marshmallow-mongoengine = [
     {file = "marshmallow-mongoengine-0.30.2.tar.gz", hash = "sha256:64857b86a4f2e2d8ff096eab2fa244562817c9e0bb7cda156a0bb85d3dbcbbcf"},

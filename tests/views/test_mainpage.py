@@ -13,7 +13,7 @@ class Describe_MainPageView:
         class Context_최신순_게시물:
             @pytest.fixture
             def trans_api(self, client, post, headers):
-                return client.get('/?filter=date', headers=headers)
+                return client.get('/?orderby=date', headers=headers)
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
@@ -26,7 +26,7 @@ class Describe_MainPageView:
         class Context_댓글순_게시물:
             @pytest.fixture
             def trans_api(self, client, post, headers):
-                return client.get('/?filter=comment', headers=headers)
+                return client.get('/?orderby=comment', headers=headers)
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
@@ -39,7 +39,7 @@ class Describe_MainPageView:
         class Context_like_List:
             @pytest.fixture
             def trans_api(self, client, post, headers):
-                return client.get('/?filter=like', headers=headers)
+                return client.get('/?orderby=like', headers=headers)
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
