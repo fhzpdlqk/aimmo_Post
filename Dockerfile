@@ -8,8 +8,6 @@ COPY requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt
 
-RUN pip install marshmallow-enum
-
 COPY . /aimmoPost/
 
 ENV PYTHONPATH=/aimmoPost
