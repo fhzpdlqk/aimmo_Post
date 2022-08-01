@@ -24,8 +24,8 @@ class Describe_UserView:
             return client.post('/users/', data=dumps(form), content_type="application/json")
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+            def test_상태코드_201(self, trans_api):
+                assert trans_api.status_code == 201
 
             def test_user_수가_증가(self, trans_api):
                 assert User.objects().count() == 1
@@ -108,8 +108,8 @@ class Describe_UserView:
 
         class Context_정상_요청:
 
-            def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+            def test_상태코드_201(self, trans_api):
+                assert trans_api.status_code == 201
 
             def test_변경_확인(self, trans_api, logged_in_user, form):
                 assert bcrypt.checkpw(form["password"].encode("utf-8"), User.objects(email=logged_in_user.email).get().password.encode("utf-8"))

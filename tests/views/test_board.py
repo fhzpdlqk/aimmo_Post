@@ -22,7 +22,7 @@ class Describe_BoardView:
             return client.post('/boards/', data=dumps(form), headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_201(self, trans_api):
                 assert trans_api.status_code == 201
 
             def test_데이터_삽입여부(self, trans_api, form):
@@ -50,7 +50,7 @@ class Describe_BoardView:
                     "name": board.name
                 }
 
-            def test_상태코드_200(self, trans_api, form):
+            def test_상태코드_201(self, trans_api, form):
                 assert trans_api.status_code == 201
                 assert len(Board.objects(name=form["name"], is_deleted=False)) == 1
 
@@ -90,8 +90,8 @@ class Describe_BoardView:
             return client.put(f"/boards/{str(board.id)}", data=dumps(form), headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+            def test_상태코드_201(self, trans_api):
+                assert trans_api.status_code == 201
 
             def test_업데이트_정보(self, board, trans_api, form):
                 assert Board.objects(id=board.id).get().name == form["name"]
@@ -126,7 +126,7 @@ class Describe_BoardView:
             return client.delete(f"/boards/{str(board.id)}", headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_204(self, trans_api):
                 assert trans_api.status_code == 204
 
             def test_삭제_여부(self, board, trans_api):

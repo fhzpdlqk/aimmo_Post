@@ -30,20 +30,20 @@ class UserView(FlaskView):
     @route("/", methods=["POST"])
     @doc(summary="사용자 회원가입", description="사용자 회원가입")
     @use_kwargs(UserSignupSchema())
-    @marshal_empty(code=200, description="회원가입 성공")
+    @marshal_empty(code=201, description="회원가입 성공")
     @marshal_with(ApiErrorSchema, code=409, description="이미 존재하는 사용자")
     @marshal_with(ApiErrorSchema, code=422, description="validation 에러")
     def post(self, email, password, is_master=False):
         if User.objects().filter(email=email):
             raise ApiError(message="이미 존재하는 ID입니다.", status_code=409)
         User(email=email, password=password, is_master=is_master).save()
-        return "", 200
+        return "", 201
 
     @route("/", methods=["PUT"])
     @doc(summary="사용자 비밀번호 변경", description="사용자 비밀번호 변경")
     @login_required
     @use_kwargs(UserUpdateSchema())
-    @marshal_empty(code=200, description="비밀번호 변경 성공")
+    @marshal_empty(code=201, description="비밀번호 변경 성공")
     @marshal_with(ApiErrorSchema, code=401, description="비밀번호가 틀림")
     def put(self, password, origin_password):
         user = User.objects().get(email=g.email)
@@ -52,4 +52,4 @@ class UserView(FlaskView):
         else:
             password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
             User.objects(email=g.email).update(password=password.decode("utf-8"))
-            return "", 200
+            return "", 201

@@ -19,7 +19,7 @@ class Describe_CommentView:
                                headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_201(self, trans_api):
                 assert trans_api.status_code == 201
 
             def test_데이터_삽입여부(self, trans_api, form, post):
@@ -43,8 +43,8 @@ class Describe_CommentView:
             return client.put(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}',
                               data=dumps(form), headers=headers)
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+            def test_상태코드_201(self, trans_api):
+                assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, form, post, comment, logged_in_user):
                 assert Comment.objects(id=comment.id).get().content == form["content"]
@@ -58,7 +58,7 @@ class Describe_CommentView:
                                  headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_204(self, trans_api):
                 assert trans_api.status_code == 204
 
             def test_데이터개수_확인(self, trans_api, post, comment):
@@ -72,7 +72,7 @@ class Describe_CommentView:
                                headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_201(self, trans_api):
                 assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
@@ -83,7 +83,7 @@ class Describe_CommentView:
             def comment(self, logged_in_user, board, post):
                 return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_400(self, trans_api):
                 assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
@@ -99,7 +99,7 @@ class Describe_CommentView:
             return client.delete(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/like',
                                headers=headers)
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_204(self, trans_api):
                 assert trans_api.status_code == 204
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
@@ -110,7 +110,7 @@ class Describe_CommentView:
             def comment(self, logged_in_user, board, post):
                 return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_400(self, trans_api):
                 assert trans_api.status_code == 400
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
