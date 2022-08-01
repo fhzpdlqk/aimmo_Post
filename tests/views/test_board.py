@@ -23,7 +23,7 @@ class Describe_BoardView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 201
 
             def test_데이터_삽입여부(self, trans_api, form):
                 assert len(Board.objects(name=form["name"])) == 1
@@ -51,7 +51,7 @@ class Describe_BoardView:
                 }
 
             def test_상태코드_200(self, trans_api, form):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 201
                 assert len(Board.objects(name=form["name"], is_deleted=False)) == 1
 
         class Context_마스터계정이_아닐_경우:
@@ -127,7 +127,7 @@ class Describe_BoardView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 204
 
             def test_삭제_여부(self, board, trans_api):
                 assert Board.objects(id=board.id).get().is_deleted

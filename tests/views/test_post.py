@@ -25,7 +25,7 @@ class Describe_PostView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 201
 
             def test_데이터_삽입여부(self, trans_api, form):
                 assert len(Post.objects()) == 1
@@ -78,7 +78,7 @@ class Describe_PostView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 204
 
             def test_삭제_여부(self, post, trans_api):
                 assert Post.objects(id=post.id).get().is_deleted
@@ -116,7 +116,7 @@ class Describe_PostView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, post, logged_in_user):
                 assert logged_in_user in Post.objects(id=post.id).get().like
@@ -142,7 +142,7 @@ class Describe_PostView:
             return PostFactory.create(board=board, writer=logged_in_user.email, like=[logged_in_user])
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 204
 
             def test_데이터_확인(self, trans_api, post, logged_in_user):
                 assert logged_in_user not in Post.objects(id=post.id).get().like

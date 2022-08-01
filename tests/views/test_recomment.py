@@ -27,7 +27,7 @@ class Describe_ReCommentView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 201
 
             def test_데이터_삽입여부(self, trans_api, form, comment):
                 assert len(ReComment.objects()) == 1
@@ -69,7 +69,7 @@ class Describe_ReCommentView:
 
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 204
 
             def test_데이터_개수_확인(self, trans_api, comment):
                 assert ReComment.objects(comment=comment.id, is_deleted=False).count() == 0
@@ -87,7 +87,7 @@ class Describe_ReCommentView:
                 headers=headers)
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 201
 
             def test_데이터_확인(self, trans_api, logged_in_user, recomment):
                 assert logged_in_user in ReComment.objects(id=recomment.id).get().like
@@ -116,7 +116,7 @@ class Describe_ReCommentView:
                 headers=headers)
         class Context_정상_요청:
             def test_상태코드_200(self, trans_api):
-                assert trans_api.status_code == 200
+                assert trans_api.status_code == 204
 
             def test_데이터_확인(self, trans_api, logged_in_user, recomment):
                 assert logged_in_user not in ReComment.objects(id=recomment.id).get().like

@@ -13,13 +13,13 @@ class ReCommentView(FlaskView):
     @route("/",methods=["POST"])
     @doc(summary="대댓글 작성", description="대댓글 작성")
     @use_kwargs(ReCommentSchema)
-    @marshal_empty(code=200, description="대댓글 작성 성공")
+    @marshal_empty(code=201, description="대댓글 작성 성공")
     @marshal_with(ApiErrorSchema, code=422, description='validation error')
     def post(self, board_id, post_id, comment_id, content):
         comment = Comment.objects().get(id=comment_id)
         ReComment(content=content, writer=User.objects().get(email=g.email), comment=comment).save()
         comment.modify(inc__num_recomment=1)
-        return "", 200
+        return "", 201
 
     @route("/<recomment_id>", methods=["PUT"])
     @doc(summary="대댓글 수정", description="대댓글 수정")
@@ -33,17 +33,17 @@ class ReCommentView(FlaskView):
     @route("/<recomment_id>", methods=["DELETE"])
     @doc(summary="대댓글 삭제", description="대댓글 삭제")
     @check_recomment_writer
-    @marshal_empty(code=200, description="대댓글 삭제 성공")
+    @marshal_empty(code=204, description="대댓글 삭제 성공")
     def delete(self, board_id, post_id, comment_id, recomment_id):
         ReComment.objects(id=recomment_id, writer=User.objects.get(email=g.email)).update(is_deleted=True)
         comment = Comment.objects().get(id=comment_id)
         comment.modify(dec__num_recomment=1)
-        return "", 200
+        return "", 204
 
     @route("/<recomment_id>/like", methods=["POST"])
     @doc(summary="대댓글 좋아요", description="대댓글 좋아요")
     @check_recomment
-    @marshal_empty(code=200, description="대댓글 좋아요 성공")
+    @marshal_empty(code=201, description="대댓글 좋아요 성공")
     @marshal_with(ApiErrorSchema, code=400, description="already push like user")
     def recomment_like(self, board_id, post_id, comment_id, recomment_id):
         user = User.objects().get(email=g.email)
@@ -51,13 +51,13 @@ class ReCommentView(FlaskView):
             ReComment.objects(id=recomment_id).update_one(push__like=user)
         else:
             raise ApiError(message="좋아요를 이미 누른 유저입니다.", status_code=400)
-        return "", 200
+        return "", 201
 
 
     @route("/<recomment_id>/like", methods=["DELETE"])
     @doc(summary="대댓글 좋아요 취소", description="대댓글 좋아요 취소")
     @check_recomment
-    @marshal_empty(code=200, description="대댓글 취소 성공")
+    @marshal_empty(code=204, description="대댓글 취소 성공")
     @marshal_with(ApiErrorSchema, code=400, description="no push like user")
     def recomment_like_cancel(self, board_id, post_id, comment_id, recomment_id):
         user = User.objects().get(email=g.email)
@@ -65,4 +65,4 @@ class ReCommentView(FlaskView):
             raise ApiError(message="좋아요를 누르지 않은 유저입니다.", status_code=400)
         else:
             ReComment.objects(id=recomment_id).update_one(pull__like=user)
-        return "", 200
+        return "", 204
