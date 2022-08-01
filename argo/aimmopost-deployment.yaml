@@ -15,6 +15,7 @@ spec:
     spec:
       containers:
       - image: aimmoregistry.azurecr.io/aimmopost:v1
+        imagePullPolicy: Always
         name: aimmopost
         ports:
         - containerPort: 5000
