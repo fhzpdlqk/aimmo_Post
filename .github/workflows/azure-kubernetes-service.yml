@@ -79,7 +79,7 @@ jobs:
       run: |
         sudo rm -rf /manifest-repo
         sudo mkdir /manifest-repo
-        sudh chmod -R 777 /manifest-repo
+        sudo chmod -R 777 /manifest-repo
         git clone https://github.com/fhzpdlqk/aimmo_Post-infra.git /manifest-repo
         cd manifestr-repo
         cd overlays/dev/
