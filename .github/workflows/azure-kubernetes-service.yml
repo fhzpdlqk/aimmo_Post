@@ -1,0 +1,88 @@
+# This workflow will build and push an application to a Azure Kubernetes Service (AKS) cluster when you push your code
+#
+# This workflow assumes you have already created the target AKS cluster and have created an Azure Container Registry (ACR)
+# For instructions see:
+#   - https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough-portal
+#   - https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal
+#   - https://github.com/Azure/aks-create-action
+#
+# To configure this workflow:
+#
+
+name: Build and deploy an app to AKS
+
+on:
+  push:
+    branches:
+      - "main"
+
+env:
+  AZURE_CONTAINER_REGISTRY: "aimmoregistry"
+  CONTAINER_NAME: "aimmopost"
+  RESOURCE_GROUP: "aimmopost_group"
+  GITHUB_SHA: ${{ github.sha }}
+
+jobs:
+  run-test-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.10.5"
+      - run: pip install -r requirements.txt
+      - run: pytest
+      
+  buildImage:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+    # Checks out the repository this file is in
+    - uses: actions/checkout@v3
+    
+    - name: Docker login
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+        username: ${{ secrets.DockerID }}
+        password: ${{ secrets.DockerPW }}
+    
+    - name: Pull Image
+      run: |
+        docker pull ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:latest
+  
+    # Builds and pushes an image up to your Azure Container Registry
+    - name: Build Image
+      run: |
+        docker build -f "Dockerfile" -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ env.GITHUB_SHA }}
+        
+    - name: Push Image
+      run: |
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ env.GITHUB_SHA }}
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:latest
+
+    - name: Install kustomize
+      run: |
+        curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases | grep browser_download | grep linux_amd | cut -d '"' -f 4 | grep /kustomize/v | sort | tail -n 1 | xargs curl -O -L
+        tar xzf ./kustomize_v*_linux_amd64.tar.gz
+        sudo cp ./kustomize /usr/bin/kustomize
+          
+    - name: update manifets-repo
+      run: |
+        sudo chmod -R 777 /
+        git clone https://github.com/fhzpdlqk/aimmo_Post-infra.git
+        cd aimmo_Post-infra
+        cd overlays/dev/
+        kustomize edit set image ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ env.GITHUB_SHA }}
+        git config --global user.email "rozencrants@naver.com"
+        git config --global user.name "github action"
+        git add .
+        git commit -m "set new image $GITHUB_SHA tag"
+        git push origin main
+        
+
+
+
+
