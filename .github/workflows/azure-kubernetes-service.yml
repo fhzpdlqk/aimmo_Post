@@ -57,7 +57,7 @@ jobs:
     
     - name: Pull Image
       run: |
-        docker pull ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:latest
+        docker pull ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:v1
   
     # Builds and pushes an image up to your Azure Container Registry
     - name: Build Image
