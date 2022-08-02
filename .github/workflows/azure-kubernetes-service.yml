@@ -62,7 +62,7 @@ jobs:
     # Builds and pushes an image up to your Azure Container Registry
     - name: Build Image
       run: |
-        docker build -f "Dockerfile" -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ env.GITHUB_SHA }}
+        docker build -f "Dockerfile" -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ env.GITHUB_SHA }} ./
         
     - name: Push Image
       run: |
