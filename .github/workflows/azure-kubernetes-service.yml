@@ -80,7 +80,7 @@ jobs:
         sudo rm -rf /manifest-repo
         sudo mkdir /manifest-repo
         sudo chmod -R 777 /manifest-repo
-        git clone https://github.com/fhzpdlqk/aimmo_Post-infra.git /manifest-repo
+        git clone https://${{ secrets.REPO_ACCESS_TOKEN }}@github.com/fhzpdlqk/aimmo_Post-infra.git /manifest-repo
         cd /manifest-repo
         cd overlays/dev/
         kustomize edit set image ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ env.GITHUB_SHA }}
