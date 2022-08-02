@@ -33,6 +33,7 @@ jobs:
       - name: requirements install
         run: |
           pip install -r requirements.txt
+          pip install poetry
       - name: poetry install
         run: |
           poetry install
