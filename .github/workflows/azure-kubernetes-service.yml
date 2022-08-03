@@ -17,9 +17,9 @@ on:
       - "main"
 
 env:
-  AZURE_CONTAINER_REGISTRY: "aimmoregistry"
+  AZURE_CONTAINER_REGISTRY: "aimmopostregistry"
   CONTAINER_NAME: "aimmopost"
-  RESOURCE_GROUP: "aimmopost_group"
+  RESOURCE_GROUP: "backend_sandbox"
   GITHUB_SHA: ${{ github.sha }}
 
 jobs:
