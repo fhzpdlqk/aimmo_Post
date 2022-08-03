@@ -72,6 +72,7 @@ jobs:
     - name: Install kustomize
       run: |
         curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases | grep browser_download | grep linux_amd | cut -d '"' -f 4 | grep /kustomize/v | sort | tail -n 1 | xargs curl -O -L
+        ls
         tar xzf ./kustomize_v*_linux_amd64.tar.gz
         sudo cp ./kustomize /usr/bin/kustomize
           
