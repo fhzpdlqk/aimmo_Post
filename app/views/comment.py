@@ -4,7 +4,7 @@ from flask_classful import FlaskView, route
 from flask import request, g
 from flask_apispec import marshal_with, use_kwargs, doc
 from app.models import Comment, User, Post
-from app.schemas.CommentSchema import CommentSchema
+from app.schemas.Comment import CommentSchema
 from app.decorator import login_required, check_post, check_board, check_comment, check_comment_writer, marshal_empty
 from app.errors import ApiError, ApiErrorSchema
 

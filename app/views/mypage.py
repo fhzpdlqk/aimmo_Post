@@ -1,9 +1,9 @@
 from flask import g
 from flask_classful import FlaskView, route
 from flask_apispec import marshal_with, doc
-from app.schemas.PostSchema import PostListSchema
-from app.schemas.CommentSchema import Comment, CommentListSchema
-from app.schemas.ReCommentSchema import ReCommentListSchema
+from app.schemas.Post import PostListSchema
+from app.schemas.Comment import Comment, CommentListSchema
+from app.schemas.Recomment import ReCommentListSchema
 from app.models import Post, User, ReComment
 from app.decorator import login_required
 

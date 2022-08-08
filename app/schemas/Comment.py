@@ -1,6 +1,6 @@
 from marshmallow import fields, Schema, post_load
 from app.models import Comment, ReComment
-from app.schemas.ReCommentSchema import ReCommentDetailSchema, ReCommentListSchema
+from app.schemas.Recomment import ReCommentDetailSchema, ReCommentListSchema
 
 
 class CommentListSchema(Schema):

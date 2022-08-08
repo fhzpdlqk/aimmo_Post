@@ -1,7 +1,7 @@
 from flask_classful import FlaskView, route
 from flask_apispec import use_kwargs, marshal_with, doc
-from app.schemas.PostSchema import PostListSchema
-from app.schemas.MainpageSchema import MainPageOrderbySchema
+from app.schemas.Post import PostListSchema
+from app.schemas.Mainpage import MainPageOrderbySchema
 from app.decorator import login_required
 from app.models import Post
 

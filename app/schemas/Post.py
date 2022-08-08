@@ -1,7 +1,7 @@
 from marshmallow import fields, Schema, post_load
 from marshmallow.validate import Length
 from app.models import Post, Comment, User
-from app.schemas.CommentSchema import CommentDetailSchema
+from app.schemas.Comment import CommentDetailSchema
 from flask import g
 
 
