@@ -24,13 +24,9 @@ class Describe_UserView:
             return client.post('/users/', data=dumps(form), content_type="application/json")
 
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, form):
                 assert trans_api.status_code == 201
-
-            def test_user_수가_증가(self, trans_api):
                 assert User.objects().count() == 1
-
-            def test_데이터베이스에_존재(self, trans_api, form):
                 assert len(User.objects(email=form["email"])) == 1
 
         class Context_중복된_id로_회원가입할_경우:
@@ -63,11 +59,9 @@ class Describe_UserView:
             return client.post('/users/login', data=dumps(form), content_type="application/json")
 
         class Context_정상_요청:
-            def test_login_상태코드_200(self, trans_api):
+            def test_login_상태코드_200(self, trans_api, form, logged_in_user):
                 assert trans_api.status_code == 200
-
-            def test_login_토큰일치(self, trans_api, form, created_user):
-                token = jwt.encode({"email": form["email"], "is_master": created_user.is_master}, TestConfig.TOKEN_KEY,
+                token = jwt.encode({"email": form["email"], "is_master": logged_in_user.is_master}, TestConfig.TOKEN_KEY,
                                    TestConfig.ALGORITHM)
                 assert token == trans_api.json["token"]
 
@@ -108,10 +102,8 @@ class Describe_UserView:
 
         class Context_정상_요청:
 
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, logged_in_user, form):
                 assert trans_api.status_code == 201
-
-            def test_변경_확인(self, trans_api, logged_in_user, form):
                 assert bcrypt.checkpw(form["password"].encode("utf-8"), User.objects(email=logged_in_user.email).get().password.encode("utf-8"))
 
         class Context_동일한_비밀번호로_요청할_경우:

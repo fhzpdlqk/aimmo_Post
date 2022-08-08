@@ -17,8 +17,6 @@ class Describe_MainPageView:
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
-
-            def test_목록_최신순_여부(self, trans_api):
                 post_list = trans_api.json
                 for index in range(1, len(post_list)):
                     assert post_list[index - 1]["date"] >= post_list[index]["date"]
@@ -30,8 +28,6 @@ class Describe_MainPageView:
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
-
-            def test_목록_댓글순_여부(self, trans_api):
                 post_list = trans_api.json
                 for index in range(1, len(post_list)):
                     assert post_list[index - 1]["num_comment"] >= post_list[index]["num_comment"]
@@ -43,8 +39,6 @@ class Describe_MainPageView:
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
-
-            def test_목록_좋아요순_여부(self, trans_api):
                 post_list = trans_api.json
                 for index in range(1, len(post_list)):
                     assert post_list[index - 1]["num_like"] >= post_list[index]["num_like"]
