@@ -20,10 +20,8 @@ class Describe_MyPageView:
             return client.get('/mypage/posts', headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_200(self, trans_api, logged_in_user):
                 assert trans_api.status_code == 200
-
-            def test_post_목록_작성자_여부(self, trans_api, logged_in_user):
                 post_list = trans_api.json
                 assert len(post_list) == 20
                 for post in post_list:
@@ -38,10 +36,8 @@ class Describe_MyPageView:
         def trans_api(self, client, headers, comments):
             return client.get('/mypage/comments', headers=headers)
 
-        def test_상태코드_200(self, trans_api):
+        def test_상태코드_200(self, trans_api, logged_in_user):
             assert trans_api.status_code == 200
-
-        def test_댓글_목록_작성자_여부(self, trans_api, logged_in_user):
             comment_list = trans_api.json
             assert len(comment_list) == 20
             for comment in comment_list:
@@ -56,10 +52,8 @@ class Describe_MyPageView:
         def trans_api(self, client, headers, comments):
             return client.get('/mypage/recomments', headers=headers)
 
-        def test_상태코드_200(self, trans_api):
+        def test_상태코드_200(self, trans_api, logged_in_user):
             assert trans_api.status_code == 200
-
-        def test_댓글_목록_작성자_여부(self, trans_api, logged_in_user):
             recomment_list = trans_api.json
             assert len(recomment_list) == 20
             for recomment in recomment_list:
@@ -75,10 +69,8 @@ class Describe_MyPageView:
         def trans_api(self, client, headers, posts):
             return client.get('/mypage/likes', headers=headers)
 
-        def test_상태코드_200(self, trans_api):
+        def test_상태코드_200(self, trans_api, logged_in_user):
             assert trans_api.status_code == 200
-
-        def test_게시글_목록_좋아요_여부(self, trans_api, logged_in_user):
             post_list = trans_api.json
             assert len(post_list) == 20
             for post in post_list:

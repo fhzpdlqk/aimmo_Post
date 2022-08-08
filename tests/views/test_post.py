@@ -24,13 +24,9 @@ class Describe_PostView:
             return client.post(f'/boards/{str(board.id)}/posts/', data=dumps(form), headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, form):
                 assert trans_api.status_code == 201
-
-            def test_데이터_삽입여부(self, trans_api, form):
                 assert len(Post.objects()) == 1
-
-            def test_데이터_확인(self, trans_api, form):
                 assert Post.objects()[0].title == form["title"]
                 assert Post.objects()[0].content == form["content"]
                 assert Post.objects()[0].tag == form["tag"]
@@ -48,10 +44,8 @@ class Describe_PostView:
             return [CommentFactory.create(post=post) for _ in range(post.num_comment)]
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_200(self, trans_api, post):
                 assert trans_api.status_code == 200
-
-            def test_데이터_확인(self, trans_api, post):
                 assert str(post.id) == trans_api.json["id"]
                 assert post.title == trans_api.json["title"]
                 assert post.content == trans_api.json["content"]
@@ -77,10 +71,8 @@ class Describe_PostView:
             return client.delete(f"/boards/{str(board.id)}/posts/{str(post.id)}", headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_204(self, trans_api):
+            def test_상태코드_204(self, trans_api, post):
                 assert trans_api.status_code == 204
-
-            def test_삭제_여부(self, post, trans_api):
                 assert Post.objects(id=post.id).get().is_deleted
 
     class Test_Update_Post:
@@ -98,10 +90,8 @@ class Describe_PostView:
             return client.put(f'/boards/{str(board.id)}/posts/{str(post.id)}', data=dumps(form), headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, form, post):
                 assert trans_api.status_code == 201
-
-            def test_데이터_확인(self, trans_api, form, post):
                 assert Post.objects(id=post.id).get().title == form["title"]
                 assert Post.objects(id=post.id).get().content == form["content"]
                 assert Post.objects(id=post.id).get().tag == form["tag"]
@@ -115,10 +105,8 @@ class Describe_PostView:
             return client.post(f'/boards/{str(board.id)}/posts/{str(post.id)}/like', headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, logged_in_user, post):
                 assert trans_api.status_code == 201
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user):
                 assert logged_in_user in Post.objects(id=post.id).get().like
 
         class Context_이미_좋아요가_눌러져_있을_경우:
@@ -126,10 +114,8 @@ class Describe_PostView:
             def post(self, logged_in_user, board):
                 return PostFactory.create(board=board, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_409(self, trans_api):
+            def test_상태코드_409(self, trans_api, logged_in_user, post):
                 assert trans_api.status_code == 409
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user):
                 assert logged_in_user in Post.objects(id=post.id).get().like
 
     class Test_UnLike_Post:
@@ -141,10 +127,8 @@ class Describe_PostView:
         def post(self, logged_in_user, board):
             return PostFactory.create(board=board, writer=logged_in_user.email, like=[logged_in_user])
         class Context_정상_요청:
-            def test_상태코드_204(self, trans_api):
+            def test_상태코드_204(self, trans_api, logged_in_user, post):
                 assert trans_api.status_code == 204
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user):
                 assert logged_in_user not in Post.objects(id=post.id).get().like
 
         class Context_좋아요가_눌러져_있지_않은_경우:
@@ -152,10 +136,8 @@ class Describe_PostView:
             def post(self, logged_in_user, board):
                 return PostFactory.create(board=board, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_412(self, trans_api):
+            def test_상태코드_412(self, trans_api, logged_in_user, post):
                 assert trans_api.status_code == 412
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user):
                 assert logged_in_user not in Post.objects(id=post.id).get().like
 
     class Test_Search_Post:
@@ -170,10 +152,8 @@ class Describe_PostView:
             return client.post(f'/boards/{str(board.id)}/posts/search', data=dumps(form), headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_200(self, trans_api, post):
                 assert trans_api.status_code == 200
-
-            def test_데이터_확인(self, trans_api, post):
                 assert len(trans_api.json) == 1
                 assert trans_api.json[0]["title"] == post.title
                 assert trans_api.json[0]["id"] == str(post.id)
@@ -193,10 +173,8 @@ class Describe_PostView:
                     "search_word": "title"
                 }
 
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_200(self, trans_api, post, form):
                 assert trans_api.status_code == 200
-
-            def test_데이터_확인(self, trans_api, post, form):
                 assert len(trans_api.json) == 1
                 assert trans_api.json[0]["title"] == post.title
                 assert form["search_word"] in trans_api.json[0]["title"]
@@ -217,10 +195,8 @@ class Describe_PostView:
                     "search_word": "content"
                 }
 
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_200(self, trans_api, post, form):
                 assert trans_api.status_code == 200
-
-            def test_데이터_확인(self, trans_api, post, form):
                 assert len(trans_api.json) == 1
                 assert trans_api.json[0]["title"] == post.title
                 assert form["search_word"] in trans_api.json[0]["content"]
@@ -245,10 +221,8 @@ class Describe_PostView:
             return client.get(f"/boards/{str(board.id)}/posts/?page=1&size=10", headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_200(self, trans_api):
+            def test_상태코드_200(self, trans_api, post, logged_in_user):
                 assert trans_api.status_code == 200
-
-            def test_데이터_확인(self, trans_api):
                 posts = trans_api.json
                 for i in posts:
                     assert "id" in i
@@ -261,20 +235,14 @@ class Describe_PostView:
                     assert "num_like" in i
                     assert "num_comment" in i
                     assert not Post.objects(id=i["id"]).get().is_deleted
-
-            def test_공지사항_상단_노출_여부(self, trans_api):
                 posts = trans_api.json
                 for i in range(1, len(posts)):
                     assert (posts[i - 1]["notice"] == True and posts[i]["notice"] == True) or (
                             posts[i - 1]["notice"] == False and posts[i]["notice"] == False) \
                            or (posts[i - 1]["notice"] == True and posts[i]["notice"] == False)
-
-            def test_존재_여부(self, trans_api, post):
                 posts = trans_api.json
                 for i in posts:
                     assert next((True for item in post if str(item.id) == i["id"]), False)
-
-            def test_좋아요_누름_여부(self, trans_api, logged_in_user):
                 posts = trans_api.json
                 for i in posts:
                     assert (logged_in_user in Post.objects(id=i["id"]).get().like) == i["is_like"]
@@ -294,6 +262,4 @@ class Describe_PostView:
 
             def test_상태코드_200(self, trans_api):
                 assert trans_api.status_code == 200
-
-            def test_빈리스트_반환(self, trans_api):
                 assert trans_api.json == []

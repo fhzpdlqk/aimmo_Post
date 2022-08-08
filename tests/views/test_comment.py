@@ -19,17 +19,14 @@ class Describe_CommentView:
                                headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, form, post, logged_in_user):
                 assert trans_api.status_code == 201
-
-            def test_데이터_삽입여부(self, trans_api, form, post):
                 assert len(Comment.objects()) == 1
                 assert Post.objects(id=post.id).get().num_comment == post.num_comment+1
-
-            def test_데이터_확인(self, trans_api, form, logged_in_user, post):
                 assert Comment.objects()[0].content == form["content"]
                 assert Comment.objects()[0].writer.email == logged_in_user.email
                 assert Comment.objects()[0].post == Post.objects(id=post.id).get()
+
 
     class Test_Update_Comment:
         @pytest.fixture
@@ -43,10 +40,8 @@ class Describe_CommentView:
             return client.put(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}',
                               data=dumps(form), headers=headers)
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, comment, post, logged_in_user, form):
                 assert trans_api.status_code == 201
-
-            def test_데이터_확인(self, trans_api, form, post, comment, logged_in_user):
                 assert Comment.objects(id=comment.id).get().content == form["content"]
                 assert Comment.objects(id=comment.id).get().writer.email == logged_in_user.email
                 assert Comment.objects(id=comment.id).get().post == post
@@ -58,10 +53,8 @@ class Describe_CommentView:
                                  headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_204(self, trans_api):
+            def test_상태코드_204(self, trans_api, post):
                 assert trans_api.status_code == 204
-
-            def test_데이터개수_확인(self, trans_api, post, comment):
                 assert Comment.objects(post=post.id, is_deleted=False).count() == 0
                 assert Post.objects(id=post.id).get().num_comment == post.num_comment-1
 
@@ -72,10 +65,8 @@ class Describe_CommentView:
                                headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, logged_in_user, comment):
                 assert trans_api.status_code == 201
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
                 assert logged_in_user in Comment.objects(id=comment.id).get().like
 
         class Context_이미_좋아요가_눌러져_있을_경우:
@@ -83,10 +74,8 @@ class Describe_CommentView:
             def comment(self, logged_in_user, board, post):
                 return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_409(self, trans_api):
+            def test_상태코드_409(self, trans_api, logged_in_user, comment):
                 assert trans_api.status_code == 409
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
                 assert logged_in_user in Comment.objects(id=comment.id).get().like
 
     class Test_UnLike_Comment:
@@ -99,10 +88,8 @@ class Describe_CommentView:
             return client.delete(f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/like',
                                headers=headers)
         class Context_정상_요청:
-            def test_상태코드_204(self, trans_api):
+            def test_상태코드_204(self, trans_api, comment, logged_in_user):
                 assert trans_api.status_code == 204
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
                 assert logged_in_user not in Comment.objects(id=comment.id).get().like
 
         class Context_좋아요가_눌러져_있지_않은_경우:
@@ -110,8 +97,6 @@ class Describe_CommentView:
             def comment(self, logged_in_user, board, post):
                 return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_412(self, trans_api):
+            def test_상태코드_412(self, trans_api, comment, logged_in_user):
                 assert trans_api.status_code == 412
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
                 assert logged_in_user not in Comment.objects(id=comment.id).get().like

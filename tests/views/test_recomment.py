@@ -26,14 +26,10 @@ class Describe_ReCommentView:
                                headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, form, comment, logged_in_user):
                 assert trans_api.status_code == 201
-
-            def test_데이터_삽입여부(self, trans_api, form, comment):
                 assert len(ReComment.objects()) == 1
                 assert Comment.objects(id=comment.id).get().num_recomment == comment.num_recomment + 1
-
-            def test_데이터_확인(self, trans_api, form, logged_in_user, comment):
                 assert ReComment.objects()[0].content == form["content"]
                 assert ReComment.objects()[0].writer.email == logged_in_user.email
                 assert ReComment.objects()[0].comment == Comment.objects(id=comment.id).get()
@@ -52,10 +48,8 @@ class Describe_ReCommentView:
                 data=dumps(form),
                 headers=headers)
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, form, logged_in_user, comment):
                 assert trans_api.status_code == 201
-
-            def test_데이터_확인(self, trans_api, form, logged_in_user, comment):
                 assert ReComment.objects()[0].content == form["content"]
                 assert ReComment.objects()[0].writer.email == logged_in_user.email
                 assert ReComment.objects()[0].comment == Comment.objects(id=comment.id).get()
@@ -68,10 +62,8 @@ class Describe_ReCommentView:
                 headers=headers)
 
         class Context_정상_요청:
-            def test_상태코드_204(self, trans_api):
+            def test_상태코드_204(self, trans_api, comment):
                 assert trans_api.status_code == 204
-
-            def test_데이터_개수_확인(self, trans_api, comment):
                 assert ReComment.objects(comment=comment.id, is_deleted=False).count() == 0
                 assert Comment.objects(id=comment.id).get().num_recomment == comment.num_recomment-1
 
@@ -86,10 +78,8 @@ class Describe_ReCommentView:
                 f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}/like',
                 headers=headers)
         class Context_정상_요청:
-            def test_상태코드_201(self, trans_api):
+            def test_상태코드_201(self, trans_api, logged_in_user, recomment):
                 assert trans_api.status_code == 201
-
-            def test_데이터_확인(self, trans_api, logged_in_user, recomment):
                 assert logged_in_user in ReComment.objects(id=recomment.id).get().like
 
         class Context_이미_좋아요가_눌러져_있을_경우:
@@ -97,10 +87,8 @@ class Describe_ReCommentView:
             def recomment(self, logged_in_user, board, comment):
                 return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_409(self, trans_api):
+            def test_상태코드_409(self, trans_api, logged_in_user, recomment):
                 assert trans_api.status_code == 409
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user, comment, recomment):
                 assert logged_in_user in ReComment.objects(id=recomment.id).get().like
 
 
@@ -115,10 +103,8 @@ class Describe_ReCommentView:
                 f'/boards/{str(board.id)}/posts/{str(post.id)}/comments/{str(comment.id)}/recomments/{str(recomment.id)}/like',
                 headers=headers)
         class Context_정상_요청:
-            def test_상태코드_204(self, trans_api):
+            def test_상태코드_204(self, trans_api, logged_in_user, recomment):
                 assert trans_api.status_code == 204
-
-            def test_데이터_확인(self, trans_api, logged_in_user, recomment):
                 assert logged_in_user not in ReComment.objects(id=recomment.id).get().like
 
         class Context_좋아요가_눌려져_있지_않은_경우:
@@ -126,8 +112,6 @@ class Describe_ReCommentView:
             def recomment(self, logged_in_user, board, comment):
                 return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_412(self, trans_api):
+            def test_상태코드_412(self, trans_api, logged_in_user, recomment):
                 assert trans_api.status_code == 412
-
-            def test_데이터_확인(self, trans_api, post, logged_in_user, comment, recomment):
                 assert logged_in_user not in ReComment.objects(id=recomment.id).get().like
