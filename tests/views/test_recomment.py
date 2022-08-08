@@ -97,8 +97,8 @@ class Describe_ReCommentView:
             def recomment(self, logged_in_user, board, comment):
                 return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_400(self, trans_api):
-                assert trans_api.status_code == 400
+            def test_상태코드_409(self, trans_api):
+                assert trans_api.status_code == 409
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment, recomment):
                 assert logged_in_user in ReComment.objects(id=recomment.id).get().like
@@ -121,13 +121,13 @@ class Describe_ReCommentView:
             def test_데이터_확인(self, trans_api, logged_in_user, recomment):
                 assert logged_in_user not in ReComment.objects(id=recomment.id).get().like
 
-        class Context_이미_좋아요가_눌러져_있을_경우:
+        class Context_좋아요가_눌려져_있지_않은_경우:
             @pytest.fixture
             def recomment(self, logged_in_user, board, comment):
                 return ReCommentFactory.create(comment=comment.id, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_400(self, trans_api):
-                assert trans_api.status_code == 400
+            def test_상태코드_412(self, trans_api):
+                assert trans_api.status_code == 412
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment, recomment):
                 assert logged_in_user not in ReComment.objects(id=recomment.id).get().like

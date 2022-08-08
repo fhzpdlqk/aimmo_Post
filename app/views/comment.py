@@ -52,7 +52,7 @@ class CommentView(FlaskView):
         if user not in Comment.objects().get(id=comment_id).like:
             Comment.objects(id=comment_id).update_one(push__like=user)
         else:
-            raise ApiError(message="이미 좋아요가 눌러져 있습니다", status_code=400)
+            raise ApiError(message="이미 좋아요가 눌러져 있습니다", status_code=409)
         return "", 201
 
     @route("/<string:comment_id>/like", methods=["DELETE"])
@@ -63,7 +63,7 @@ class CommentView(FlaskView):
     def like_cancel(self, board_id, post_id, comment_id):
         user = User.objects().get(email=g.email)
         if user not in Comment.objects().get(id=comment_id).like:
-            raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=400)
+            raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=412)
         else:
             Comment.objects(id=comment_id).update_one(pull__like=user)
         return "", 204
