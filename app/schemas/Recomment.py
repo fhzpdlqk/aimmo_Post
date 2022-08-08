@@ -3,25 +3,21 @@ from marshmallow import fields, Schema, post_load
 
 class ReCommentListSchema(Schema):
     id = fields.Str()
-    writer = fields.Method("get_writer")
+    writer_email = fields.Email()
     date = fields.DateTime()
     content = fields.Str()
     num_like = fields.Int()
 
-    def get_writer(self, obj) -> str:
-        return obj.writer.email
 
 
 class ReCommentDetailSchema(Schema):
     id = fields.Str()
-    writer = fields.Method("get_writer")
+    writer = fields.Email()
     date = fields.DateTime()
     num_like = fields.Int()
     content = fields.Str()
     like = fields.List(fields.Str())
 
-    def get_writer(self, obj) -> str:
-        return obj.writer.email
 
 
 class ReCommentSchema(Schema):

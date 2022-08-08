@@ -5,29 +5,22 @@ from app.schemas.Recomment import ReCommentDetailSchema, ReCommentListSchema
 
 class CommentListSchema(Schema):
     id = fields.Str()
-    writer = fields.Method("get_writer")
+    writer_email = fields.Email()
     date = fields.DateTime()
     num_like = fields.Int()
     content = fields.Str()
-
-    def get_writer(self, obj) -> str:
-        return obj.writer.email
 
 
 
 class CommentDetailSchema(Schema):
     id = fields.Str()
-    writer = fields.Method("get_writer")
+    writer_email = fields.Email()
     date = fields.DateTime()
     num_like = fields.Int()
     content = fields.Str()
     like = fields.List(fields.Str())
     recomment = fields.Nested(ReCommentDetailSchema(many=True))
     post = fields.Nested("PostDetailSchema", only=("id",))
-
-    def get_writer(self, obj) -> str:
-        return obj.writer.email
-
 
 
 class CommentSchema(Schema):

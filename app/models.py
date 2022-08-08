@@ -1,7 +1,7 @@
 from mongoengine import *
 import datetime
 import jwt
-from flask import current_app
+from flask import current_app,g
 
 
 class User(Document):
@@ -35,6 +35,14 @@ class Post(Document):
     def comment(self):
         return Comment.objects().filter(post=self)
 
+    @property
+    def is_like(self):
+        return User.objects().get(email=g.email) in self.like
+
+    @property
+    def writer_email(self):
+        return self.writer.email
+
 
 class Comment(Document):
     writer = ReferenceField(User, required=True)
@@ -53,6 +61,10 @@ class Comment(Document):
     def recomment(self):
         return ReComment.objects().filter(comment=self)
 
+    @property
+    def writer_email(self):
+        return self.writer.email
+
 class ReComment(Document):
     writer = ReferenceField(User, required=True)
     date = ComplexDateTimeField(default=datetime.datetime.utcnow)
@@ -64,6 +76,10 @@ class ReComment(Document):
     @property
     def num_like(self) -> int:
         return len(self.like)
+
+    @property
+    def writer_email(self):
+        return self.writer.email
 
 class AuthToken(Document):
     token = StringField(required=True)

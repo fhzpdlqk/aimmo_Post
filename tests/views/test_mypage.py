@@ -27,7 +27,7 @@ class Describe_MyPageView:
                 post_list = trans_api.json
                 assert len(post_list) == 20
                 for post in post_list:
-                    assert post["writer"] == logged_in_user.email
+                    assert post["writer_email"] == logged_in_user.email
 
     class Test_My_Comment:
         @pytest.fixture
@@ -45,7 +45,7 @@ class Describe_MyPageView:
             comment_list = trans_api.json
             assert len(comment_list) == 20
             for comment in comment_list:
-                assert comment["writer"] == logged_in_user.email
+                assert comment["writer_email"] == logged_in_user.email
 
     class Test_My_ReComment:
         @pytest.fixture
@@ -63,7 +63,7 @@ class Describe_MyPageView:
             recomment_list = trans_api.json
             assert len(recomment_list) == 20
             for recomment in recomment_list:
-                assert recomment["writer"] == logged_in_user.email
+                assert recomment["writer_email"] == logged_in_user.email
 
     class Test_My_Like:
         @pytest.fixture
