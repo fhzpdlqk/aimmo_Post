@@ -30,9 +30,6 @@ class PostRegistSchema(Schema):
     tag = fields.List(fields.Str(), required=True)
     notice = fields.Bool(default=False)
 
-    @post_load
-    def make_post(self, data, **kwargs):
-        return dict(data)
 
 
 class PostDetailSchema(Schema):
@@ -57,23 +54,13 @@ class PostUpdateSchema(Schema):
     tag = fields.List(fields.Str(), required=True)
     notice = fields.Bool(default=False)
 
-    @post_load
-    def make_post(self, data, **kwargs):
-        return dict(data)
 
 
 class PostSearchSchema(Schema):
     search_word = fields.Str()
 
-    @post_load
-    def search_post(self, data, **kwargs):
-        return {'search_word': data['search_word']}
 
 
 class PostListFilterSchema(Schema):
     page = fields.Int()
     size = fields.Int()
-
-    @post_load
-    def list_info(self, data, **kwargs):
-        return dict(data)
