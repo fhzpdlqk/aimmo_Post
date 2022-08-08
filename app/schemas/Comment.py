@@ -33,6 +33,3 @@ class CommentDetailSchema(Schema):
 class CommentSchema(Schema):
     content = fields.Str()
 
-    @post_load
-    def make_comment(self, data, **kwargs):
-        return dict(data)

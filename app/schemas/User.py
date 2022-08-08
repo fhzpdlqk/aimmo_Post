@@ -23,10 +23,6 @@ class UserLoginSchema(Schema):
     email = fields.Email()
     password = fields.Str()
 
-    @post_load
-    def check_user(self, data, **kwargs):
-        return dict(data)
-
 
 class UserUpdateSchema(Schema):
     origin_password = fields.Str()

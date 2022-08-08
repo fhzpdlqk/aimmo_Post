@@ -27,6 +27,3 @@ class ReCommentDetailSchema(Schema):
 class ReCommentSchema(Schema):
     content = fields.Str()
 
-    @post_load
-    def make_recomment(self, data, **kwargs):
-        return dict(data)
