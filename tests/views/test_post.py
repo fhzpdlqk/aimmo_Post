@@ -126,8 +126,8 @@ class Describe_PostView:
             def post(self, logged_in_user, board):
                 return PostFactory.create(board=board, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_400(self, trans_api):
-                assert trans_api.status_code == 400
+            def test_상태코드_409(self, trans_api):
+                assert trans_api.status_code == 409
 
             def test_데이터_확인(self, trans_api, post, logged_in_user):
                 assert logged_in_user in Post.objects(id=post.id).get().like
@@ -152,8 +152,8 @@ class Describe_PostView:
             def post(self, logged_in_user, board):
                 return PostFactory.create(board=board, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_400(self, trans_api):
-                assert trans_api.status_code == 400
+            def test_상태코드_412(self, trans_api):
+                assert trans_api.status_code == 412
 
             def test_데이터_확인(self, trans_api, post, logged_in_user):
                 assert logged_in_user not in Post.objects(id=post.id).get().like

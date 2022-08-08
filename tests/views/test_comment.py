@@ -83,8 +83,8 @@ class Describe_CommentView:
             def comment(self, logged_in_user, board, post):
                 return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[logged_in_user])
 
-            def test_상태코드_400(self, trans_api):
-                assert trans_api.status_code == 400
+            def test_상태코드_409(self, trans_api):
+                assert trans_api.status_code == 409
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
                 assert logged_in_user in Comment.objects(id=comment.id).get().like
@@ -110,8 +110,8 @@ class Describe_CommentView:
             def comment(self, logged_in_user, board, post):
                 return CommentFactory.create(post=post.id, writer=logged_in_user.email, like=[])
 
-            def test_상태코드_400(self, trans_api):
-                assert trans_api.status_code == 400
+            def test_상태코드_412(self, trans_api):
+                assert trans_api.status_code == 412
 
             def test_데이터_확인(self, trans_api, post, logged_in_user, comment):
                 assert logged_in_user not in Comment.objects(id=comment.id).get().like

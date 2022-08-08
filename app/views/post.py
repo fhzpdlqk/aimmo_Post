@@ -55,7 +55,7 @@ class PostView(FlaskView):
         if user not in Post.objects().get(id=post_id).like:
             Post.objects(id=post_id).update_one(push__like=user)
         else:
-            raise ApiError(message="좋아요가 눌러져 있습니다.", status_code=400)
+            raise ApiError(message="좋아요가 눌러져 있습니다.", status_code=409)
         return "", 201
 
     @route("/<string:post_id>/like", methods=["DELETE"])
@@ -68,7 +68,7 @@ class PostView(FlaskView):
         if user in Post.objects().get(id=post_id).like:
             Post.objects(id=post_id).update_one(pull__like=user)
         else:
-            raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=400)
+            raise ApiError(message="좋아요가 눌러져 있지 않습니다.", status_code=412)
         return "", 204
 
     @route("/search", methods=["POST"])

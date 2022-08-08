@@ -50,7 +50,7 @@ class ReCommentView(FlaskView):
         if user not in ReComment.objects().get(id=recomment_id).like:
             ReComment.objects(id=recomment_id).update_one(push__like=user)
         else:
-            raise ApiError(message="좋아요를 이미 누른 유저입니다.", status_code=400)
+            raise ApiError(message="좋아요를 이미 누른 유저입니다.", status_code=409)
         return "", 201
 
 
@@ -62,7 +62,7 @@ class ReCommentView(FlaskView):
     def recomment_like_cancel(self, board_id, post_id, comment_id, recomment_id):
         user = User.objects().get(email=g.email)
         if user not in ReComment.objects().get(id=recomment_id).like:
-            raise ApiError(message="좋아요를 누르지 않은 유저입니다.", status_code=400)
+            raise ApiError(message="좋아요를 누르지 않은 유저입니다.", status_code=412)
         else:
             ReComment.objects(id=recomment_id).update_one(pull__like=user)
         return "", 204
