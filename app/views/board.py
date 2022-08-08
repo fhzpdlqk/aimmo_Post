@@ -4,7 +4,7 @@ from flask_apispec import use_kwargs, marshal_with, doc
 
 from app.models import Board
 from app.decorator import login_required, master_required, check_board, marshal_empty
-from app.schemas.BoardSchema import BoardRegistSchema, BoardSchema, BoardUpdateSchema
+from app.schemas.Board import BoardRegistSchema, BoardSchema, BoardUpdateSchema
 from app.errors import ApiError, ApiErrorSchema
 
 class BoardView(FlaskView):
@@ -18,10 +18,10 @@ class BoardView(FlaskView):
     @marshal_with(ApiErrorSchema, code=409, description="중복 게시판")
     @marshal_with(ApiErrorSchema, code=422, description="validation error")
     @marshal_empty(code=201)
-    def post(self, board_name):
-        if Board.objects().filter(name=board_name, is_deleted=False):
+    def post(self, name):
+        if Board.objects().filter(name=name, is_deleted=False):
             raise ApiError(message="이미 등록된 게시판입니다.", status_code=409)
-        Board(name=board_name).save()
+        Board(name=name).save()
         return '', 201
 
     @route("/", methods=["GET"])

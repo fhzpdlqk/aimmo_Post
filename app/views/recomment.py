@@ -3,7 +3,7 @@ from bson import ObjectId
 from flask_classful import FlaskView, route
 from flask_apispec import use_kwargs, marshal_with, doc
 from app.models import ReComment, User, Comment
-from app.schemas.ReCommentSchema import ReCommentSchema
+from app.schemas.Recomment import ReCommentSchema
 from app.decorator import login_required, check_board, check_post, check_comment, check_recomment_writer, check_recomment, marshal_empty
 from app.errors import ApiError, ApiErrorSchema
 

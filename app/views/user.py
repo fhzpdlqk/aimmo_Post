@@ -4,7 +4,7 @@ import bcrypt
 from flask_classful import FlaskView, route
 from flask import request, g
 from flask_apispec import use_kwargs, marshal_with, doc
-from app.schemas.UserSchema import UserSignupSchema, UserSchema, UserLoginSchema, AuthTokenSchema, UserUpdateSchema
+from app.schemas.User import UserSignupSchema, UserSchema, UserLoginSchema, AuthTokenSchema, UserUpdateSchema
 from app.models import User, AuthToken
 from app.errors import ApiError, ApiErrorSchema
 from app.decorator import login_required, marshal_empty

@@ -2,7 +2,7 @@ from bson import ObjectId
 from flask_classful import FlaskView, route
 from flask import g, request
 from flask_apispec import marshal_with, use_kwargs, doc
-from app.schemas.PostSchema import PostListSchema, PostRegistSchema, PostDetailSchema, PostUpdateSchema, PostSearchSchema, PostListFilterSchema
+from app.schemas.Post import PostListSchema, PostRegistSchema, PostDetailSchema, PostUpdateSchema, PostSearchSchema, PostListFilterSchema
 from app.models import Post, User, Board
 from app.decorator import login_required, check_board, check_post, check_post_writer, marshal_empty
 from app.errors import ApiError, ApiErrorSchema
