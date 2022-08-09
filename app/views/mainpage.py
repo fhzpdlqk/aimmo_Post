@@ -4,6 +4,7 @@ from app.schemas.Post import PostListSchema
 from app.schemas.Mainpage import MainPageOrderbySchema
 from app.decorator import login_required
 from app.models import Post
+import random
 
 class MainPageView(FlaskView):
     decorators = (doc(tags=["Mainpage"]),)
@@ -16,3 +17,7 @@ class MainPageView(FlaskView):
         post_list = Post.objects(is_deleted=False).order_by(f"-{orderby}")[:10]
         return post_list, 200
 
+
+    @route("/matrics", methods=["GET"])
+    def matrics(self):
+        return {"data": random.randint(1,100)}, 200
